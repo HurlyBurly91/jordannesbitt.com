@@ -8,7 +8,7 @@
 /* Body Styling */
 body {
   font-family: Arial, sans-serif;
-  background-color: white;
+  background-color: #121212;
   color: #333;
 }
 
@@ -27,7 +27,7 @@ body {
 
 /* Hero Text Styling */
 .hero h1 a {
-  color: white;
+  color: #F0F0F0;
   text-decoration: none;
   font-size: 3em;
 }
@@ -48,7 +48,7 @@ nav ul li {
 }
 
 nav ul li a {
-  color: white;
+  color: #F0F0F0;
   text-decoration: none;
   font-size: 1.5em;
 }
