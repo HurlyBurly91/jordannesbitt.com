@@ -12,23 +12,33 @@ body {
   color: #333;
   display: flex;
   flex-direction: column;
-  min-height: 110vh;
+  min-height: 100vh;
 }
 
-main{
+main {
   flex: 1;
 }
+
 /* Hero Section */
 .hero {
-  background-image: url('../images/hero-image.jpg'); /* Double-check that the path is correct */
+  background-image: url('../images/hero-image.jpg'); 
   background-size: cover;
   background-position: center;
-  height: 100vh; /* Full-screen height */
+  min-height: 100vh; /* Ensures the hero takes at least the full viewport height */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+
+/* Mobile-specific Hero Adjustments */
+@media (max-width: 768px) {
+  .hero {
+    background-size: cover;
+    background-position: top; /* Adjust image focus for mobile screens */
+    min-height: 100vh; /* Ensure the hero section adjusts to the viewport */
+  }
 }
 
 /* Hero Text Styling */
@@ -39,7 +49,7 @@ main{
 }
 
 .hero h1 a:hover {
-  color: #ffcc00; /* Hover effect */
+  color: #ffcc00;
 }
 
 /* Navigation Styling */
@@ -92,4 +102,13 @@ footer {
   text-align: center;
   padding: 10px 0;
   width: 100%;
+  margin-top: auto;
+  clear: both; /* Prevents the footer from overlapping with any floated content */
+}
+
+/* Additional Mobile Adjustments */
+@media (max-width: 768px) {
+  footer {
+    position: relative; /* Ensure it's positioned properly on mobile */
+  }
 }
