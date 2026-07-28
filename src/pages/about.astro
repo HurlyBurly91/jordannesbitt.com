@@ -1,0 +1,24 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { identity } from "@/config/identity";
+---
+
+<BaseLayout title="About">
+  <header class="page-intro about-intro">
+    <p class="eyebrow">About</p>
+    <h1>{identity.name} is an artist based in {identity.location}.</h1>
+  </header>
+  <section class="about-grid">
+    <p class="section-number">Practice</p>
+    <div class="prose">
+      <p>
+        The practice spans drawing, printmaking, painting, photography, aerial
+        imaging, film, and computational systems.
+      </p>
+      <p>
+        A full biography, exhibition history, and downloadable curriculum vitae
+        will be added before launch.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,27 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ArtworkPlaceholder from "@/components/ArtworkPlaceholder.astro";
+import { media } from "@/data/artworks";
+
+export function getStaticPaths() {
+  return media.map((item) => ({
+    params: { medium: item.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+---
+
+<BaseLayout title={item.label}>
+  <header class="page-intro medium-page">
+    <p class="eyebrow">Medium</p>
+    <h1>{item.label}</h1>
+    <p>A curated selection will be added here.</p>
+  </header>
+  <section class="editorial-grid archive-preview" aria-label={`${item.label} works`}>
+    <ArtworkPlaceholder label={`${item.label} 01`} variant="portrait" index={1} />
+    <ArtworkPlaceholder label={`${item.label} 02`} variant="landscape" index={2} />
+    <ArtworkPlaceholder label={`${item.label} 03`} variant="square" index={3} />
+  </section>
+</BaseLayout>

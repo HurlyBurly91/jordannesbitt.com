@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { media } from "@/data/artworks";
+---
+
+<BaseLayout title="Work">
+  <header class="page-intro">
+    <p class="eyebrow">Selected work</p>
+    <h1>Work organized by medium, connected by practice.</h1>
+    <p>
+      These sections are ready for curated selections. The archive will remain
+      separate from the public-facing portfolio.
+    </p>
+  </header>
+  <section class="medium-index">
+    <ol>
+      {media.map((item, index) => (
+        <li>
+          <a href={`/work/${item.slug}`}>
+            <span>{String(index + 1).padStart(2, "0")}</span>
+            <strong>{item.label}</strong>
+            <span class="status">Awaiting selection</span>
+            <span class="arrow">↗</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+</BaseLayout>
