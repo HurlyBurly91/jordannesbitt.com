@@ -1,0 +1,15 @@
+---
+interface Props {
+  label?: string;
+  variant?: "portrait" | "landscape" | "square";
+  index?: number;
+}
+
+const { label = "Artwork forthcoming", variant = "portrait", index = 1 } = Astro.props;
+---
+
+<div class:list={["art-placeholder", variant]} aria-label={label}>
+  <span class="placeholder-index">{String(index).padStart(2, "0")}</span>
+  <span class="placeholder-mark" aria-hidden="true"></span>
+  <span class="placeholder-label">{label}</span>
+</div>

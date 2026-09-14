@@ -1,0 +1,25 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { media } from "@/data/artworks";
+---
+
+<BaseLayout title="Archive">
+  <header class="page-intro">
+    <p class="eyebrow">Structured archive</p>
+    <h1>The larger body of work.</h1>
+    <p>
+      The archive will provide chronology, medium, series, and availability
+      filters after the initial catalogue is prepared.
+    </p>
+  </header>
+  <section class="archive-table" aria-label="Archive categories">
+    <div class="archive-row archive-header">
+      <span>Medium</span><span>Published</span><span>Status</span>
+    </div>
+    {media.map((item) => (
+      <div class="archive-row">
+        <strong>{item.label}</strong><span>{item.count}</span><span>Inventory pending</span>
+      </div>
+    ))}
+  </section>
+</BaseLayout>
