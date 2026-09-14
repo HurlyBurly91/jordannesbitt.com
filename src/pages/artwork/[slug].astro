@@ -1,0 +1,37 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { artworks } from "@/data/artworks";
+
+export function getStaticPaths() {
+  return artworks
+    .filter((artwork) => artwork.published)
+    .map((artwork) => ({
+      params: { slug: artwork.slug },
+      props: { artwork },
+    }));
+}
+
+const { artwork } = Astro.props;
+const details = [artwork.materials, artwork.dimensions].filter(Boolean).join(" · ");
+---
+
+<BaseLayout title={artwork.title} description={`${artwork.title}, ${artwork.year}, by Jordan Nesbitt.`}>
+  <article class="artwork-detail">
+    <div class="artwork-image">
+      {artwork.image ? (
+        <img src={artwork.image} alt={artwork.alt} width="1800" height="2250" />
+      ) : (
+        <div class="art-placeholder portrait" aria-label={artwork.alt}>
+          <span class="placeholder-label">{artwork.title}</span>
+        </div>
+      )}
+    </div>
+    <header>
+      <p class="eyebrow">{artwork.medium}</p>
+      <h1>{artwork.title}</h1>
+      <p>{artwork.year}</p>
+      {details && <p class="artwork-details">{details}</p>}
+      <a class="text-link" href={`/work/${artwork.medium}`}>Back to {artwork.medium}</a>
+    </header>
+  </article>
+</BaseLayout>

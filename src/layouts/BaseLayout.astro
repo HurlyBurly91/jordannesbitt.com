@@ -7,12 +7,25 @@ interface Props {
   description?: string;
 }
 
-const {
-  title,
-  description = identity.descriptor,
-} = Astro.props;
+const { title, description = identity.descriptor } = Astro.props;
 const pageTitle = title ? `${title} — ${identity.name}` : identity.name;
 const canonical = new URL(Astro.url.pathname, identity.siteUrl);
+const path = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
+const artistSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: identity.name,
+  url: identity.siteUrl,
+  jobTitle: "Visual artist",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "London",
+    addressRegion: "Ontario",
+    addressCountry: "CA",
+  },
+};
 ---
 
 <!doctype html>
@@ -22,9 +35,11 @@ const canonical = new URL(Astro.url.pathname, identity.siteUrl);
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <meta name="theme-color" content="#f0ede5" />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{pageTitle}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(artistSchema)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -33,9 +48,9 @@ const canonical = new URL(Astro.url.pathname, identity.siteUrl);
         {identity.name}
       </a>
       <nav aria-label="Primary navigation">
-        <a href="/work">Work</a>
-        <a href="/archive">Archive</a>
-        <a href="/about">About</a>
+        <a href="/work" aria-current={isActive("/work") ? "page" : undefined}>Work</a>
+        <a href="/archive" aria-current={isActive("/archive") ? "page" : undefined}>Archive</a>
+        <a href="/about" aria-current={isActive("/about") ? "page" : undefined}>About</a>
       </nav>
     </header>
     <main id="main">

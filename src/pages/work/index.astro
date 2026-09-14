@@ -1,29 +1,33 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { media } from "@/data/artworks";
+import { artworks, media } from "@/data/artworks";
+
+const published = artworks.filter((artwork) => artwork.published);
 ---
 
-<BaseLayout title="Work">
+<BaseLayout title="Work" description="Selected work by Jordan Nesbitt, organized by medium.">
   <header class="page-intro">
     <p class="eyebrow">Selected work</p>
     <h1>Work organized by medium, connected by practice.</h1>
     <p>
-      These sections are ready for curated selections. The archive will remain
-      separate from the public-facing portfolio.
+      Painting, drawing, printmaking, photography, aerial imaging, and film.
     </p>
   </header>
-  <section class="medium-index">
+  <section class="medium-index" aria-label="Media">
     <ol>
-      {media.map((item, index) => (
-        <li>
-          <a href={`/work/${item.slug}`}>
-            <span>{String(index + 1).padStart(2, "0")}</span>
-            <strong>{item.label}</strong>
-            <span class="status">Awaiting selection</span>
-            <span class="arrow">↗</span>
-          </a>
-        </li>
-      ))}
+      {media.map((item, index) => {
+        const count = published.filter((artwork) => artwork.medium === item.slug).length;
+        return (
+          <li>
+            <a href={`/work/${item.slug}`}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <strong>{item.label}</strong>
+              <span class="status">{count > 0 ? `${count} work${count === 1 ? "" : "s"}` : "Selection in preparation"}</span>
+              <span class="arrow">↗</span>
+            </a>
+          </li>
+        );
+      })}
     </ol>
   </section>
 </BaseLayout>

@@ -1,25 +1,32 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { media } from "@/data/artworks";
+import { artworks, media } from "@/data/artworks";
+
+const published = artworks.filter((artwork) => artwork.published);
 ---
 
-<BaseLayout title="Archive">
+<BaseLayout title="Archive" description="Archive of work by Jordan Nesbitt.">
   <header class="page-intro">
-    <p class="eyebrow">Structured archive</p>
+    <p class="eyebrow">Archive</p>
     <h1>The larger body of work.</h1>
     <p>
-      The archive will provide chronology, medium, series, and availability
-      filters after the initial catalogue is prepared.
+      A chronological record across media. Entries are published as works are
+      photographed, measured, and catalogued.
     </p>
   </header>
   <section class="archive-table" aria-label="Archive categories">
     <div class="archive-row archive-header">
-      <span>Medium</span><span>Published</span><span>Status</span>
+      <span>Medium</span><span>Published</span><span>Catalogue</span>
     </div>
-    {media.map((item) => (
-      <div class="archive-row">
-        <strong>{item.label}</strong><span>{item.count}</span><span>Inventory pending</span>
-      </div>
-    ))}
+    {media.map((item) => {
+      const count = published.filter((artwork) => artwork.medium === item.slug).length;
+      return (
+        <a class="archive-row" href={`/work/${item.slug}`}>
+          <strong>{item.label}</strong>
+          <span>{count}</span>
+          <span>{count > 0 ? "View works" : "In preparation"}</span>
+        </a>
+      );
+    })}
   </section>
 </BaseLayout>

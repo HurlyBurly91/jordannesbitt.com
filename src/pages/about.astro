@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { identity } from "@/config/identity";
 ---
 
-<BaseLayout title="About">
+<BaseLayout title="About" description={`About ${identity.name}, a multidisciplinary artist based in ${identity.location}.`}>
   <header class="page-intro about-intro">
     <p class="eyebrow">About</p>
     <h1>{identity.name} is an artist based in {identity.location}.</h1>
@@ -12,12 +12,13 @@ import { identity } from "@/config/identity";
     <p class="section-number">Practice</p>
     <div class="prose">
       <p>
-        The practice spans drawing, printmaking, painting, photography, aerial
-        imaging, film, and computational systems.
+        Nesbitt works across drawing, printmaking, painting, photography,
+        aerial imaging, film, and computational systems.
       </p>
       <p>
-        A full biography, exhibition history, and downloadable curriculum vitae
-        will be added before launch.
+        The practice joins direct observation and physical processes with
+        constructed images, treating each medium as part of the same sustained
+        investigation.
       </p>
     </div>
   </section>

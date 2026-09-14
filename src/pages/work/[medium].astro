@@ -1,27 +1,42 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import ArtworkCard from "@/components/ArtworkCard.astro";
 import ArtworkPlaceholder from "@/components/ArtworkPlaceholder.astro";
-import { media } from "@/data/artworks";
+import { artworks, media } from "@/data/artworks";
 
 export function getStaticPaths() {
   return media.map((item) => ({
     params: { medium: item.slug },
-    props: { item },
+    props: {
+      item,
+      works: artworks
+        .filter((artwork) => artwork.published && artwork.medium === item.slug)
+        .sort((a, b) => b.year - a.year),
+    },
   }));
 }
 
-const { item } = Astro.props;
+const { item, works } = Astro.props;
 ---
 
-<BaseLayout title={item.label}>
+<BaseLayout
+  title={item.label}
+  description={`${item.label} by Jordan Nesbitt, a visual artist in London, Ontario.`}
+>
   <header class="page-intro medium-page">
     <p class="eyebrow">Medium</p>
     <h1>{item.label}</h1>
-    <p>A curated selection will be added here.</p>
+    <p>{works.length > 0 ? `${works.length} selected work${works.length === 1 ? "" : "s"}.` : "Selection in preparation."}</p>
   </header>
-  <section class="editorial-grid archive-preview" aria-label={`${item.label} works`}>
-    <ArtworkPlaceholder label={`${item.label} 01`} variant="portrait" index={1} />
-    <ArtworkPlaceholder label={`${item.label} 02`} variant="landscape" index={2} />
-    <ArtworkPlaceholder label={`${item.label} 03`} variant="square" index={3} />
-  </section>
+  {works.length > 0 ? (
+    <section class="work-grid" aria-label={`${item.label} works`}>
+      {works.map((work) => <ArtworkCard artwork={work} />)}
+    </section>
+  ) : (
+    <section class="editorial-grid archive-preview" aria-label={`${item.label} works in preparation`}>
+      <ArtworkPlaceholder label={`${item.label} 01`} variant="portrait" index={1} />
+      <ArtworkPlaceholder label={`${item.label} 02`} variant="landscape" index={2} />
+      <ArtworkPlaceholder label={`${item.label} 03`} variant="square" index={3} />
+    </section>
+  )}
 </BaseLayout>
