@@ -30,7 +30,7 @@ Use only media categories actually ready for publication. Do not delay a strong 
 | --- | --- | --- |
 | M00 | milestones/M00-preparation.md | Complete: research, durable setup and explicit kickoff approval; records/M00-preparation.md |
 | M01 | milestones/M01-baseline.md | Complete: reproducible build, runtime and regression baseline; records/M01-baseline.md |
-| M02 | milestones/M02-catalogue.md | Validated catalogue and publication boundary |
+| M02 | milestones/M02-catalogue.md | Complete: validated catalogue/publication boundary; records/M02-catalogue.md |
 | M03 | milestones/M03-ingestion.md | Repeatable, non-destructive media ingestion |
 | M04 | milestones/M04-presentation.md | Artwork and curated project presentations |
 | M05 | milestones/M05-archive.md | Accessible archive, navigation and filters |

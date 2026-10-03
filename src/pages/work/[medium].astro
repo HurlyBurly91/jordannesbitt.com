@@ -10,8 +10,8 @@ export function getStaticPaths() {
     props: {
       item,
       works: artworks
-        .filter((artwork) => artwork.published && artwork.medium === item.slug)
-        .sort((a, b) => b.year - a.year),
+        .filter((artwork) => artwork.medium === item.slug)
+        .sort((a, b) => (b.date.year ?? 0) - (a.date.year ?? 0)),
     },
   }));
 }

@@ -32,7 +32,13 @@ resume through `RUN_PROMPT.txt`.
 ## Content
 
 - Public identity is centralized in `src/config/identity.ts`.
-- Medium taxonomy and artwork records live in `src/data/artworks.ts`.
+- Approved public-source records are empty JSON arrays in `src/content/`;
+  strict schemas and publication rules are in `src/lib/catalogue.ts`.
+- `src/data/catalogue.ts` exposes only publication-filtered records;
+  `src/data/artworks.ts` preserves the existing import entrypoint.
+- Reviewed web derivatives belong in `src/media/`, never `public/media/`;
+  only published records' referenced assets are emitted. See `docs/catalogue.md`.
+- Test fixtures belong under `tests/fixtures/`, outside production content.
 - Artwork placeholders are deliberate and can be replaced incrementally.
 - Full-resolution masters should remain outside this repository.
 

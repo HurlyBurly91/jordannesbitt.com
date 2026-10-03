@@ -1,25 +1,27 @@
 ---
 import type { Artwork } from "@/data/artworks";
+import { dateLabel } from "@/lib/catalogue";
 
 interface Props {
   artwork: Artwork;
 }
 
 const { artwork } = Astro.props;
+const image = artwork.reproductions.find((image) => image.role === "primary");
 ---
 
 <article class="artwork-card">
   <a href={`/artwork/${artwork.slug}`}>
-    {artwork.image ? (
-      <img src={artwork.image} alt={artwork.alt} loading="lazy" width="1200" height="1500" />
+    {image ? (
+      <img src={image.src} alt={image.alt} loading="lazy" width={image.width} height={image.height} />
     ) : (
-      <div class="art-placeholder portrait" aria-label={artwork.alt}>
+      <div class="art-placeholder portrait">
         <span class="placeholder-label">{artwork.title}</span>
       </div>
     )}
     <div class="artwork-meta">
       <h2>{artwork.title}</h2>
-      <p>{artwork.year}</p>
+      <p>{dateLabel(artwork.date)}</p>
     </div>
   </a>
 </article>

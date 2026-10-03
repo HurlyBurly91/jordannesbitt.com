@@ -1,49 +1,47 @@
 # Tasks
 
 ```yaml
-Milestone: M01
+Milestone: M02
 State: COMPLETE
-Active-Request: M01-R1
-Specification: milestones/M01-baseline.md
+Active-Request: M02-R1
+Specification: milestones/M02-catalogue.md
 ```
 
-## Current authorization
+## Current authorization and carried evidence
 
-Source: USER, 2026-10-03. Explicit grant archived in records/M00-preparation.md; M00 checkpoint 5476c4c was pushed successfully. Implement M01 through M08 autonomously on redesign/astro-foundation using the selected Sol 6.1 Max model, committing/pushing verified milestone checkpoints. Stop before M09 or at any earlier genuine blocker/mandatory human gate. No protected-branch writes, publication/deployment, DNS/hosting changes, real messages, purchases, payment activation or other external effects beyond the named development checkpoint pushes. No host-wide configuration changes.
+Source: USER, 2026-10-03; full grant records/M00-preparation.md. Implement M01–M08 on redesign/astro-foundation using selected Sol 6.1 Max, with verified checkpoint commits/pushes. Stop before M09 or an earlier genuine blocker/required human gate. No master/backup writes, publication/deployment, DNS/hosting changes, real messages, purchases, payments or other external effects beyond named development checkpoint pushes; no host-wide changes. Planning counts only: owner chooses all real works/groups/order/publication/availability/prices at M09. Isolated synthetic fixtures permitted; no production leakage or representation as actual artwork. No confidential intake directory authorized.
 
-The 20–30 works / 3–5 groups / approximately ten-work pilot are planning targets only. Real content, series, order, publication, availability and pricing are owner choices at M09. Use isolated synthetic fixtures only where permitted, never production content or representations of the owner's artwork. No confidential input directory is authorized.
+M01 checkpoint **4896d8e** committed/pushed successfully; worktree clean and remote/protected heads rechecked at initialization. Node 22.23.3/npm 10.9.9 temporary runtime; OpenCode 1.18.34; actual openai/gpt-6.1-sol variant max. Baseline route tests: 13 pass. Nonpassing dependency audit and feature-exposure obligations: docs/operations.md (M03 must review decoder choice; release/affected features must revisit remaining advisories).
 
-## M01-R1 — Reproducible baseline
+## M02-R1 — Validated catalogue and publication
 
-Source: USER (execution grant above); technical tasks and checks Source: DERIVED from milestones/M01-baseline.md, docs/operations.md, docs/quality.md and docs/catalogue.md.
+Source: DERIVED from milestones/M02-catalogue.md, docs/catalogue.md and docs/acquisition.md under the USER execution grant.
 
-- [x] M01-R1-D01 Inspect origin, branch/worktree/topology, installed Node/npm/OpenCode and actual configured provider/model/variant without exposing credentials.
-  Dependencies: M00 complete. Evidence: development origin/clean head confirmed at kickoff; master-only change is the known PR #1 merge.
-  Evidence: Shell Node v18.19.1/npm 9.2.0 is incompatible. Temporary, explicitly versioned npm-exec environment provides Node v22.23.3/npm 10.9.9 without global changes. OpenCode 1.18.34 models includes openai/gpt-6.1-sol; read-only CLI database queries restricted to this checkout's latest session/model metadata confirm provider openai, model gpt-6.1-sol, variant max (session and actual assistant messages). Credential/configuration values and conversation contents were not output or committed.
-- [x] M01-R1-D02 Reproduce npm ci and npm run build using the lockfile in a Node 22-compatible environment; inspect security findings and resolve baseline defects without blind major upgrades.
-  Dependencies: D01 runtime availability.
-  Evidence: Original lockfile npm ci/build exited 0 under temporary Node 22.23.3/npm 10.9.9; Astro 5.18.2 produced 10 pages, no errors/warnings, one explicit-inline JSON-LD hint. npm audit --json exited 1 with 9 findings (1 critical, 7 high, 1 low), inspected rather than reported passing. Compatible fix/triage task D05 follows; no force/major upgrade is authorized. Subsequent builds will disable telemetry per process (ASTRO_TELEMETRY_DISABLED=1).
-- [x] M01-R1-D03 Establish meaningful automated regression smoke checks for actual existing routes and document repeatable commands.
-  Dependencies: D02 build output and inspected runtime/routes.
-  Evidence: tests/smoke.test.mjs and tests/helpers/preview.mjs; actual Astro preview checks all 10 routes, key HTML metadata/landmarks, CSS/favicon/sitemap and unknown-artwork 404. npm run verify exited 0, 13 tests passed, none skipped.
-- [x] M01-R1-D04 Update docs/operations.md and developer instructions with verified non-secret runtime facts, route inventory and observed limitations.
+- [x] M02-R1-D01 Implement Astro 5-compatible schemas/collections for artworks, ordered projects/series and professional content, including truthful dates, typed distinct dimensions, editions/offers and film/computational metadata.
+  Dependencies: M01 complete. Decision to verify: empty public-source JSON arrays with custom collection loaders, because Astro's built-in file loader overwrites duplicate IDs and logs some read failures instead of rejecting them. Validate the full snapshot before storing entries.
+  Evidence: src/content.config.ts and src/lib/catalogue.ts/source implement strict full-snapshot validation; empty real content arrays build. Built-in file loader behavior was inspected before selecting the custom loader.
+- [x] M02-R1-D02 Centralize public-content selection, relationships/counts and asset URL/source mapping; migrate the empty array consumers without changing stable routes/identity.
+  Dependencies: D01. Derive reverse project membership; omit unpublished members from public views; never duplicate work records for availability or projects.
+  Evidence: Marked public projection exposed through src/data/catalogue.ts; all existing page consumers use projected works. Project membership/counts and asset lists derive from the same records; compatibility import retained.
+- [x] M02-R1-D03 Enforce fixture isolation and publication-gated derivative emission from an approved-source media root outside public; validate missing/broken assets and reject production fixtures.
+  Dependencies: D01, D02. Production inputs are hardcoded approved-source paths, with no fixture environment override. No original media/real metadata is supplied or inferred.
+  Evidence: Hardcoded input files, strict fixture rejection, path/symlink/missing checks, forbidden public/media and marked selective emission integration. Full isolated build rejects fixtures/duplicates and omits unpublished routes/data/assets. No actual assets were ingested.
+- [x] M02-R1-D04 Add meaningful positive/negative schema, relationship, dimension/edition and production-boundary tests using clearly labelled fixtures outside production paths; document selected layout in docs/catalogue.md/README.md.
   Dependencies: D01–D03.
-  Evidence: docs/operations.md verified baseline/triage and README.md reproducible commands; package engines/.nvmrc and loopback/telemetry scripts use the inspected runtime.
-- [x] M01-R1-D05 Apply individually scoped compatible transitive fixes for devalue, fast-uri, js-yaml, nanoid and svgo; inspect remaining advisory surfaces and document limitations without changing Astro's major or claiming a clean audit.
-  Source: DERIVED from D02 audit inspection. Dependencies: original-lockfile build reproduced. Remaining Astro advisories recommend major 7; optional sharp and http-cache-semantics require careful triage. M01 acceptance requires inspected findings, not a fabricated zero-advisory result.
-  Evidence: Scoped updates reduced 9 findings to 4; post-update audit exited 1 (Astro critical, sharp/http-cache-semantics high, esbuild low). Current feature exposure, unsupported major fix, M03 ingestion review and future release limitation recorded in docs/operations.md. No audit pass claimed.
-- [x] M01-R1-P01 Preserve existing identity/assets, stable route identities, catalogue privacy rules and installed framework major; keep all fixtures outside production paths.
-  Source: USER and DERIVED. Dependencies: all M01 changes.
-  Evidence: Reviewed intended diff changes only baseline scripts/runtime declaration, compatible lock resolutions, one explicit-inline hint, tests and documentation; no identity/assets/catalogue/route changes or fixture content. Actual baseline routes pass; Astro remains 5.18.2.
-- [x] M01-R1-P02 Preserve master/backup and existing deployment controls; local previews must bind loopback. No global configuration changes or silent model substitution.
-  Source: USER. Dependencies: all M01 operations.
-  Evidence: Remote refs rechecked unchanged (master 755df7f, backup 3bc95c7); deployment workflow remains master-only/manual and untouched. Loopback preview tests passed and stopped. Model max verified in actual session; no host configuration writes.
-- [x] M01-R1-V01 Verify requested model selection through the actual installed runtime or record a precise blocker; never invent a Max variant.
-  Dependencies: D01.
-  Evidence: Linux checkout; opencode --version/help, credential-filtered opencode debug config, opencode models openai and read-only opencode db model-only queries exited 0. Resolved openai/gpt-6.1-sol variant max in this checkout's active build session and assistant messages. No repository/global OpenCode configuration was changed; selection is already correct.
-- [x] M01-R1-V02 Verify clean lockfile installation/build and actual route smoke harness exit codes.
-  Dependencies: D02, D03. Evidence: On Linux, temporary Node 22.23.3/npm 10.9.9 with ASTRO_TELEMETRY_DISABLED=1: npm install --package-lock-only --ignore-scripts --no-audit && npm ci && npm run verify exited 0. Astro check: 0 errors/warnings/hints; 10 pages built; 13 Node tests passed. Package audit findings remain separately nonpassing as documented, not a required zero-advisory criterion in this contract.
-- [x] M01-R1-V03 Verify intended diff, synchronized durable state, same-branch checkpoint procedure and unchanged protected refs; commit/push M01 only after required checks pass.
-  Dependencies: D04, P01, P02, V01, V02. Evidence: git status/diff/log/diff --check and git ls-remote exited 0; intended tracked/untracked files reviewed and synchronized headers updated together. Protected refs unchanged; remote development head is the successful same-branch M00 checkpoint 5476c4c. All required M01 technical checks passed before the M01 checkpoint operation. Commit/push transport result must be recorded on M02 initialization or failure re-entry, not inferred here.
+  Evidence: tests/catalogue.test.mjs, tests/publication.test.mjs, labelled test-only factory and temporary-project helper; canonical layout and source privacy documented in docs/catalogue.md/README.md.
+- [x] M02-R1-P01 Preserve existing six medium URLs, /artwork/[slug] identities, src/config/identity.ts and assets; retain static-first Astro 5, one public catalogue, Git/privacy and protected-branch/external-effect rules.
+  Source: USER and DERIVED. Dependencies: all changes.
+  Evidence: Intended diff reviewed; all original routes pass, identity/assets/deployment controls untouched, framework remains Astro 5.18.2. Canonical markers/reference documents accompany publication/media logic.
+- [x] M02-R1-P02 Keep actual catalogue/projects/professional content empty until owner-approved public input; no invented biography, works, offer choices or confidential data.
+  Source: USER. Dependencies: all changes.
+  Evidence: All three actual content arrays are []; production output has no artwork/media or fixture/sentinel data. Synthetic records are confined to labelled test factories and discarded isolated projects.
+- [x] M02-R1-V01 Run positive/negative tests for duplicate IDs/slugs/aliases, enums/values/dimensions, edition/offer inconsistencies, dangling relationships and missing assets.
+  Dependencies: D04. Evidence: npm run verify exited 0 on Linux under temporary Node 22.23.3/npm 10.9.9 (telemetry disabled): 38 tests passed; Astro check 0 errors/warnings/hints; 10 routes built. Astro emits expected runtime notices for the intentionally empty collections, not a claimed populated catalogue.
+- [x] M02-R1-V02 Verify unpublished and fixture absence from production pages, embedded JSON/counts, search/sitemap and emitted assets; empty real catalogue builds truthfully and original route smoke tests pass.
+  Dependencies: D04. Evidence: First full verify passed boundary and original route checks; final targeted positive emission/hidden/orphan check added for actual filesystem copying. No search index exists yet; M05 must consume the same projection and extend verification.
+  Final evidence: node --test tests/publication.test.mjs exited 0 under the verified temporary runtime, 4 tests passed. Positive emission copies only the public derivative, omitting hidden/orphan assets; symlink/missing/public-root misuse and full-build fixture/duplicate rejection pass. No browser/colour/content approval claimed.
+- [x] M02-R1-V03 Review intended diff/state/canonical references/protected refs, close out only after required technical checks, then commit/push the M02 checkpoint.
+  Dependencies: D04, P01, P02, V01, V02.
+  Evidence: git status/diff/diff --check/log and ls-remote exited 0; intended changes reviewed, canonical references reconciled, headers synchronized. Protected refs remain master 755df7f/backup 3bc95c7; development head is M01 4896d8e. All required technical acceptance checks precede checkpoint; transport result recorded on next initialization or failure re-entry.
 
-No M01 human acceptance gate is specified. Content/visual acceptance is deferred to M09, not claimed by baseline tests. No superseded IDs. Closeout: records/M01-baseline.md. Next authorized: M02 after the M01 checkpoint is pushed. Remaining nonpassing audit findings and feature-exposure review are carried in docs/operations.md.
+No required M02 human gate; real metadata approval belongs to M09. No superseded IDs. Closeout: records/M02-catalogue.md. Next: M03 after verified M02 checkpoint push.

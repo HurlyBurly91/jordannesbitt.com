@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M01
+Milestone: M02
 State: COMPLETE
-Active-Request: M01-R1
-Specification: milestones/M01-baseline.md
+Active-Request: M02-R1
+Specification: milestones/M02-catalogue.md
 ```
 
-M01 technical checks complete; closeout: records/M01-baseline.md. Baseline build and all 13 route/asset tests pass under Node 22.23.3/npm 10.9.9; actual model openai/gpt-6.1-sol, variant max. Remaining inspected dependency advisories are documented in docs/operations.md, not reported passing. Next: M02 after the M01 checkpoint push. Grant: records/M00-preparation.md, through M08; content/release gates remain.
+M02 technical acceptance complete; records/M02-catalogue.md. Full verification passed 38 tests; final targeted media/publication checks passed 4 tests. Actual content remains empty. Next: M03 after M02 checkpoint push. Grant: records/M00-preparation.md through M08; runtime/model/advisory triage: docs/operations.md. Content/release gates remain.
