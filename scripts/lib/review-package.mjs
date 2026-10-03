@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { specimenSite } from "../../tests/helpers/specimen-site.mjs";
 import { professionalCases } from "../../tests/fixtures/professional.mjs";
 import { movingCases, prepareMoving } from "../../tests/fixtures/moving-image.mjs";
-import { auditAccessibility, measurePage, launchBrowser } from "./browser-quality.mjs";
+import { auditAccessibility, measurePage, launchBrowser, prepareScreenshot } from "./browser-quality.mjs";
 import { inspectOutput } from "./output-quality.mjs";
 
 export const reviewPaths = ["/", "/artwork/specimen-portrait/", "/artwork/specimen-landscape/", "/artwork/specimen-long/", "/projects/specimen-project/", "/archive/", "/artwork/specimen-film/", "/artwork/specimen-computer/", "/about/", "/cv/", "/available/", "/contact/"];
@@ -29,6 +29,7 @@ export async function createReviewPackage(directory = "/tmp/opencode/jordannesbi
         const accessibility = await auditAccessibility(page);
         const reflow = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1);
         const name = `synthetic-${width}-${path === "/" ? "home" : path.replace(/^\//, "").replace(/\/$/, "").replaceAll("/", "-")}.png`;
+        await prepareScreenshot(page);
         await page.screenshot({ path: resolve(output, "screenshots", name), fullPage: true });
         report.pages.push({ path, width, height: 900, reflow, screenshot: `screenshots/${name}`, accessibility });
       }

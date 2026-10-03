@@ -17,6 +17,7 @@
     "release:check": "node scripts/release-check.mjs",
     "check:output": "node scripts/check-output.mjs",
     "review": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node scripts/review.mjs",
+    "pilot": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node scripts/pilot.mjs",
     "test:smoke": "node --test tests/smoke.test.mjs",
     "ingest": "node scripts/ingest.mjs",
     "verify": "npm run build && npm test"

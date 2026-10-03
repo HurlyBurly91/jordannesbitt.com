@@ -1,11 +1,11 @@
 # Status
 
 ```yaml
-Milestone: M08
-State: COMPLETE
-Active-Request: M08-R1
-Specification: milestones/M08-quality.md
-Next-Gate: M09 owner content and separate bounded authority
+Milestone: M09
+State: ACTIVE
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R1
+Specification: milestones/M09-content-acceptance.md
 ```
 
-M01–M08 technical batch complete; M08 checkpoint366d241 committed/pushed and clean remote readback verified. Closeout records/M08-quality.md. Verified66 tests/0diagnostics,36 local synthetic screenshots/0observed axe/reflow failures; review package /tmp/opencode/jordannesbitt-review (recreate npm run review). Actual release check exits1 BLOCKED_CONTENT; real content/lead/recipient/professional/owner manifest absent. Execution grant exhausted; stopped before M09 pending explicit owner input/authority. No publication or M09/M10/M11 implementation approved. Residual4audit findings remain nonpassing; docs/operations.md.
+M09-R1 local-only pilot implementation/checks ready for owner review:169frozen inputs,10representatives,69image-complete captures,0observed axe/reflow/unapproved-assertion issues,169/169source unchanged. Current package /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-03T20-13-49-968Z-546dd887; start owner-review-summary.md. Production/manifest/assets remain unapproved and release BLOCKED_CONTENT. Only code/docs checkpoint allowed; awaiting M09-R1-H01, final M09 gates unresolved. No final closeout/COMPLETE, no public preview; further feedback gets new request group.

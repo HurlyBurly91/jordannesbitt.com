@@ -9,6 +9,14 @@ export async function auditAccessibility(page) {
     return { violations: results.violations.map(({ id, impact, help, nodes }) => ({ id, impact, help, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })), incomplete: results.incomplete.map(({ id, help }) => ({ id, help })), passes: results.passes.length };
   });
 }
+export async function prepareScreenshot(page) {
+  // Capture-only completeness: production browsing and separate lab measurements stay lazy.
+  await page.evaluate(async () => {
+    const images = [...document.images];
+    for (const image of images) image.loading = "eager";
+    await Promise.all(images.map((image) => image.decode()));
+  });
+}
 export async function measurePage(browser, origin, path) {
   const context = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 1 });
   await context.route("**/*", (route) => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());

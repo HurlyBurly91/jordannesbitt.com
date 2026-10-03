@@ -1,12 +1,12 @@
 ---
 import type { Artwork, Project } from "@/lib/catalogue";
-import { dateLabel, dimensionLabel, media } from "@/lib/catalogue";
+import { dateLabel, dimensionLabel, mediumLabel } from "@/lib/catalogue";
 import Reproduction from "./Reproduction.astro";
 import ArtworkCard from "./ArtworkCard.astro";
 import MediaPlayer from "./MediaPlayer.astro";
 interface Props { artwork: Artwork; projects?: Project[]; related?: Artwork[]; }
 const { artwork, projects = [], related = [] } = Astro.props;
-const medium = media.find((item) => item.slug === artwork.medium)?.label ?? "Computational";
+const medium = mediumLabel(artwork.medium);
 ---
 <article class="artwork-detail">
   <div class="artwork-images">

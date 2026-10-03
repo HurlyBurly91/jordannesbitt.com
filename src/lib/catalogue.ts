@@ -5,8 +5,9 @@ export const media = [
   { slug: "printmaking", label: "Printmaking" }, { slug: "photography", label: "Photography" },
   { slug: "aerial", label: "Aerial" }, { slug: "film", label: "Film" },
 ] as const;
-export const mediumSchema = z.enum(["drawing", "painting", "printmaking", "photography", "aerial", "film", "computational"]);
+export const mediumSchema = z.enum(["drawing", "painting", "printmaking", "photography", "aerial", "film", "computational", "unclassified"]);
 export type Medium = z.infer<typeof mediumSchema>;
+export function mediumLabel(medium: Medium): string { return media.find((item) => item.slug === medium)?.label ?? (medium === "computational" ? "Computational" : "Classification unconfirmed"); }
 const text = z.string().trim().min(1);
 const id = z.string().regex(/^[a-z][a-z0-9-]*$/, "Use a stable, neutral ID or slug");
 const asset = z.string().regex(/^\/media\/[a-z0-9][a-z0-9/_-]*\.(?:jpe?g|png|webp|avif|mp4|webm|vtt|pdf)$/, "Use a local /media/ derivative URL");
@@ -70,7 +71,7 @@ export const filmSchema = z.object({
 }).strict();
 export const artworkSchema = z.object({
   ...base, date: dateSchema, medium: mediumSchema,
-  kind: z.enum(["original", "original-print", "reproduction", "moving-image", "computational"]),
+  kind: z.enum(["original", "original-print", "reproduction", "moving-image", "computational", "unclassified"]),
   techniques: z.array(text).default([]), materials: text.optional(), description: text.optional(),
   dimensions: z.array(dimension).default([]), reproductions: z.array(reproductionSchema).default([]),
   featured: z.boolean().default(false), selectedOrder: z.number().int().nonnegative().optional(),

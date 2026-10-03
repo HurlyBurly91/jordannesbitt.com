@@ -40,7 +40,7 @@ export async function ingest(options, dependencies = {}) {
   const bytes = await readFile(input);
   const sourceSha256 = checksum(bytes);
   const metadata = await sharp(bytes, { failOn: "error", limitInputPixels: 100_000_000 }).metadata();
-  if (!["jpeg", "png", "tiff"].includes(metadata.format) || metadata.pages > 1) throw new Error("Select a single JPEG, PNG or TIFF export, not animated/multipage/master media");
+  if (!["jpeg", "png", "tiff", "webp", "heif", "avif"].includes(metadata.format) || metadata.pages > 1) throw new Error("Select a single JPEG, PNG, TIFF, WebP or AVIF export, not animated/multipage/master media");
   if (!metadata.width || !metadata.height) throw new Error("Missing image dimensions");
   if (!metadata.icc && !options.assumeSrgb) throw new Error("Missing ICC profile: review the export and explicitly choose --assume-srgb if appropriate");
   const rotated = [5, 6, 7, 8].includes(metadata.orientation);

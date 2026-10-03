@@ -107,3 +107,25 @@ release. Actual metadata/contact remains empty; no launch manifest approval has
 been inferred. `docs/quality.md` records profiles, strict gate semantics, legacy
 URLs/host requirements and exact owner-input checklist. M09 requires new owner
 input/authority; M10 publication and M11 commerce remain separate grants.
+
+## Owner-authorized local real-image pilot
+
+M09-R1 permits only local testing/classification of an explicit approved source
+directory. Snapshot/private registry/real images/provisional metadata/screenshots
+stay under `/tmp/opencode/jordannesbitt-m09`, outside public Git. Preserve the
+registry and exact snapshot; added exports never silently change an old run.
+
+```bash
+npm run pilot -- snapshot --source /explicit/owner-approved/image-directory
+npm run pilot -- review --snapshot /tmp/opencode/your-pilot/snapshot.json --plan /tmp/opencode/your-pilot/visual-review-plan.json
+npm run pilot -- serve --directory /tmp/opencode/your-review/site
+```
+
+Review plans contain locally inspected provisional categories/ambiguities,
+neutral grouping/layout choices and representative IDs, not permanent artwork
+titles/series names or owner approval. Source filesystem-mtime creation dates are
+provisional only under the explicit M09-R1 test instruction; physical dimensions,
+rights/authorship, offers and edition facts remain absent/unknown. Use Node22,
+loopback only; see `docs/catalogue.md`, `docs/design.md` and `docs/quality.md`.
+Production arrays/launch manifest/assets remain unapproved and release remains
+BLOCKED_CONTENT until later explicit owner content/rights/publication approval.

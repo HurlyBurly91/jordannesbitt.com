@@ -277,7 +277,7 @@ button:disabled { cursor: default; }
 .archive-object h2 { margin: 0; font-size: clamp(1.2rem, 2vw, 2rem); line-height: 1.2; }
 .archive-entry p { margin: 0; font-size: .85rem; }
 .archive-project-links { grid-column: 1 / -1; padding-left: 1rem; font-size: .85rem; line-height: 1.7; }
-.archive-project-links a { text-decoration: underline; }
+.archive-project-links a { display: inline-flex; align-items: center; min-height: 24px; text-decoration: underline; }
 @media (max-width: 760px) {
   .filter-fields { grid-template-columns: 1fr; }
   .archive-entry { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
