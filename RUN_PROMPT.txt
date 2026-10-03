@@ -1,0 +1,16 @@
+Resume from durable repository state, not missing conversation history.
+
+1. Read AGENTS.md, PROJECT.md, STATUS.md, its referenced milestone contract and TASKS.md.
+2. Read only the applicable docs/ references. Before editing a BEGIN CANONICAL ALGORITHM region, read its Reference document and preserve its markers/invariants.
+3. Inspect branch, origin, working tree and remote state. Do not overwrite unrelated work or start a second writer.
+4. Reconstruct unresolved requirements, dependencies, evidence, blocked work, human checks, supersession and the exact current authorization. Synchronize disagreeing durable files before code changes.
+5. If at M00 awaiting kickoff without a new explicit grant, report the pending gate and STOP. Reading this prompt is not authorization to implement or publish.
+6. If the owner explicitly approves M00 and grants implementation, record the approval and scope, verify all M00 checks, close M00 into records/M00-preparation.md, then initialize M01 and M01-R1. Do not invent an approval date, model identifier or capability.
+7. Persist any new/changed requirements with stable IDs BEFORE implementation. Human feedback creates a new group, preserves unresolved older checks and transitions out of HUMAN_VERIFICATION before coding/testing.
+8. Execute the highest-priority non-blocked work in the authorized milestone. Keep STATUS.md and TASKS.md synchronized with actual state and phase. Use the owner's locally configured Sol 6.1 Max selection; M01 resolves the real installed provider/model/variant without exposing credentials or editing host-wide settings.
+9. Run the applicable verification and attach command/environment/results. Unknown, unavailable or failed checks are not passes. No fixture, draft or private data may leak to the production output.
+10. Complete a milestone only after all its required automated and human checks pass, reconcile docs/, archive evidence and final IDs in records/, and satisfy authorized commit/push requirements. Then initialize only the next authorized milestone and bound TASKS.md to current work.
+11. Do not load every historical record. Do not continue past a human, content, external-effect or release gate. M01-M08 technical completion does not approve M09; M10 publication and M11 commerce need separate authority.
+
+Suggested later kickoff instruction (not itself an authorization):
+I approve the plan and staged launch approach. Begin M01 and continue through M08 on redesign/astro-foundation using the selected Sol 6.1 Max model. Commit and push verified checkpoints on that branch. Follow RUN_PROMPT.txt and stop at M09 or any earlier genuine blocker. Do not modify master, publish, change DNS, send real messages, purchase services, or activate payments.
