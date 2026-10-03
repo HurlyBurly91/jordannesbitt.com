@@ -1,0 +1,37 @@
+---
+import type { Artwork } from "@/lib/catalogue";
+import { embedUrls, durationLabel, watchReady } from "@/lib/moving-image";
+interface Props { artwork: Artwork; }
+const { artwork } = Astro.props;
+const film = artwork.film!;
+const external = film.embed ? embedUrls(film.embed) : undefined;
+---
+<section class="media-player" data-media-player aria-label={`Moving image: ${artwork.title}`}>
+  {watchReady(artwork) ? <>
+    {film.sources.length > 0 ? <>
+      <video controls preload="none" poster={film.poster} width={film.posterInfo?.width} height={film.posterInfo?.height} tabindex="0" aria-label={artwork.title} data-local-video>
+        {film.sources.map((source) => <source src={source.src} type={source.type} />)}
+        {film.captions.tracks.map((track, index) => <track kind="captions" src={track.src} srclang={track.language} label={track.label} default={index === 0} />)}
+        Your browser does not support this video. Use a source link below.
+      </video>
+      <button type="button" data-video-toggle>Play film</button>
+      <p class="media-error" role="status" aria-live="polite" data-media-error hidden>The media could not be played here. Use a source link or the transcript below.</p>
+      <ul class="media-fallback">{film.sources.map((source) => <li><a class="text-link" href={source.src}>Open {source.type === "video/webm" ? "WebM" : "MP4"} source</a></li>)}</ul>
+    </> : <>
+      <img class="video-poster" src={film.poster} width={film.posterInfo?.width} height={film.posterInfo?.height} alt={film.posterInfo?.alt ?? `${artwork.title}, supplied film poster`} />
+      <p>Loading this player connects to {external!.label}. Playback starts under your control.</p>
+      <button type="button" data-load-embed>Load external player</button>
+      <div class="external-player" data-embed-target></div>
+      <template data-embed-template><iframe src={external!.player} title={artwork.title} allow="fullscreen; picture-in-picture" allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe></template>
+      <p role="status" aria-live="polite" data-embed-status></p>
+      <p><a class="text-link" href={external!.page} rel="noopener noreferrer" target="_blank">Open on {external!.label} (external)</a></p>
+    </>}
+  </> : <p>Playable media and a reviewed poster have not been supplied.</p>}
+  {film.runtimeSeconds && <p>Runtime: {durationLabel(film.runtimeSeconds)}</p>}
+  {film.uploadDate && <p>Video publication: <time datetime={film.uploadDate}>{film.uploadDate.slice(0, 10)}</time></p>}
+  {film.credits.length > 0 && <section class="media-credits"><h2>Credits</h2><ul>{film.credits.map((credit) => <li>{credit}</li>)}</ul></section>}
+  {film.captions.status === "not-supplied" && <p>Captions have not been supplied.</p>}
+  {film.accessibilityNote && <p>{film.accessibilityNote}</p>}
+  {film.transcript && <section class="transcript"><h2>Transcript / description</h2><p>{film.transcript}</p></section>}
+</section>
+<script>import "@/client/media";</script>

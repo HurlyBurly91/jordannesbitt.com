@@ -55,8 +55,10 @@ export const availabilitySchema = z.object({
 });
 export const filmSchema = z.object({
   poster: imageAsset.optional(), runtimeSeconds: z.number().int().positive().optional(),
-  sources: z.array(z.object({ src: asset.refine((value) => /\.(mp4|webm)$/.test(value)), type: z.enum(["video/mp4", "video/webm"]) }).strict()).default([]),
-  embed: z.object({ provider: z.enum(["youtube", "vimeo"]), id: z.string().regex(/^[a-zA-Z0-9_-]+$/), consentRequired: z.literal(true) }).strict().optional(),
+  posterInfo: z.object({ width: z.number().int().positive(), height: z.number().int().positive(), alt: text }).strict().optional(),
+  uploadDate: z.string().datetime({ offset: true }).optional(),
+  sources: z.array(z.object({ src: asset.refine((value) => /\.(mp4|webm)$/.test(value)), type: z.enum(["video/mp4", "video/webm"]) }).strict().refine((source) => source.src.endsWith(source.type === "video/mp4" ? ".mp4" : ".webm"), "Source extension and MIME type disagree")).default([]),
+  embed: z.object({ provider: z.enum(["youtube", "vimeo"]), id: z.string().regex(/^[a-zA-Z0-9_-]+$/), consentRequired: z.literal(true) }).strict().refine((embed) => embed.provider === "vimeo" ? /^\d+$/.test(embed.id) : /^[a-zA-Z0-9_-]{11}$/.test(embed.id), "Invalid provider video ID").optional(),
   credits: z.array(text).default([]),
   captions: z.object({
     status: z.enum(["provided", "not-supplied", "not-applicable"]),
@@ -74,7 +76,7 @@ export const artworkSchema = z.object({
   featured: z.boolean().default(false), selectedOrder: z.number().int().nonnegative().optional(),
   edition: edition.optional(), availability: availabilitySchema.default({ state: "unknown", reviewed: false }),
   film: filmSchema.optional(),
-  computational: z.object({ summary: text, tools: z.array(text).default([]), links: z.array(z.object({ label: text, url: z.string().url().refine((value) => value.startsWith("https://")) }).strict()).default([]) }).strict().optional(),
+  computational: z.object({ summary: text, tools: z.array(text).default([]), links: z.array(z.object({ label: text, url: z.string().url().refine((value) => value.startsWith("https://")) }).strict()).default([]), demo: z.object({ label: text, url: z.string().url().refine((value) => value.startsWith("https://")) }).strict().optional() }).strict().optional(),
 }).strict().superRefine((work, ctx) => {
   if (new Set(work.dimensions.map((size) => size.kind)).size !== work.dimensions.length) ctx.addIssue({ code: "custom", message: "Duplicate dimension kind" });
   const primaries = work.reproductions.filter((image) => image.role === "primary").length;

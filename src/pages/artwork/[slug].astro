@@ -5,6 +5,7 @@ import { catalogue, artworks, projectsForArtwork } from "@/data/catalogue";
 import { dateLabel } from "@/lib/catalogue";
 import { relatedWorks } from "@/lib/presentation";
 import { identity } from "@/config/identity";
+import { videoMetadata } from "@/lib/moving-image";
 
 export function getStaticPaths() {
   return artworks.flatMap((artwork) => [artwork.slug, ...artwork.aliases].map((slug) => ({
@@ -20,7 +21,8 @@ const schema = {
   ...(artwork.materials ? { material: artwork.materials } : {}),
   ...(primary ? { image: { "@type": "ImageObject", contentUrl: new URL(primary.src, identity.siteUrl).href, caption: primary.alt, width: primary.width, height: primary.height } } : {}),
 };
+const video = videoMetadata(artwork, identity.siteUrl);
 ---
-<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} schema={[schema]}>
+<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} schema={[schema, ...(video ? [video] : [])]}>
   <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)} />
 </BaseLayout>

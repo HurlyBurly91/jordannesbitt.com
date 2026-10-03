@@ -5,7 +5,7 @@ import { isolatedProject } from "./build-project.mjs";
 import { publicSpecimens } from "../fixtures/public-specimens.mjs";
 import { startPreview } from "./preview.mjs";
 
-export async function specimenSite(t, transform = (data) => data) {
+export async function specimenSite(t, transform = (data) => data, { prepare } = {}) {
   const project = await isolatedProject(t);
   const data = transform(publicSpecimens());
   for (const name of ["artworks", "projects", "professional"]) await project.content(name, data[name]);
@@ -25,6 +25,7 @@ export async function specimenSite(t, transform = (data) => data) {
       await project.asset(source.src, bytes);
     }
   }
+  if (prepare) await prepare(project, data);
   const buildStart = performance.now();
   const built = await project.build();
   const buildMs = performance.now() - buildStart;

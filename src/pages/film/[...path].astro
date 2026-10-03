@@ -1,0 +1,10 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ArtworkCard from "@/components/ArtworkCard.astro";
+import { films } from "@/data/catalogue";
+export function getStaticPaths() { return films.length ? [{ params: { path: undefined } }] : []; }
+---
+<BaseLayout title="Film" description="Published moving-image work and its authored context.">
+  <header class="page-intro"><p class="eyebrow">Moving image</p><h1>Film.</h1></header>
+  <section class="work-grid" aria-label="Published films">{films.map((work) => <ArtworkCard artwork={work} />)}</section>
+</BaseLayout>

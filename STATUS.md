@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M05
+Milestone: M06
 State: COMPLETE
-Active-Request: M05-R1
-Specification: milestones/M05-archive.md
+Active-Request: M06-R1
+Specification: milestones/M06-moving-image.md
 ```
 
-M05 technical acceptance complete; records/M05-archive.md. All 54 tests/build/check pass with per-project cache isolation; filters/history/no-JS/public-only index verified. Separate synthetic scale evidence recorded without real-art/field claims. Next M06 after checkpoint push. Actual content empty; grant through M08: records/M00-preparation.md.
+M06 technical capability acceptance complete; records/M06-moving-image.md. Full 57 tests and final targeted 3 tests pass, including captions/playback/errors and locally intercepted embeds/demo actions. Actual Film content/menu/index absent; no real media/accessibility approval. Next M07 after checkpoint push. Grant through M08: records/M00-preparation.md.

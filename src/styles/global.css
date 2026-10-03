@@ -280,3 +280,11 @@ button:disabled { cursor: default; }
   .filter-fields { grid-template-columns: 1fr; }
   .archive-entry { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
 }
+
+.media-player { margin-bottom: 3rem; min-width: 0; }
+.media-player video, .video-poster { display: block; width: 100%; height: auto; background: var(--paper-deep); margin-bottom: 1rem; }
+.external-player iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; }
+.media-player h2, .computational-context h2 { font-size: 1.4rem; line-height: 1.2; }
+.media-fallback, .media-credits ul { padding-left: 1.25rem; line-height: 1.7; }
+.transcript p { white-space: pre-line; }
+.media-error { padding: 1rem; border: 1px solid var(--oxide); }
