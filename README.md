@@ -44,3 +44,29 @@ resume through `RUN_PROMPT.txt`.
 
 The current redesign is an initial shell. It contains no fabricated artwork
 titles, dates, dimensions, exhibition history, or biography.
+
+## Non-destructive intake
+
+Use a supported Node runtime. Select an approved export explicitly; no real
+input folder is authorized by the current technical run. Preview the plan first:
+
+```bash
+npm run ingest -- --input /explicit/approved-export.jpg --output /explicit/outside-checkout/intake --id w-0001 --title "Caller-supplied review title" --medium drawing --alt "Caller-supplied accurate description" --dry-run
+```
+
+Remove `--dry-run` only for the selected authorized file/destination. Untagged
+exports need an explicit `--assume-srgb` decision. Optional `--creator` and
+`--rights` retain only approved values. Output defaults unpublished; nothing is
+copied to the website. See `docs/catalogue.md` for profile, cache/collision and
+review conventions.
+
+```bash
+node scripts/preview-intake.mjs --directory /explicit/outside-checkout/intake/w-0001
+node --test tests/ingestion.test.mjs
+```
+
+The second command is the repeatable **synthetic import-to-local-preview
+exercise**: it creates isolated test images in `/tmp/opencode`, ingests a labelled
+TEST FIXTURE, checks orientations/profiles/metadata/checksums and serves its
+derivative through an ephemeral loopback preview. It sends no messages and
+uses no real artwork; its temporary files and server are cleaned up.
