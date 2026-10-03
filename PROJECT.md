@@ -28,7 +28,7 @@ Use only media categories actually ready for publication. Do not delay a strong 
 
 | ID | Contract | Outcome |
 | --- | --- | --- |
-| M00 | milestones/M00-preparation.md | Research, durable setup and explicit kickoff approval |
+| M00 | milestones/M00-preparation.md | Complete: research, durable setup and explicit kickoff approval; records/M00-preparation.md |
 | M01 | milestones/M01-baseline.md | Reproducible build, runtime and regression baseline |
 | M02 | milestones/M02-catalogue.md | Validated catalogue and publication boundary |
 | M03 | milestones/M03-ingestion.md | Repeatable, non-destructive media ingestion |
