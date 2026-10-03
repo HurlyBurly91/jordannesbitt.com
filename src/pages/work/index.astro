@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { artworks, media } from "@/data/artworks";
+import { artworks } from "@/data/artworks";
 import SelectedWork from "@/components/SelectedWork.astro";
+import { populatedMedia } from "@/data/catalogue";
 
 const published = artworks;
 ---
@@ -12,9 +13,9 @@ const published = artworks;
     <h1>Selected work.</h1>
   </header>
   <SelectedWork artworks={artworks} />
-  <section class="medium-index" aria-label="Media">
+  {populatedMedia.length > 0 && <section class="medium-index" aria-label="Published media">
     <ol>
-      {media.map((item, index) => {
+      {populatedMedia.map((item, index) => {
         const count = published.filter((artwork) => artwork.medium === item.slug).length;
         return (
           <li>
@@ -28,5 +29,5 @@ const published = artworks;
         );
       })}
     </ol>
-  </section>
+  </section>}
 </BaseLayout>

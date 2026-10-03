@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M04
+Milestone: M05
 State: COMPLETE
-Active-Request: M04-R1
-Specification: milestones/M04-presentation.md
+Active-Request: M05-R1
+Specification: milestones/M05-archive.md
 ```
 
-M04 technical acceptance complete; records/M04-presentation.md. Build/check passed; all 51 tests pass; final fixture-noindex browser checks pass 7/7. Native full-image paths, authored ordering and viewport/keyboard/touch verified on synthetic sites. Real content empty; artistic approval M09. Next M05 after checkpoint push; grant through M08 in records/M00-preparation.md.
+M05 technical acceptance complete; records/M05-archive.md. All 54 tests/build/check pass with per-project cache isolation; filters/history/no-JS/public-only index verified. Separate synthetic scale evidence recorded without real-art/field claims. Next M06 after checkpoint push. Actual content empty; grant through M08: records/M00-preparation.md.

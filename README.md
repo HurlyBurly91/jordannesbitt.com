@@ -76,3 +76,9 @@ exercise**: it creates isolated test images in `/tmp/opencode`, ingests a labell
 TEST FIXTURE, checks orientations/profiles/metadata/checksums and serves its
 derivative through an ephemeral loopback preview. It sends no messages and
 uses no real artwork; its temporary files and server are cleaned up.
+
+The Archive serves all published work without JavaScript; labelled filters
+enhance it with search, medium/project/year/availability, sorting and restorable
+URL state. `tests/archive.test.mjs` also runs a separately labelled 1,000-record
+synthetic scaling exercise. Those records never enter the real catalogue or
+count toward launch content. See `docs/quality.md` for measurement limits.

@@ -1,32 +1,44 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { artworks, media } from "@/data/artworks";
-
-const published = artworks;
+import { catalogue, populatedMedia, projects } from "@/data/catalogue";
+import { searchEntries, availabilityLabels } from "@/lib/search";
+import { filterEntries, defaultFilters } from "@/lib/archive";
+import { safeJson } from "@/lib/presentation";
+import { identity } from "@/config/identity";
+const entries = searchEntries(catalogue);
+const sorted = filterEntries(entries, defaultFilters);
+const years = [...new Set(entries.map((entry) => String(entry.year ?? "unknown")))].sort((a, b) => Number(b) - Number(a));
+const availability = [...new Set(entries.map((entry) => entry.availability))];
 ---
-
-<BaseLayout title="Archive" description="Archive of work by Jordan Nesbitt.">
-  <header class="page-intro">
-    <p class="eyebrow">Archive</p>
-    <h1>The larger body of work.</h1>
-    <p>
-      A chronological record across media. Entries are published as works are
-      photographed, measured, and catalogued.
-    </p>
-  </header>
-  <section class="archive-table" aria-label="Archive categories">
-    <div class="archive-row archive-header">
-      <span>Medium</span><span>Published</span><span>Catalogue</span>
-    </div>
-    {media.map((item) => {
-      const count = published.filter((artwork) => artwork.medium === item.slug).length;
-      return (
-        <a class="archive-row" href={`/work/${item.slug}`}>
-          <strong>{item.label}</strong>
-          <span>{count}</span>
-          <span>{count > 0 ? "View works" : "In preparation"}</span>
-        </a>
-      );
-    })}
-  </section>
+<BaseLayout title="Archive" description={`Published artwork archive of ${identity.name}.`}>
+  <header class="page-intro archive-intro"><p class="eyebrow">Archive</p><h1>Published work.</h1><p>A comprehensive index, distinct from the authored selection.</p></header>
+  <form class="archive-filters" data-archive-form>
+    <fieldset disabled><legend>Filter the published archive</legend>
+      <div class="filter-fields">
+        <div><label for="archive-search">Search</label><input id="archive-search" type="search" name="q" maxlength="200" placeholder="Title, process, material or context" /></div>
+        <div><label for="archive-medium">Medium</label><select id="archive-medium" name="medium"><option value="">All media</option>{populatedMedia.map((item) => <option value={item.slug}>{item.label}</option>)}</select></div>
+        <div><label for="archive-series">Project / series</label><select id="archive-series" name="series"><option value="">All projects</option>{projects.map((project) => <option value={project.id}>{project.title}</option>)}</select></div>
+        <div><label for="archive-year">Year</label><select id="archive-year" name="year"><option value="">All dates</option>{years.map((year) => <option value={year}>{year === "unknown" ? "Date unknown" : year}</option>)}</select></div>
+        <div><label for="archive-availability">Availability</label><select id="archive-availability" name="availability"><option value="">All states</option>{availability.map((state) => <option value={state}>{availabilityLabels[state]}</option>)}</select></div>
+        <div><label for="archive-sort">Sort</label><select id="archive-sort" name="sort"><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="title">Title A–Z</option></select></div>
+      </div>
+      <div class="filter-actions"><button type="submit">Apply filters</button><button type="button" data-reset>Reset filters</button></div>
+    </fieldset>
+  </form>
+  <noscript><p class="no-script">Filters require JavaScript; all published works remain available below. You can also browse medium or project links.</p></noscript>
+  {populatedMedia.length > 0 && <nav class="archive-medium-links" aria-label="Published media">{populatedMedia.map((item) => <a class="text-link" href={`/work/${item.slug}/`}>{item.label} ({item.count})</a>)}</nav>}
+  <p class="archive-count" role="status" aria-live="polite" aria-atomic="true" data-result-count>{entries.length} result{entries.length === 1 ? "" : "s"} of {entries.length} published works</p>
+  <p class="empty-state" data-no-results hidden={entries.length > 0}>{entries.length === 0 ? "No work is published yet." : "No works match these filters. Try changing or resetting them."}</p>
+  <ol class="archive-list" data-archive-list>
+    {sorted.map((entry) => <li class="archive-entry" data-work-id={entry.id}>
+      <a class="archive-object" href={`/artwork/${entry.slug}/`}>
+        {entry.thumbnail && <img src={entry.thumbnail.src} alt={entry.thumbnail.alt} width={entry.thumbnail.width} height={entry.thumbnail.height} loading="lazy" decoding="async" />}
+        <h2>{entry.title}</h2>
+      </a>
+      <p>{entry.date}<br />{entry.mediumLabel}</p><p>{availabilityLabels[entry.availability]}</p>
+      {entry.series.length > 0 && <ul class="archive-project-links">{entry.series.map((series) => <li><a href={`/projects/${series.slug}/`}>{series.title}</a></li>)}</ul>}
+    </li>)}
+  </ol>
+  <script is:inline id="archive-data" type="application/json" set:html={safeJson(entries)} />
+  <script>import "@/client/archive";</script>
 </BaseLayout>

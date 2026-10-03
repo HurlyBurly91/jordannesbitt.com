@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ArtworkPlaceholder from "@/components/ArtworkPlaceholder.astro";
-import { media } from "@/data/artworks";
+import { populatedMedia } from "@/data/catalogue";
 ---
 
 <BaseLayout>
@@ -39,7 +39,7 @@ import { media } from "@/data/artworks";
       <h2 id="media-title">Browse by medium</h2>
     </div>
     <ol>
-      {media.map((item, index) => (
+      {populatedMedia.map((item, index) => (
         <li>
           <a href={`/work/${item.slug}`}>
             <span>{String(index + 1).padStart(2, "0")}</span>

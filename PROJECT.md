@@ -33,7 +33,7 @@ Use only media categories actually ready for publication. Do not delay a strong 
 | M02 | milestones/M02-catalogue.md | Complete: validated catalogue/publication boundary; records/M02-catalogue.md |
 | M03 | milestones/M03-ingestion.md | Complete: repeatable non-destructive intake; records/M03-ingestion.md |
 | M04 | milestones/M04-presentation.md | Complete: artwork and authored presentations; records/M04-presentation.md |
-| M05 | milestones/M05-archive.md | Accessible archive, navigation and filters |
+| M05 | milestones/M05-archive.md | Complete: public archive/navigation/filters; records/M05-archive.md |
 | M06 | milestones/M06-moving-image.md | Film and computational project support |
 | M07 | milestones/M07-professional-site.md | Homepage, About/CV, availability and enquiry paths |
 | M08 | milestones/M08-quality.md | Automated quality gates and local review package |

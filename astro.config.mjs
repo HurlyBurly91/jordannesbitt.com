@@ -24,5 +24,7 @@ const approvedMedia = {
 export default defineConfig({
   site: "https://jordannesbitt.com",
   output: "static",
+  cacheDir: "./.astro/cache/",
+  vite: { cacheDir: "./.astro/vite/" },
   integrations: [sitemap({ filter: (page) => !aliasPaths.has(new URL(page).pathname) }), approvedMedia],
 });

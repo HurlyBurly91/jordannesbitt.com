@@ -13,6 +13,7 @@ async function outputText(root) {
 test("real production output contains no fixtures, unpublished sentinel or artwork routes", async () => {
   assert.deepEqual(readCatalogue(repository), { artworks: [], projects: [], professional: [] });
   assert.doesNotMatch(await outputText(resolve(repository, "dist")), /TEST FIXTURE|test-fixture-|UNPUBLISHED SENTINEL/);
+  assert.doesNotMatch(await readFile(resolve(repository, ".astro/cache/data-store.json"), "utf8"), /specimen-|test-fixture-|scale-|UNPUBLISHED SENTINEL/, "fixture builds cannot contaminate the real content cache");
   await assert.rejects(access(resolve(repository, "dist/artwork")));
   await assert.rejects(access(resolve(repository, "dist/media")));
 });

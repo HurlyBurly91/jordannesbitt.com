@@ -252,3 +252,31 @@ h1, h2, .object-details dd, .object-description { overflow-wrap: anywhere; }
 @media (max-width: 760px) {
   .ordered-sequence li { grid-template-columns: 1.5rem minmax(0, 1fr); gap: 1rem; }
 }
+
+.archive-intro { min-height: auto; padding-bottom: 3rem; }
+.archive-filters { margin: 0 var(--pad) 2rem; }
+.archive-filters fieldset { padding: 1.5rem; border: 1px solid var(--line); }
+.archive-filters legend { padding: 0 .5rem; }
+.filter-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.filter-fields > div { display: grid; gap: .5rem; font-size: .85rem; }
+input, select, textarea, button { font: inherit; color: inherit; }
+.filter-fields input, .filter-fields select { min-width: 0; width: 100%; padding: .75rem; background: var(--paper); border: 1px solid var(--muted); border-radius: 0; }
+button { padding: .75rem 1rem; background: var(--ink); color: var(--paper); border: 1px solid var(--ink); cursor: pointer; }
+button:disabled { cursor: default; }
+.filter-actions { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
+.filter-actions button + button { color: var(--ink); background: var(--paper); }
+.archive-count, .archive-medium-links, .no-script { margin: 1.5rem var(--pad); }
+.archive-medium-links { display: flex; flex-wrap: wrap; gap: 1rem 2rem; }
+.archive-list { padding: 0; margin: 0 var(--pad) 5rem; list-style: none; }
+.archive-entry { display: grid; grid-template-columns: minmax(0, 2fr) 1fr 1fr; gap: 1.5rem; padding: 1.5rem 0; border-top: 1px solid var(--line); align-items: start; }
+.archive-entry[hidden] { display: none; }
+.archive-object { display: flex; align-items: start; gap: 1.5rem; min-width: 0; }
+.archive-object img { width: 90px; height: auto; flex-shrink: 0; }
+.archive-object h2 { margin: 0; font-size: clamp(1.2rem, 2vw, 2rem); line-height: 1.2; }
+.archive-entry p { margin: 0; font-size: .85rem; }
+.archive-project-links { grid-column: 1 / -1; padding-left: 1rem; font-size: .85rem; line-height: 1.7; }
+.archive-project-links a { text-decoration: underline; }
+@media (max-width: 760px) {
+  .filter-fields { grid-template-columns: 1fr; }
+  .archive-entry { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+}
