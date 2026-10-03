@@ -39,7 +39,7 @@ const artistSchema = {
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{pageTitle}</title>
-    <script type="application/ld+json" set:html={JSON.stringify(artistSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(artistSchema)} />
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

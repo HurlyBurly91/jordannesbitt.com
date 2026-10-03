@@ -1,50 +1,49 @@
 # Tasks
 
 ```yaml
-Milestone: M00
+Milestone: M01
 State: COMPLETE
-Active-Request: M00-R2
-Specification: milestones/M00-preparation.md
+Active-Request: M01-R1
+Specification: milestones/M01-baseline.md
 ```
 
-## M00-R1 — Prepare autonomous website development
+## Current authorization
 
-Source: USER, 2026-10-03. Recover the local checkout, conform this repository to the durable-state prototype, expand earlier website research with established fine-artist examples, and prepare milestones for OpenCode using the owner's Sol 6.1 Max selection. Prepare now; implementation begins after the owner approves starting.
+Source: USER, 2026-10-03. Explicit grant archived in records/M00-preparation.md; M00 checkpoint 5476c4c was pushed successfully. Implement M01 through M08 autonomously on redesign/astro-foundation using the selected Sol 6.1 Max model, committing/pushing verified milestone checkpoints. Stop before M09 or at any earlier genuine blocker/mandatory human gate. No protected-branch writes, publication/deployment, DNS/hosting changes, real messages, purchases, payment activation or other external effects beyond the named development checkpoint pushes. No host-wide configuration changes.
 
-- [x] M00-R1-01 Recover the prior checkout and provide safe update/bootstrap instructions.
-  Evidence: September 14 session recorded /home/jordan/jordannesbitt.com on wilco3. Present existence is not observable here; docs/operations.md provides a non-destructive reuse-or-clone command. bash -n passed; six mocked scenarios passed: existing checkout, absent checkout, dirty checkout, wrong origin, failed pull and failed clone. No command was executed on the owner's computer.
-- [x] M00-R1-02 Adapt the actual baseline prototype, preserving state/phase separation, stable IDs, human re-entry and selective canonical references.
-  Evidence: AGENTS.md and RUN_PROMPT.txt identify the inspected upstream template blobs.
-- [x] M00-R1-03 Reconstruct and extend the website plan using source-backed research.
-  Evidence: PROJECT.md, docs/research.md and the domain contracts distinguish the recovered brief, new observations and proposed adaptations.
-- [x] M00-R1-04 Define executable milestones with acceptance criteria and review boundaries.
-  Evidence: milestones/M00-preparation.md through milestones/M11-commerce.md. M01-M08 are technical scope; M09 requires content/visual acceptance; M10 requires release authorization; M11 is deferred.
-- [x] M00-R1-P01 Preserve runtime source, dependency lockfile, identity, existing artwork assets, master and backup branches during preparation.
-  Source: USER and existing repository policy.
-  Evidence: M00-R1-V01 comparison and inspected refs; preparation introduces documentation only.
-- [x] M00-R1-P02 Do not publish, launch an implementation agent, infer confidential content permission, choose prices or authorize paid services.
-  Evidence: Preparation-only grant in AGENTS.md; no runtime model identifier fabricated.
-- [x] M00-R1-V01 Verify committed file inventory, contract references, synchronized state headers and additive documentation-only diff; confirm master and backup refs unchanged.
-  Evidence: GitHub comparison of 8fc3176b9d906b2f7794237a0fab75c91a6b61b4 to preparation commit 2bd4a2644ffd3f13d9a0bd2e8def9bfeeea8bcf1 reports exactly 25 added documentation files and no modified/deleted runtime files. PROJECT.md contract paths match that inventory; STATUS.md/TASKS.md readback headers agree. Branch readback preserves master 755df7fee1a515388a035fce8e9e672070a1d2b4 and backup 3bc95c75bbe85918ce10498af31a751e2cf58fc6. This subsequent checkpoint only records verification and changes both active phases to HUMAN_VERIFICATION.
-  Limitation: Documentation inspection and mocked bootstrap tests are not npm/build/browser verification. The preparation environment could not resolve github.com for a clone. M01 must reproduce the actual application baseline; later CI results must be recorded as separate evidence if observed.
-- [x] M00-R1-H01 Owner approves the plan and grants the bounded implementation run.
-  Verification: Explicit approval of starting on redesign/astro-foundation, the staged content target and allowed checkpoint commits/pushes. Do not infer this acceptance from the planning request or a bare resume.
-  Evidence: Owner's explicit 2026-10-03 kickoff approves M01 through M08, autonomous execution and verified milestone checkpoint commits/pushes on redesign/astro-foundation. The staged targets are planning targets only; actual launch choices remain M09.
+The 20–30 works / 3–5 groups / approximately ten-work pilot are planning targets only. Real content, series, order, publication, availability and pricing are owner choices at M09. Use isolated synthetic fixtures only where permitted, never production content or representations of the owner's artwork. No confidential input directory is authorized.
 
-## M00-R2 — Explicit kickoff and execution boundaries
+## M01-R1 — Reproducible baseline
 
-Source: USER, 2026-10-03. This request grants implementation beyond the initial preparation-only permission.
+Source: USER (execution grant above); technical tasks and checks Source: DERIVED from milestones/M01-baseline.md, docs/operations.md, docs/quality.md and docs/catalogue.md.
 
-- [x] M00-R2-01 Record authorization to begin M01 and continue autonomously through M08 using the owner's selected Sol 6.1 Max model; commit and push verified milestone checkpoints on redesign/astro-foundation.
-  Evidence: Explicit kickoff message; grant archived in records/M00-preparation.md. Local provider/model/variant resolution is required by M01, not assumed by this approval.
-- [x] M00-R2-02 Record the approximately 20–30 works / 3–5 coherent groups and approximately ten-work pilot as planning targets only. The owner chooses actual works, series, sequence, publication, availability, prices and other real launch content at M09.
-  Evidence: Explicit kickoff message; these choices are not authorized for inference in M01–M08.
-- [x] M00-R2-P01 Record protected branches and external-effect boundaries: no writes to master or backup/pre-astro-redesign; no publication, deployment, DNS/hosting changes, real messages, purchases, payment activation or other external consequences without separate authorization.
-  Evidence: Explicit kickoff message. Verified 2026-10-03 remote heads still match the preparation baseline; no external effect occurred during preparation. Authorized development-branch checkpoint pushes are the named exception.
-- [x] M00-R2-P02 Record permission for isolated synthetic fixtures only where contracts permit; prevent production leakage and any representation as the owner's actual artwork.
-  Evidence: Explicit kickoff message; docs/catalogue.md publication boundary remains canonical.
-- [x] M00-R2-V01 Recheck preparation and grant closeout prerequisites.
-  Source: DERIVED. Dependencies: M00-R1-V01, M00-R1-H01, M00-R2-01, M00-R2-02, M00-R2-P01, M00-R2-P02.
-  Evidence: On Linux in /home/jordan/jordannesbitt.com, git status/branch/remote/log/diff and git ls-remote all exited 0. Worktree was clean at fde7d07; remote development head matched. git diff --name-status 8fc3176..HEAD lists exactly the original 25 additive documentation files. All 12 milestone contracts and referenced domain documents were inspected/resolved; STATUS.md/TASKS.md headers agreed. Remote master and backup remain 755df7f and 3bc95c7. git rev-list reports development 4 ahead / 1 behind master; master-only commit is the known PR #1 merge. No build/browser results are claimed by M00.
+- [x] M01-R1-D01 Inspect origin, branch/worktree/topology, installed Node/npm/OpenCode and actual configured provider/model/variant without exposing credentials.
+  Dependencies: M00 complete. Evidence: development origin/clean head confirmed at kickoff; master-only change is the known PR #1 merge.
+  Evidence: Shell Node v18.19.1/npm 9.2.0 is incompatible. Temporary, explicitly versioned npm-exec environment provides Node v22.23.3/npm 10.9.9 without global changes. OpenCode 1.18.34 models includes openai/gpt-6.1-sol; read-only CLI database queries restricted to this checkout's latest session/model metadata confirm provider openai, model gpt-6.1-sol, variant max (session and actual assistant messages). Credential/configuration values and conversation contents were not output or committed.
+- [x] M01-R1-D02 Reproduce npm ci and npm run build using the lockfile in a Node 22-compatible environment; inspect security findings and resolve baseline defects without blind major upgrades.
+  Dependencies: D01 runtime availability.
+  Evidence: Original lockfile npm ci/build exited 0 under temporary Node 22.23.3/npm 10.9.9; Astro 5.18.2 produced 10 pages, no errors/warnings, one explicit-inline JSON-LD hint. npm audit --json exited 1 with 9 findings (1 critical, 7 high, 1 low), inspected rather than reported passing. Compatible fix/triage task D05 follows; no force/major upgrade is authorized. Subsequent builds will disable telemetry per process (ASTRO_TELEMETRY_DISABLED=1).
+- [x] M01-R1-D03 Establish meaningful automated regression smoke checks for actual existing routes and document repeatable commands.
+  Dependencies: D02 build output and inspected runtime/routes.
+  Evidence: tests/smoke.test.mjs and tests/helpers/preview.mjs; actual Astro preview checks all 10 routes, key HTML metadata/landmarks, CSS/favicon/sitemap and unknown-artwork 404. npm run verify exited 0, 13 tests passed, none skipped.
+- [x] M01-R1-D04 Update docs/operations.md and developer instructions with verified non-secret runtime facts, route inventory and observed limitations.
+  Dependencies: D01–D03.
+  Evidence: docs/operations.md verified baseline/triage and README.md reproducible commands; package engines/.nvmrc and loopback/telemetry scripts use the inspected runtime.
+- [x] M01-R1-D05 Apply individually scoped compatible transitive fixes for devalue, fast-uri, js-yaml, nanoid and svgo; inspect remaining advisory surfaces and document limitations without changing Astro's major or claiming a clean audit.
+  Source: DERIVED from D02 audit inspection. Dependencies: original-lockfile build reproduced. Remaining Astro advisories recommend major 7; optional sharp and http-cache-semantics require careful triage. M01 acceptance requires inspected findings, not a fabricated zero-advisory result.
+  Evidence: Scoped updates reduced 9 findings to 4; post-update audit exited 1 (Astro critical, sharp/http-cache-semantics high, esbuild low). Current feature exposure, unsupported major fix, M03 ingestion review and future release limitation recorded in docs/operations.md. No audit pass claimed.
+- [x] M01-R1-P01 Preserve existing identity/assets, stable route identities, catalogue privacy rules and installed framework major; keep all fixtures outside production paths.
+  Source: USER and DERIVED. Dependencies: all M01 changes.
+  Evidence: Reviewed intended diff changes only baseline scripts/runtime declaration, compatible lock resolutions, one explicit-inline hint, tests and documentation; no identity/assets/catalogue/route changes or fixture content. Actual baseline routes pass; Astro remains 5.18.2.
+- [x] M01-R1-P02 Preserve master/backup and existing deployment controls; local previews must bind loopback. No global configuration changes or silent model substitution.
+  Source: USER. Dependencies: all M01 operations.
+  Evidence: Remote refs rechecked unchanged (master 755df7f, backup 3bc95c7); deployment workflow remains master-only/manual and untouched. Loopback preview tests passed and stopped. Model max verified in actual session; no host configuration writes.
+- [x] M01-R1-V01 Verify requested model selection through the actual installed runtime or record a precise blocker; never invent a Max variant.
+  Dependencies: D01.
+  Evidence: Linux checkout; opencode --version/help, credential-filtered opencode debug config, opencode models openai and read-only opencode db model-only queries exited 0. Resolved openai/gpt-6.1-sol variant max in this checkout's active build session and assistant messages. No repository/global OpenCode configuration was changed; selection is already correct.
+- [x] M01-R1-V02 Verify clean lockfile installation/build and actual route smoke harness exit codes.
+  Dependencies: D02, D03. Evidence: On Linux, temporary Node 22.23.3/npm 10.9.9 with ASTRO_TELEMETRY_DISABLED=1: npm install --package-lock-only --ignore-scripts --no-audit && npm ci && npm run verify exited 0. Astro check: 0 errors/warnings/hints; 10 pages built; 13 Node tests passed. Package audit findings remain separately nonpassing as documented, not a required zero-advisory criterion in this contract.
+- [x] M01-R1-V03 Verify intended diff, synchronized durable state, same-branch checkpoint procedure and unchanged protected refs; commit/push M01 only after required checks pass.
+  Dependencies: D04, P01, P02, V01, V02. Evidence: git status/diff/log/diff --check and git ls-remote exited 0; intended tracked/untracked files reviewed and synchronized headers updated together. Protected refs unchanged; remote development head is the successful same-branch M00 checkpoint 5476c4c. All required M01 technical checks passed before the M01 checkpoint operation. Commit/push transport result must be recorded on M02 initialization or failure re-entry, not inferred here.
 
-No IDs were superseded. M00 is complete; initialize M01-R1 after the preparation closeout checkpoint is pushed. The bounded grant ends before M09 and at any earlier genuine blocker or mandatory human gate.
+No M01 human acceptance gate is specified. Content/visual acceptance is deferred to M09, not claimed by baseline tests. No superseded IDs. Closeout: records/M01-baseline.md. Next authorized: M02 after the M01 checkpoint is pushed. Remaining nonpassing audit findings and feature-exposure review are carried in docs/operations.md.

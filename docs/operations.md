@@ -39,3 +39,35 @@ The sales-oriented target requires suitable hosting; see acquisition.md. During 
 Before authorized launch, capture the last known-good deployed artifact and release commit, document host-specific rollback, verify intended DNS/canonical behavior and prevent the old Pages workflow from accidentally publishing a competing build during migration. Changes to workflows/hosting are part of the explicit release grant, not routine branch validation.
 
 Prefer a reviewed PR and a reversible release. Revert an approved release change or redeploy the captured prior artifact when explicitly instructed; never rewrite shared Git history. The pre-Astro backup is historical preservation, not necessarily the correct rollback target for a later release.
+
+## Verified local baseline: M01, 2026-10-03
+
+The existing /home/jordan/jordannesbitt.com checkout is present on Linux, clean at kickoff, on redesign/astro-foundation with the expected HTTPS origin. Remote master and backup still match the inspected refs above. The sole master-only commit is the known PR #1 merge; no integration was performed. M00 approval/scope is archived in records/M00-preparation.md; M01–M08 checkpoint pushes are authorized, not deployment.
+
+Default shell Node 18.19.1/npm 9.2.0 is below the lockfile's runtime requirements. A temporary npm-exec runtime provides **Node 22.23.3 / npm 10.9.9**, using only /tmp/opencode/jordannesbitt-npm-cache for its cache. `.nvmrc` records the verified Node release, package engines require Node >=22.12.0, and existing validation CI uses Node 22. No global Node/shell/OpenCode configuration was changed. Repeatable command:
+
+```bash
+npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm ci && npm run verify'
+```
+
+Installed OpenCode is **1.18.34**. `opencode models openai` lists **openai/gpt-6.1-sol**. Read-only `opencode db` queries restricted to model fields of this checkout's latest session and actual assistant messages confirm provider **openai**, model **gpt-6.1-sol**, variant **max**, build agent. This resolves the owner's Sol 6.1 Max selection without a fabricated identifier or configuration change. Resolved configuration has no default model override; selection resides in the active session. Credentials, raw configuration and message contents were not output/committed. No permissions configuration was added; CLI inspection alone is not a security sandbox.
+
+The original lockfile resolves **Astro 5.18.2**. `npm ci && npm run build` passed before implementation, generating 10 pages with one inline-JSON-LD hint. The hint is now explicit `is:inline`; the verified checkpoint build has zero errors, warnings or hints. `npm run verify` builds and runs Node's test harness against an actual loopback Astro preview: all 10 existing routes, canonical/title/landmark/JSON-LD smoke checks, referenced CSS/favicon/sitemap and unknown-artwork 404. **13 tests passed**. The preview is stopped by the harness. No artwork routes are generated because the real catalogue is empty. Baseline routes:
+
+- `/`, `/work/`, `/archive/`, `/about/`
+- `/work/drawing/`, `/work/painting/`, `/work/printmaking/`, `/work/photography/`, `/work/aerial/`, `/work/film/`
+
+Dev/preview explicitly bind 127.0.0.1. Build/check/dev/preview scripts disable Astro telemetry per process rather than altering host configuration. The first original-lockfile build printed Astro's default telemetry notice; no claim is made about whether it transmitted data. All subsequent verification runs disabled it explicitly.
+
+### Dependency findings and remaining limitations
+
+The original `npm audit --json` exited **1**, reporting 9 findings (1 critical, 7 high, 1 low). Individually scoped `npm update devalue fast-uri js-yaml nanoid svgo --ignore-scripts` applied compatible dependency resolutions: devalue 5.9.4, fast-uri 3.1.8, js-yaml 4.3.2, nanoid 3.3.19 and svgo 4.1.0 (with its declared selector dependencies). Astro remains 5.18.2. Clean installation/build/tests pass with the resulting lockfile.
+
+The post-update audit still exits **1**, reporting **4 findings: Astro (critical), sharp (high), http-cache-semantics (high), esbuild (low)**. This is an inspected limitation, **not a passing security audit**. npm recommends Astro 7.3.5, a major upgrade outside the architecture contract; no force fix or major upgrade was applied.
+
+- Astro advisories include AVIF optimization RCE ([GHSA-26w7-cxv4-gfx2](https://github.com/advisories/GHSA-26w7-cxv4-gfx2)), dynamic/spread/slot/transition escaping, server-island replay, SSR error fetching and base-path authorization. Current output is static, with no server adapter/islands, View Transitions, dynamic attribute names or `define:vars`; the site does not call Astro's image optimizer. These observations are scope triage, not proof that an affected package is safe.
+- Optional sharp 0.34.x has native-decoder advisories ([GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj), [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c)); there is no image decoding in this baseline. M03 must choose and verify an appropriate ingestion implementation rather than reuse this vulnerable optional optimizer without review.
+- http-cache-semantics 4.2.0 has cross-user response-cache disclosure ([GHSA-ch52-4w7c-c8xp](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)). The baseline has no remote-media cache/authenticated fetch path.
+- esbuild 0.27.x's reported issue is local arbitrary-file read on a Windows development server ([GHSA-g7r4-m6w7-qqqr](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr)); this verification is Linux/loopback, with static production output.
+
+Later milestones must revisit findings when introducing affected features and at release review. Framework migration requires an explicit change to the architecture boundary; technical baseline completion does not approve deployment or resolve these advisories. No browser/accessibility/performance, visual/colour, delivered email or indexing acceptance is claimed by these route tests.

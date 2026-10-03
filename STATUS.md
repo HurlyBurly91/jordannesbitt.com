@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M00
+Milestone: M01
 State: COMPLETE
-Active-Request: M00-R2
-Specification: milestones/M00-preparation.md
+Active-Request: M01-R1
+Specification: milestones/M01-baseline.md
 ```
 
-Preparation and explicit owner kickoff verified on 2026-10-03. Closeout: records/M00-preparation.md. Authorized next: initialize M01 and continue through M08 on redesign/astro-foundation, with verified checkpoint commits/pushes. Actual content/visual approval remains M09; publication/release and commerce require separate grants. Stop at any earlier genuine blocker or mandatory human gate. Resume with RUN_PROMPT.txt.
+M01 technical checks complete; closeout: records/M01-baseline.md. Baseline build and all 13 route/asset tests pass under Node 22.23.3/npm 10.9.9; actual model openai/gpt-6.1-sol, variant max. Remaining inspected dependency advisories are documented in docs/operations.md, not reported passing. Next: M02 after the M01 checkpoint push. Grant: records/M00-preparation.md, through M08; content/release gates remain.
