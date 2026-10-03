@@ -36,7 +36,7 @@ Use only media categories actually ready for publication. Do not delay a strong 
 | M05 | milestones/M05-archive.md | Complete: public archive/navigation/filters; records/M05-archive.md |
 | M06 | milestones/M06-moving-image.md | Complete: film/computational capability; records/M06-moving-image.md |
 | M07 | milestones/M07-professional-site.md | Complete: professional/acquisition capability; records/M07-professional-site.md |
-| M08 | milestones/M08-quality.md | Automated quality gates and local review package |
+| M08 | milestones/M08-quality.md | Complete: technical quality/review package; records/M08-quality.md. Next gate M09 owner content |
 | M09 | milestones/M09-content-acceptance.md | Actual launch content and explicit visual/business acceptance |
 | M10 | milestones/M10-release.md | Approved hosting, controlled launch and rollback |
 | M11 | milestones/M11-commerce.md | Deferred transactional commerce, separately authorized |

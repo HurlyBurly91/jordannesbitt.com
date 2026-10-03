@@ -8,6 +8,8 @@ export async function isolatedProject(t) {
   const root = await mkdtemp("/tmp/opencode/jordannesbitt-fixture-");
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const path of ["src", "public", "astro.config.mjs", "tsconfig.json", "package.json"]) await cp(resolve(repository, path), resolve(root, path), { recursive: true });
+  await mkdir(resolve(root, "scripts/lib"), { recursive: true });
+  for (const file of ["release-gate.mjs", "output-quality.mjs"]) await cp(resolve(repository, "scripts/lib", file), resolve(root, "scripts/lib", file));
   await symlink(resolve(repository, "node_modules"), resolve(root, "node_modules"), "dir");
   return {
     root,
@@ -17,8 +19,8 @@ export async function isolatedProject(t) {
       await mkdir(resolve(destination, ".."), { recursive: true });
       await writeFile(destination, bytes);
     },
-    async build() {
-      const child = spawn(process.execPath, [resolve(repository, "node_modules/astro/astro.js"), "build", "--root", root], { cwd: root, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"] });
+    async build({ mode } = {}) {
+      const child = spawn(process.execPath, [resolve(repository, "node_modules/astro/astro.js"), "build", "--root", root, ...(mode ? ["--mode", mode] : [])], { cwd: root, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"] });
       let output = "";
       child.stdout.on("data", (chunk) => { output += chunk; });
       child.stderr.on("data", (chunk) => { output += chunk; });

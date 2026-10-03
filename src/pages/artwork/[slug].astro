@@ -24,6 +24,6 @@ const schema = {
 };
 const video = videoMetadata(artwork, identity.siteUrl);
 ---
-<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} schema={[schema, ...(video ? [video] : [])]}>
+<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} image={primary} pageType={video ? "video.other" : "article"} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Archive", path: "/archive/" }, { name: artwork.title, path }]} schema={[schema, ...(video ? [video] : [])]}>
   <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)}><ArtworkOffer artwork={artwork} recipient={professional?.contact} /></ArtworkView>
 </BaseLayout>

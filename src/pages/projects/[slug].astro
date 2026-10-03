@@ -8,6 +8,6 @@ export function getStaticPaths() {
 }
 const { project, alias } = Astro.props;
 ---
-<BaseLayout title={project.title} description={project.description ?? `${project.title}, an authored project by Jordan Nesbitt.`} canonicalPath={`/projects/${project.slug}/`} alias={alias}>
+<BaseLayout title={project.title} description={project.description ?? `${project.title}, an authored project.`} canonicalPath={`/projects/${project.slug}/`} alias={alias} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Projects", path: "/projects/" }, { name: project.title, path: `/projects/${project.slug}/` }]}>
   <ProjectView project={project} members={projectMembers(project, artworks)} />
 </BaseLayout>

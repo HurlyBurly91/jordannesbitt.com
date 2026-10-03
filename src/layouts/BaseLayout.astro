@@ -10,12 +10,18 @@ interface Props {
   canonicalPath?: string;
   schema?: unknown[];
   alias?: boolean;
+  image?: { src: string; alt: string; width?: number; height?: number };
+  pageType?: "website" | "article" | "video.other";
+  breadcrumbs?: { name: string; path: string }[];
 }
 
-const { title, description = identity.descriptor, canonicalPath = Astro.url.pathname, schema = [], alias = false } = Astro.props;
+const { title, description = identity.descriptor, canonicalPath = Astro.url.pathname, schema = [], alias = false, image, pageType = "website" } = Astro.props;
 const pageTitle = title ? `${title} — ${identity.name}` : identity.name;
 const canonical = new URL(canonicalPath, identity.siteUrl);
 const path = Astro.url.pathname;
+const preview = import.meta.env.DEV || import.meta.env.MODE === "preview";
+const breadcrumbs = Astro.props.breadcrumbs ?? (canonicalPath === "/" ? [] : [{ name: "Home", path: "/" }, { name: title ?? identity.name, path: canonicalPath }]);
+const breadcrumbSchema = breadcrumbs.length > 1 ? { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: breadcrumbs.map((item, index) => ({ "@type": "ListItem", position: index + 1, name: item.name, item: new URL(item.path, identity.siteUrl).href })) } : undefined;
 const isActive = (href: string) =>
   href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
 const artistSchema = {
@@ -24,12 +30,6 @@ const artistSchema = {
   name: identity.name,
   url: identity.siteUrl,
   jobTitle: "Visual artist",
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "London",
-    addressRegion: "Ontario",
-    addressCountry: "CA",
-  },
 };
 ---
 
@@ -44,9 +44,16 @@ const artistSchema = {
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{pageTitle}</title>
-    {alias && <meta name="robots" content="noindex,follow" />}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={identity.name} />
+    <meta property="og:type" content={pageType} />
+    {image && <><meta property="og:image" content={new URL(image.src, identity.siteUrl)} /><meta property="og:image:alt" content={image.alt} />{image.width && <meta property="og:image:width" content={String(image.width)} />}{image.height && <meta property="og:image:height" content={String(image.height)} />}</>}
+    {(preview || alias) && <meta name="robots" content={preview ? "noindex,nofollow" : "noindex,follow"} />}
     <script is:inline type="application/ld+json" set:html={safeJson(artistSchema)} />
     {schema.map((item) => <script is:inline type="application/ld+json" set:html={safeJson(item)} />)}
+    {breadcrumbSchema && <script is:inline type="application/ld+json" set:html={safeJson(breadcrumbSchema)} />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -66,6 +73,7 @@ const artistSchema = {
     </header>
     <main id="main">
       {alias && <p class="compatibility-note">Permanent address: <a href={canonicalPath}>{title}</a></p>}
+      {breadcrumbs.length > 1 && <nav class="breadcrumbs" aria-label="Breadcrumbs"><ol>{breadcrumbs.map((item, index) => <li>{index === breadcrumbs.length - 1 ? <span aria-current="page">{item.name}</span> : <a href={item.path}>{item.name}</a>}</li>)}</ol></nav>}
       <slot />
     </main>
     <footer class="site-footer">

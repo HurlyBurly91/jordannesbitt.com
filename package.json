@@ -13,6 +13,10 @@
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "test": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/*.test.mjs",
     "browser:install": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers playwright install chromium --only-shell",
+    "build:preview": "ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build --mode preview --outDir /tmp/opencode/jordannesbitt-preview",
+    "release:check": "node scripts/release-check.mjs",
+    "check:output": "node scripts/check-output.mjs",
+    "review": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node scripts/review.mjs",
     "test:smoke": "node --test tests/smoke.test.mjs",
     "ingest": "node scripts/ingest.mjs",
     "verify": "npm run build && npm test"
@@ -24,6 +28,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "axe-core": "4.13.0",
+    "parse5": "8.0.1",
     "playwright": "1.63.0",
     "sharp": "0.35.5",
     "typescript": "^5.9.2"

@@ -3,6 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import { fileURLToPath } from "node:url";
 import { readCatalogue, emitPublicMedia } from "./src/lib/catalogue-source.ts";
 import { publicCatalogue } from "./src/lib/catalogue.ts";
+import { recordBuildDigest } from "./scripts/lib/release-gate.mjs";
 
 let approvedRoot;
 let aliasPaths = new Set();
@@ -17,7 +18,7 @@ const approvedMedia = {
         ...catalogue.projects.flatMap((project) => project.aliases.map((alias) => `/projects/${alias}/`)),
       ]);
     },
-    "astro:build:done": ({ dir }) => { emitPublicMedia(approvedRoot, fileURLToPath(dir)); },
+    "astro:build:done": async ({ dir }) => { emitPublicMedia(approvedRoot, fileURLToPath(dir)); await recordBuildDigest(approvedRoot, fileURLToPath(dir)); },
   },
 };
 

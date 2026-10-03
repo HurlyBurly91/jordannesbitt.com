@@ -90,3 +90,20 @@ Enquiry forms prepare an explicitly labelled mailto draft with work identity;
 they do not deliver messages. Direct public email is the accessible fallback.
 Actual recipient/offers/receipt/business policies remain M09/M10 approval gates;
 see `docs/acquisition.md`. No real message test is authorized by `npm run verify`.
+
+## Quality and local review
+
+```bash
+npm run verify        # one technical schema/build/publication/browser/axe/link/asset/metadata/budget command
+npm run check:output  # inspect already-built output without contacting external URLs
+npm run release:check # strict real-content gate; intentionally fails until explicit M09 input/approval
+npm run build:preview # noindex local build in /tmp/opencode/jordannesbitt-preview
+npm run review        # labelled synthetic screenshots/report/checklist in /tmp/opencode/jordannesbitt-review
+```
+
+Use the verified Node22/npm10 runtime and installed test browser above. Review
+artifacts never approve real content, accessibility, colour, offers, delivery or
+release. Actual metadata/contact remains empty; no launch manifest approval has
+been inferred. `docs/quality.md` records profiles, strict gate semantics, legacy
+URLs/host requirements and exact owner-input checklist. M09 requires new owner
+input/authority; M10 publication and M11 commerce remain separate grants.

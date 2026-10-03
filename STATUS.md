@@ -1,10 +1,11 @@
 # Status
 
 ```yaml
-Milestone: M07
+Milestone: M08
 State: COMPLETE
-Active-Request: M07-R1
-Specification: milestones/M07-professional-site.md
+Active-Request: M08-R1
+Specification: milestones/M08-quality.md
+Next-Gate: M09 owner content and separate bounded authority
 ```
 
-M07 technical capability complete; records/M07-professional-site.md. All61 tests/build/check pass; fixture enquiry draft journey/status/currency/recipient/spam/CV verified. Actual content/recipient/offers empty and release-blocking; M08 must test guard rejection, M09 owns content approval. No real sends. Next M08 after checkpoint push; grant records/M00-preparation.md.
+M01–M08 technical batch complete; M08 closeout records/M08-quality.md. Verified66 tests/0diagnostics,36 local synthetic screenshots/0observed axe/reflow failures; review package /tmp/opencode/jordannesbitt-review (recreate npm run review). Actual release check exits1 BLOCKED_CONTENT; real content/lead/recipient/professional/owner manifest absent. Grant ends after M08 checkpoint; stopped before M09 pending explicit owner input/authority. No publication or M09/M10/M11 implementation approved. Residual4audit findings remain nonpassing; see docs/operations.md.
