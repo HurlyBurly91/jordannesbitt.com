@@ -2,6 +2,8 @@
 
 Recorded 2026-10-03. M09 remains **ACTIVE / HUMAN_VERIFICATION**; M09-R1-H01 awaits owner pilot review and final M09 public/content/rights/visual/business gates are unresolved. This is generic code/documentation/check evidence only, not a final milestone closeout, publication permission or factual/rights approval. Image-specific filenames/dates/classifications/memberships and images are private local artefacts, not committed here.
 
+Actual permitted checkpoint **cdcb339b5ef1086ece7111e74e0f64d9162faebf** committed/pushed successfully; readback matches origin and clean checkout. Its22files are code/documentation only, no artwork or private metadata. Master755df7f/backup3bc95c7 unchanged. Final documentation checkpoint records transport, not human/content acceptance; work stops at H01.
+
 ## Bounded grant and IDs
 
 USER grant activates a local-only M09 pilot from the explicit source in TASKS.md, permits generic review code/docs and same-branch checkpoints, and excludes artwork assets/production publication/manifest/final selection/deployment. Scope also appended to M00 authorization record. Prior32ded12 development head/origin/worktree was clean; protected branches preserved.
@@ -27,7 +29,7 @@ Linux, temporary Node22.23.3/npm10.9.9, installed Astro5.18.2/sharp0.35.5/Playwr
 - Final `npm run pilot -- review --snapshot <exact above> --plan <private bound plan>`: exit0,169inputs/10representatives/**69decoded screenshots**, **0observed axe violations/reflow failures**, **0unapproved artist/rights/offer assertions**. Direct actual-image keyboard focus/full-image/Back, classified archive count/reset at360/768/1440 and no-JavaScript browsing pass. Frozen source checksum unchanged; source169/169unchanged. All external review requests blocked; browser/temporary builder stopped after capture.
 - `npm run release:check`: actual exit **1**, **BLOCKED_CONTENT**, publicationAuthorized false, same8missing approved real-content/manifest/lead/recipient/professional/construction issues. It remains blocked despite local rendered flags. No real launch manifest/published records/identity/media assets modified; no gate weakened.
 - Real local lab (360×800,DPR1,simulated1.6Mbps down/750kbps up/150ms latency,CPU4x,cache disabled,3runs/path): median LCP500–1012ms,CLS0,initial transfer29,004–169,754bytes, documented per path in private report. This improves on M08's synthetic-image limitation but is not field INP/indexing/physical colour/full assistive or human visual acceptance.
-- Final summaries/report and actual source/capture samples inspected. Generic code/docs diff and protected refs reviewed; git diff --check exit0. No image, real source-linked metadata/JSON/screenshot or unrelated changes intended for staging. Code-only checkpoint transport recorded in TASKS.md after push; no final M09 completion.
+- Final summaries/report and actual source/capture samples inspected. Generic code/docs diff and protected refs reviewed; git diff --check exit0. No image, real source-linked metadata/JSON/screenshot or unrelated change staged. Actual cdcb339 push/clean remote readback and file inventory confirmed above/TASKS.md; no final M09 completion.
 
 ## Owner gate / limitations
 
