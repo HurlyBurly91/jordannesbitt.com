@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M06
+Milestone: M07
 State: COMPLETE
-Active-Request: M06-R1
-Specification: milestones/M06-moving-image.md
+Active-Request: M07-R1
+Specification: milestones/M07-professional-site.md
 ```
 
-M06 technical capability acceptance complete; records/M06-moving-image.md. Full 57 tests and final targeted 3 tests pass, including captions/playback/errors and locally intercepted embeds/demo actions. Actual Film content/menu/index absent; no real media/accessibility approval. Next M07 after checkpoint push. Grant through M08: records/M00-preparation.md.
+M07 technical capability complete; records/M07-professional-site.md. All61 tests/build/check pass; fixture enquiry draft journey/status/currency/recipient/spam/CV verified. Actual content/recipient/offers empty and release-blocking; M08 must test guard rejection, M09 owns content approval. No real sends. Next M08 after checkpoint push; grant records/M00-preparation.md.

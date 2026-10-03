@@ -35,7 +35,7 @@ Use only media categories actually ready for publication. Do not delay a strong 
 | M04 | milestones/M04-presentation.md | Complete: artwork and authored presentations; records/M04-presentation.md |
 | M05 | milestones/M05-archive.md | Complete: public archive/navigation/filters; records/M05-archive.md |
 | M06 | milestones/M06-moving-image.md | Complete: film/computational capability; records/M06-moving-image.md |
-| M07 | milestones/M07-professional-site.md | Homepage, About/CV, availability and enquiry paths |
+| M07 | milestones/M07-professional-site.md | Complete: professional/acquisition capability; records/M07-professional-site.md |
 | M08 | milestones/M08-quality.md | Automated quality gates and local review package |
 | M09 | milestones/M09-content-acceptance.md | Actual launch content and explicit visual/business acceptance |
 | M10 | milestones/M10-release.md | Approved hosting, controlled launch and rollback |

@@ -45,7 +45,9 @@ resume through `RUN_PROMPT.txt`.
 - Reviewed web derivatives belong in `src/media/`, never `public/media/`;
   only published records' referenced assets are emitted. See `docs/catalogue.md`.
 - Test fixtures belong under `tests/fixtures/`, outside production content.
-- Artwork placeholders are deliberate and can be replaced incrementally.
+- Homepage lead is an explicit single `homepageLead` flag, not inferred curation.
+- About/CV/contact use only published professional records; missing essential
+  content is marked release-blocking until owner approval at M09.
 - Full-resolution masters should remain outside this repository.
 
 The current redesign is an initial shell. It contains no fabricated artwork
@@ -82,3 +84,9 @@ enhance it with search, medium/project/year/availability, sorting and restorable
 URL state. `tests/archive.test.mjs` also runs a separately labelled 1,000-record
 synthetic scaling exercise. Those records never enter the real catalogue or
 count toward launch content. See `docs/quality.md` for measurement limits.
+
+Available derives from reviewed canonical availability, not a second listing.
+Enquiry forms prepare an explicitly labelled mailto draft with work identity;
+they do not deliver messages. Direct public email is the accessible fallback.
+Actual recipient/offers/receipt/business policies remain M09/M10 approval gates;
+see `docs/acquisition.md`. No real message test is authorized by `npm run verify`.

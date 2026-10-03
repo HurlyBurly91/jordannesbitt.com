@@ -1,0 +1,124 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import { readFile, access } from "node:fs/promises";
+import { resolve } from "node:path";
+import { chromium } from "playwright";
+import { specimenSite } from "./helpers/specimen-site.mjs";
+import { publicSpecimens } from "./fixtures/public-specimens.mjs";
+import { repository } from "./helpers/build-project.mjs";
+import { validateCatalogue } from "../src/lib/catalogue.ts";
+import { isAvailable, priceLabel, enquiryContext } from "../src/lib/acquisition.ts";
+import { draftEnquiry } from "../src/lib/enquiry.ts";
+
+function professionalCases(data) {
+  const portrait = data.artworks[0];
+  portrait.homepageLead = true;
+  portrait.availability = { state: "available", reviewed: true, mode: "enquiry-only" };
+  portrait.framing = "unframed";
+  data.artworks[1].availability = { state: "sold", reviewed: true };
+  data.artworks.push({ ...portrait, id: "specimen-priced", slug: "specimen-priced", aliases: [], title: "Synthetic priced specimen", homepageLead: false, featured: false, selectedOrder: undefined, availability: { state: "available", reviewed: true, mode: "price", price: { amountMinor: 125000, currency: "CAD" } } });
+  data.artworks.push({ ...portrait, id: "specimen-edition", slug: "specimen-edition", aliases: [], title: "Synthetic edition specimen", homepageLead: false, featured: false, selectedOrder: undefined, medium: "printmaking", kind: "original-print", edition: { size: 10, artistProofs: 2, signed: true }, availability: { state: "edition-available", reviewed: true, mode: "enquiry-only" } });
+  data.professional = [{ id: "profile", published: true, fixture: false,
+    biography: ["Synthetic biographical paragraph for the local preview, not an actual artist biography."], statement: ["Synthetic practice statement for testing only."],
+    cv: [{ date: { certainty: "exact", year: 2000 }, category: "exhibition", text: "Synthetic exhibition entry — not a real exhibition." }],
+    contact: { email: "recipient@example.invalid", label: "Synthetic studio contact" }, acquisitionNotes: ["Synthetic enquiry context, not a real business policy."],
+  }];
+  return data;
+}
+
+test("reviewed availability, explicit lead, price currency and enquiry normal/error/spam rules", () => {
+  const catalogue = validateCatalogue(professionalCases(publicSpecimens()), { assetExists: () => true });
+  const portrait = catalogue.artworks[0], sold = catalogue.artworks[1], unknown = catalogue.artworks[2];
+  assert.equal(isAvailable(portrait), true);
+  assert.equal(isAvailable(sold), false);
+  assert.equal(isAvailable(unknown), false);
+  assert.equal(isAvailable({ ...portrait, published: false }), false);
+  assert.match(priceLabel({ amountMinor: 125000, currency: "CAD" }), /CAD.*1,250/);
+  assert.match(priceLabel({ amountMinor: 1250, currency: "JPY" }), /JPY.*1,250/);
+  const work = enquiryContext(portrait, "https://jordannesbitt.com");
+  const draft = draftEnquiry({ recipient: catalogue.professional[0].contact, work, message: "Synthetic enquiry question." });
+  assert.equal(draft.status, "ready");
+  const url = new URL(draft.href);
+  assert.equal(decodeURIComponent(url.pathname), "recipient@example.invalid");
+  assert.ok(url.searchParams.get("body").includes(work.id) && url.searchParams.get("body").includes(work.title) && url.searchParams.get("body").includes(work.url));
+  assert.equal(draftEnquiry({ message: "Synthetic question" }).status, "error");
+  assert.equal(draftEnquiry({ recipient: catalogue.professional[0].contact, message: "" }).status, "error");
+  assert.equal(draftEnquiry({ recipient: catalogue.professional[0].contact, message: "Synthetic spam", website: "bot-filled" }).status, "blocked");
+  const duplicateLead = professionalCases(publicSpecimens());
+  duplicateLead.artworks[1].homepageLead = true;
+  assert.throws(() => validateCatalogue(duplicateLead, { assetExists: () => true }), /one explicit public homepage lead/);
+});
+
+test("fixture home/project/work/status/enquiry journey and source-backed About/CV", async (t) => {
+  const site = await specimenSite(t, professionalCases);
+  const browser = await chromium.launch();
+  t.after(() => browser.close());
+  const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
+  const page = await context.newPage();
+  await page.goto(site.origin);
+  assert.equal(await page.locator(".home-lead img").count(), 1);
+  assert.equal(await page.locator("[data-release-blocker]").count(), 0);
+  assert.doesNotMatch(await page.locator("main").innerText(), /practice across image, object|Featured work|Work 01/i);
+  await page.locator(".home-projects a").first().click();
+  await page.locator('.ordered-sequence a[href="/artwork/specimen-portrait/"]').click();
+  assert.match(await page.locator(".artwork-offer").innerText(), /Available[\s\S]*Price by enquiry[\s\S]*Unframed/);
+  assert.equal(await page.locator(".approved-price").count(), 0);
+  await page.getByRole("link", { name: "Enquire about this work", exact: true }).click();
+  assert.equal(await page.getByLabel("Regarding", { exact: true }).inputValue(), "specimen-portrait");
+  await page.getByLabel("Message", { exact: true }).fill("Synthetic question about this work.");
+  await page.getByRole("button", { name: "Prepare email draft", exact: true }).click();
+  const draft = new URL(await page.locator("[data-draft-link]").getAttribute("href"));
+  assert.equal(decodeURIComponent(draft.pathname), "recipient@example.invalid");
+  assert.match(draft.searchParams.get("subject"), /Synthetic portrait specimen.*specimen-portrait/);
+  assert.ok(draft.searchParams.get("body").includes("https://jordannesbitt.com/artwork/specimen-portrait/"));
+  assert.match(await page.locator("[data-enquiry-status]").innerText(), /draft.*not delivery confirmation/i);
+  await page.locator('[name="website"]').evaluate((input) => { input.value = "synthetic-bot"; });
+  await page.getByRole("button", { name: "Prepare email draft", exact: true }).click();
+  assert.equal(await page.locator("[data-enquiry-status]").getAttribute("data-status"), "blocked");
+  assert.equal(await page.locator("[data-draft-link]").isVisible(), false);
+  for (const [slug, label] of [["specimen-landscape", "Sold"], ["specimen-long", "Availability unknown"]]) {
+    await page.goto(`${site.origin}/artwork/${slug}/`);
+    assert.match(await page.locator(".artwork-offer").innerText(), new RegExp(label));
+    assert.equal(await page.getByRole("link", { name: "Enquire about this work" }).count(), 0);
+    assert.equal(await page.locator(".approved-price").count(), 0);
+  }
+  await page.goto(`${site.origin}/available/`);
+  assert.equal(await page.locator('section[aria-label="Available work"] .artwork-card').count(), 3);
+  assert.match(await page.locator(".approved-price").innerText(), /CAD.*1,250/);
+  await page.goto(`${site.origin}/about/`);
+  assert.match(await page.locator('[aria-label="Approved biography"]').innerText(), /Synthetic biographical/);
+  await page.getByRole("link", { name: "View CV" }).click();
+  assert.match(await page.locator(".cv-list").innerText(), /2000.*Synthetic exhibition/s);
+  await page.emulateMedia({ media: "print" });
+  assert.equal(await page.locator(".site-header").isVisible(), false);
+  assert.equal(await page.locator(".cv-list").isVisible(), true);
+  await context.close();
+  t.diagnostic(`Chromium ${browser.version()}, 360x800; mailto intent inspected only, no mail application/send/receipt`);
+});
+
+test("missing recipient produces no enquiry action or fabricated success", async (t) => {
+  const site = await specimenSite(t, (data) => { const result = professionalCases(data); delete result.professional[0].contact; result.professional[0].biography = []; return result; });
+  const browser = await chromium.launch();
+  t.after(() => browser.close());
+  const page = await browser.newPage();
+  await page.goto(`${site.origin}/artwork/specimen-portrait/`);
+  assert.equal(await page.getByRole("link", { name: "Enquire about this work" }).count(), 0);
+  assert.match(await page.locator(".artwork-offer").innerText(), /recipient has not been published/);
+  await page.goto(`${site.origin}/contact/`);
+  assert.equal(await page.locator("[data-enquiry-form]").count(), 0);
+  assert.equal(await page.locator('[data-release-blocker="missing-recipient"]').count(), 1);
+  await page.goto(`${site.origin}/about/`);
+  assert.equal(await page.locator("[data-release-blocker]").count(), 0, "approved statement can provide context without a fabricated biography");
+  assert.match(await page.locator("main").innerText(), /Synthetic practice statement/);
+});
+
+test("actual empty professional output contains no unsupported CV/contact/offer claims", async () => {
+  await assert.rejects(access(resolve(repository, "dist/cv")));
+  const home = await readFile(resolve(repository, "dist/index.html"), "utf8");
+  assert.match(home, /data-release-blocker="missing-homepage-lead"/);
+  assert.doesNotMatch(home, /Work 01|Featured work|practice across image, object/);
+  const contact = await readFile(resolve(repository, "dist/contact/index.html"), "utf8");
+  assert.match(contact, /data-release-blocker="missing-recipient"/);
+  assert.doesNotMatch(contact, /recipient@example|<a\b[^>]*href="mailto:/);
+  assert.deepEqual(JSON.parse(contact.match(/<script\b[^>]*id="enquiry-data"[^>]*>(.*?)<\/script>/s)[1]), { recipient: null, works: [] });
+});

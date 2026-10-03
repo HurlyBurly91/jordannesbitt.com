@@ -1,0 +1,11 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ArtworkCard from "@/components/ArtworkCard.astro";
+import ArtworkOffer from "@/components/ArtworkOffer.astro";
+import { availableWorks, professional } from "@/data/catalogue";
+---
+<BaseLayout title="Available" description="Work with explicitly reviewed availability and an enquiry route.">
+  <header class="page-intro"><p class="eyebrow">Acquisition</p><h1>Available work.</h1></header>
+  {availableWorks.length ? <section class="work-grid" aria-label="Available work">{availableWorks.map((work) => <div><ArtworkCard artwork={work} /><ArtworkOffer artwork={work} recipient={professional?.contact} /></div>)}</section> : <p class="empty-state">No work is currently listed as available.</p>}
+  {professional?.acquisitionNotes.length > 0 && <section class="professional-prose" aria-label="Approved acquisition information">{professional.acquisitionNotes.map((note) => <p>{note}</p>)}</section>}
+</BaseLayout>

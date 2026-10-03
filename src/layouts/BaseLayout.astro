@@ -2,7 +2,7 @@
 import "../styles/global.css";
 import { identity } from "@/config/identity";
 import { safeJson, selectedWorks } from "@/lib/presentation";
-import { artworks, projects, films } from "@/data/catalogue";
+import { artworks, projects, films, availableWorks, professional } from "@/data/catalogue";
 
 interface Props {
   title?: string;
@@ -60,6 +60,8 @@ const artistSchema = {
         {films.length > 0 && <a href="/film" aria-current={isActive("/film") ? "page" : undefined}>Film</a>}
         <a href="/archive" aria-current={isActive("/archive") ? "page" : undefined}>Archive</a>
         <a href="/about" aria-current={isActive("/about") ? "page" : undefined}>About</a>
+        {availableWorks.length > 0 && <a href="/available" aria-current={isActive("/available") ? "page" : undefined}>Available</a>}
+        {professional?.contact && <a href="/contact" aria-current={isActive("/contact") ? "page" : undefined}>Contact</a>}
       </nav>
     </header>
     <main id="main">

@@ -1,0 +1,12 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { professional } from "@/data/catalogue";
+import { identity } from "@/config/identity";
+import { dateLabel } from "@/lib/catalogue";
+export function getStaticPaths() { return professional && (professional.cv.length || professional.cvPdf) ? [{ params: { path: undefined } }] : []; }
+---
+<BaseLayout title="CV" description={`Public professional record of ${identity.name}.`}>
+  <header class="page-intro cv-intro"><p class="eyebrow">CV</p><h1>{identity.name} — CV</h1><button type="button" data-print-cv hidden>Print CV</button>{professional?.cvPdf && <p><a class="text-link" href={professional.cvPdf}>Download supplied CV (PDF)</a></p>}</header>
+  <ol class="cv-list">{professional!.cv.map((entry) => <li><p>{dateLabel(entry.date)}</p><div><h2>{entry.category[0].toUpperCase() + entry.category.slice(1)}</h2><p>{entry.text}</p></div></li>)}</ol>
+  <script>const button = document.querySelector<HTMLButtonElement>("[data-print-cv]"); if (button) { button.hidden = false; button.addEventListener("click", () => window.print()); }</script>
+</BaseLayout>

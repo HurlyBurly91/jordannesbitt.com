@@ -74,6 +74,7 @@ export const artworkSchema = z.object({
   techniques: z.array(text).default([]), materials: text.optional(), description: text.optional(),
   dimensions: z.array(dimension).default([]), reproductions: z.array(reproductionSchema).default([]),
   featured: z.boolean().default(false), selectedOrder: z.number().int().nonnegative().optional(),
+  homepageLead: z.boolean().default(false), framing: z.enum(["framed", "unframed", "not-applicable"]).optional(), condition: text.optional(),
   edition: edition.optional(), availability: availabilitySchema.default({ state: "unknown", reviewed: false }),
   film: filmSchema.optional(),
   computational: z.object({ summary: text, tools: z.array(text).default([]), links: z.array(z.object({ label: text, url: z.string().url().refine((value) => value.startsWith("https://")) }).strict()).default([]), demo: z.object({ label: text, url: z.string().url().refine((value) => value.startsWith("https://")) }).strict().optional() }).strict().optional(),
@@ -82,6 +83,7 @@ export const artworkSchema = z.object({
   const primaries = work.reproductions.filter((image) => image.role === "primary").length;
   if (work.reproductions.length && primaries !== 1) ctx.addIssue({ code: "custom", message: "Reproductions require exactly one primary image" });
   if (work.published && !["film", "computational"].includes(work.medium) && primaries !== 1) ctx.addIssue({ code: "custom", message: "Published visual works require a primary reproduction" });
+  if (work.published && work.homepageLead && primaries !== 1) ctx.addIssue({ code: "custom", message: "Homepage lead requires a supplied primary reproduction" });
   if (work.edition && !["original-print", "reproduction"].includes(work.kind)) ctx.addIssue({ code: "custom", message: "Edition requires an editioned object kind" });
   if (work.availability.state === "edition-available" && !work.edition) ctx.addIssue({ code: "custom", message: "Edition availability requires edition facts" });
   if (work.medium === "film" && (work.kind !== "moving-image" || !work.film)) ctx.addIssue({ code: "custom", message: "Film requires moving-image metadata" });
@@ -137,6 +139,7 @@ export function validateCatalogue(input: unknown, options: { allowFixtures?: boo
       slugs.add(slug);
     }
   }
+  if (catalogue.artworks.filter((work) => isPublic(work) && work.homepageLead).length > 1) throw new Error("Only one explicit public homepage lead is allowed");
   const artworkIds = new Set(catalogue.artworks.map((work) => work.id));
   for (const project of catalogue.projects) for (const member of project.memberIds) {
     if (!artworkIds.has(member)) throw new Error(`Dangling member ${member} in ${project.id}`);

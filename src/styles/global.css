@@ -11,6 +11,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { background: var(--paper); color: var(--ink); scroll-behavior: smooth; }
 body { margin: 0; font-family: var(--sans); }
 a { color: inherit; text-decoration: none; }
@@ -288,3 +289,28 @@ button:disabled { cursor: default; }
 .media-fallback, .media-credits ul { padding-left: 1.25rem; line-height: 1.7; }
 .transcript p { white-space: pre-line; }
 .media-error { padding: 1rem; border: 1px solid var(--oxide); }
+
+.home-hero, .home-projects, .home-statement, .professional-prose, .contact-content { padding: 3rem var(--pad); }
+.site-header { flex-wrap: wrap; gap: 1.5rem; }
+.site-header nav { flex-wrap: wrap; }
+.home-lead { max-width: 1400px; margin: 0 auto 3rem; }
+.home-lead .reproduction { margin-bottom: 1rem; }
+.home-lead img { max-height: 75svh; width: auto; max-width: 100%; margin: auto; }
+.home-identity h1 { font-size: clamp(2.2rem, 4vw, 4rem); margin: 0; }
+.home-identity p { margin: .75rem 0; color: var(--muted); }
+.home-statement, .professional-prose { max-width: 60rem; line-height: 1.7; font-size: 1.15rem; }
+.home-projects ol { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
+.home-projects h3 { font: 1.7rem var(--serif); }
+.cv-intro, .contact-intro { min-height: auto; }
+.cv-list { list-style: none; margin: 0 var(--pad) 5rem; padding: 0; }
+.cv-list li { display: grid; grid-template-columns: 8rem minmax(0, 1fr); gap: 2rem; padding: 1.5rem 0; border-top: 1px solid var(--line); }
+.cv-list h2 { font: 1.2rem var(--sans); margin-top: 0; }
+.artwork-offer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.artwork-offer h2 { font-size: 1.4rem; line-height: 1.2; }
+.approved-price { font-size: 1.2rem; color: var(--ink); }
+.contact-content { max-width: 55rem; }
+.contact-content fieldset { margin: 2rem 0; border: 1px solid var(--line); padding: 1.5rem; }
+.contact-content form div:not(.visually-hidden) { display: grid; gap: .5rem; margin-bottom: 1.5rem; }
+.contact-content textarea, .contact-content select { min-width: 0; width: 100%; padding: .75rem; background: var(--paper); border: 1px solid var(--muted); border-radius: 0; }
+@media (max-width: 760px) { .home-projects ol { grid-template-columns: 1fr; } .cv-list li { grid-template-columns: 1fr; gap: .5rem; } }
+@media print { .site-header, .site-footer, .skip-link, [data-print-cv] { display: none; } body { background: white; color: black; } .page-intro { min-height: auto; padding: 1rem; } .cv-list { margin: 1rem; } a { text-decoration: underline; } }

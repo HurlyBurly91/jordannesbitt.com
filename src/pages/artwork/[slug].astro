@@ -1,7 +1,8 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ArtworkView from "@/components/ArtworkView.astro";
-import { catalogue, artworks, projectsForArtwork } from "@/data/catalogue";
+import { catalogue, artworks, projectsForArtwork, professional } from "@/data/catalogue";
+import ArtworkOffer from "@/components/ArtworkOffer.astro";
 import { dateLabel } from "@/lib/catalogue";
 import { relatedWorks } from "@/lib/presentation";
 import { identity } from "@/config/identity";
@@ -24,5 +25,5 @@ const schema = {
 const video = videoMetadata(artwork, identity.siteUrl);
 ---
 <BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} schema={[schema, ...(video ? [video] : [])]}>
-  <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)} />
+  <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)}><ArtworkOffer artwork={artwork} recipient={professional?.contact} /></ArtworkView>
 </BaseLayout>
