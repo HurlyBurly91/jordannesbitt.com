@@ -2,6 +2,8 @@
 
 Technical acceptance: 2026-10-03. Contract milestones/M08-quality.md; execution grant records/M00-preparation.md (ends after M08). Prior M07 **cf75f0d** checkpoint committed/pushed before initialization. This is **technical platform acceptance**, not content, artistic, security-audit, delivery, indexing or release approval.
 
+M08 verified checkpoint **366d2416d676e5d6635569567e7c49a5ac4494c2** committed and pushed successfully to redesign/astro-foundation. Subsequent git status/log/ls-remote exit0 confirms clean worktree/matching remote head and unchanged protected refs. Final documentation checkpoint records this observed transport and the exhausted grant/M09 stop; no further implementation.
+
 ## Final IDs
 
 All VERIFIED, none superseded; no required M08 human acceptance gate. Real human acceptance explicitly remains M09.
@@ -17,7 +19,7 @@ All VERIFIED, none superseded; no required M08 human acceptance gate. Real human
 - **M08-R1-P01/P02:** publication/ownership/identity/neutral routes/order/major/design/privacy/Git/external/host/human boundaries preserved; real input arrays empty, no fake real choices/manifest/acceptance/fixture/private leakage.
 - **M08-R1-V01:** actual one-command suite and negative validation pass; no unknown or skipped tools reported passing.
 - **M08-R1-V02:** strict real release failure correctly observed; preview and local artifact capture/results/checklist/screenshots verified/read; no release pass inferred.
-- **M08-R1-V03:** canonical/domain/state/intended diff/protected refs/audit limitations reviewed before checkpoint; transport recorded by final push/readback or failure re-entry. Batch stops before unauthorized M09.
+- **M08-R1-V03:** canonical/domain/state/intended diff/protected refs/audit limitations reviewed before checkpoint; actual366d241 push/clean remote readback confirmed above. Batch stops before unauthorized M09.
 
 ## Architecture and decisions
 
