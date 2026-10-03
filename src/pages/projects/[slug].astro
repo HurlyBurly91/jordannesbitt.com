@@ -1,0 +1,13 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ProjectView from "@/components/ProjectView.astro";
+import { projects, artworks } from "@/data/catalogue";
+import { projectMembers } from "@/lib/presentation";
+export function getStaticPaths() {
+  return projects.flatMap((project) => [project.slug, ...project.aliases].map((slug) => ({ params: { slug }, props: { project, alias: slug !== project.slug } })));
+}
+const { project, alias } = Astro.props;
+---
+<BaseLayout title={project.title} description={project.description ?? `${project.title}, an authored project by Jordan Nesbitt.`} canonicalPath={`/projects/${project.slug}/`} alias={alias}>
+  <ProjectView project={project} members={projectMembers(project, artworks)} />
+</BaseLayout>

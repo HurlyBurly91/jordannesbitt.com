@@ -1,52 +1,56 @@
 # Tasks
 
 ```yaml
-Milestone: M03
+Milestone: M04
 State: COMPLETE
-Active-Request: M03-R1
-Specification: milestones/M03-ingestion.md
+Active-Request: M04-R1
+Specification: milestones/M04-presentation.md
 ```
 
-## Authorization and carried evidence
+## Authorization and carried state
 
-Source: USER, 2026-10-03; full grant records/M00-preparation.md. Autonomous M01–M08 on redesign/astro-foundation with selected Sol 6.1 Max and verified checkpoint commits/pushes. Stop before M09 or an earlier genuine blocker/mandatory human gate. No protected-branch writes, deployment/publication, hosting/DNS, real messages, purchases/payments or other external effects beyond authorized checkpoints; no host-wide changes. Counts are planning targets only; owner chooses real work/series/order/publication/availability/prices at M09. Synthetic fixtures permitted only in isolated test/local preview paths, with no production leakage or actual-artwork representation. No real/confidential intake path authorized.
+Source: USER, 2026-10-03; full grant records/M00-preparation.md. Autonomous M01–M08 on redesign/astro-foundation using selected Sol 6.1 Max, with verified checkpoint commits/pushes; stop before M09 or earlier genuine blocker/required human gate. No protected-branch writes, deployment/publication, DNS/hosting, real messages, purchases/payments or other external effects beyond authorized checkpoints, nor host-wide changes. Planning counts only; owner chooses all real work/series/order/publication/availability/prices at M09. Fixtures isolated and clearly synthetic, never production output or the owner's actual artwork. No real/private intake authorized.
 
-M02 checkpoint **19bc4e6** committed/pushed successfully; initialization worktree/origin/remote/protected heads verified. Runtime remains temporary Node 22.23.3/npm 10.9.9 and actual openai/gpt-6.1-sol/max. M01 residual advisory triage remains docs/operations.md. M03 decoder review: npm view sharp version engines --json exited 0, current sharp **0.35.5**, Node >=20.9.0, outside the reported <0.35.4 native-decoder range. Use explicitly pinned direct ingestion dependency rather than Astro's older optional decoder; verify actual native capabilities and audit surfaces after install.
+M03 checkpoint **420792b** committed/pushed successfully. Initialization clean worktree/origin/remote/protected heads checked; protected refs remain 755df7f/3bc95c7. Temporary Node 22.23.3/npm 10.9.9, actual openai/gpt-6.1-sol/max. M03 full regression 44 pass; remaining nonpassing framework advisory surfaces in docs/operations.md. Presentation uses fixed attribute names and escaped structured JSON, no vulnerable optimizer/SSR/View Transitions. Browser prerequisite inspected: playwright **1.63.0**, Node >=20; pinned development dependency and browser download will be isolated to /tmp/opencode, without system-package/global changes.
 
-## M03-R1 — Non-destructive intake
+## M04-R1 — Artwork and authored presentation
 
-Source: DERIVED from milestones/M03-ingestion.md, docs/catalogue.md and docs/design.md under the USER execution grant.
+Source: DERIVED from milestones/M04-presentation.md, docs/design.md, docs/catalogue.md and docs/quality.md under USER grant.
 
-- [x] M03-R1-D01 Implement documented CLI/API with explicit single input/output, caller-supplied stable ID/title/medium/alt, dry-run, checksums, collision handling, repeat import and default-unpublished schema-valid draft.
-  Dependencies: M02 complete. No directory scanning, inferred metadata or writes to production content. Output must stay outside this public checkout.
-  Evidence: scripts/ingest.mjs and marked scripts/lib/ingestion.mjs; implementation ready for verification, no real input used.
-- [x] M03-R1-D02 Generate cached natural-ratio oriented JPEG/WebP and supported AVIF derivatives without upscaling; deliberate sRGB conversion, explicit untagged-profile assumption and only caller-approved creator/rights metadata.
-  Dependencies: D01, verified sharp 0.35.5 dependency. Strip source GPS/device metadata; preserve source bytes.
-  Evidence: Direct pinned sharp 0.35.5 installed; capability inspection confirms JPEG/WebP/AVIF and libvips 8.18.7/libheif 1.23.5. Runtime decoder assertions pending.
-- [x] M03-R1-D03 Make writes atomic per work, retain reviewed draft metadata on repeat, detect corrupt cache/source-ID conflicts and clean incomplete processing output.
-  Dependencies: D01, D02.
-  Evidence: Pending sibling stage/rename, source and derivative hashes, strict cache conflicts and whole reviewed-record preservation implemented. Hard-kill leftover limitation explicitly documented.
-- [x] M03-R1-D04 Add isolated image/orientation/profile/missing-metadata/repeat/collision/failure tests and one documented loopback import-to-preview exercise; document exact conventions in docs/catalogue.md/README.md.
-  Dependencies: D01–D03.
-  Evidence: tests/ingestion.test.mjs, scripts/lib/intake-preview.mjs and explicit-directory preview CLI; docs/catalogue.md/README.md document exercise and review boundaries. Actual test results pending.
-- [x] M03-R1-D05 Repair the synthetic EXIF-orientation fixture so it actually carries orientation 6, then rerun orientation/profile assertions.
-  Source: DERIVED from automated verification failure. Evidence: first node --test tests/ingestion.test.mjs exited 1 (4 pass/1 fail); sharp normalized the fixture's manually supplied EXIF Orientation to 1. The guard correctly rejected the invalid test precondition. Use the inspected sharp withMetadata orientation option for fixture generation, preserving ingestion's metadata-stripping path.
-  Resolution: withMetadata({ orientation: 6 }) then deliberate P3 tagging generates the intended test precondition; rerun exited 0, all 5 targeted tests passed. Assertions remain intact, including source orientation, rotated output, ICC conversion, private metadata removal and checksum preservation.
-- [x] M03-R1-P01 Preserve masters and production publication/privacy boundaries; never scan beyond selected files, overwrite reviewed metadata, publish automatically, retouch/crop/stylize/upscale or fabricate actual metadata.
+- [x] M04-R1-D01 Implement reusable responsive reproduction/artwork/project/Selected Work components; natural-ratio full/labelled additional views and factual optional metadata. Add optional explicit project dates, not inferred dates.
+  Dependencies: M03 complete. Preserve paper/ink/oxide and refine spacing/type.
+  Evidence: Reproduction/ArtworkView/ProjectView/SelectedWork and presentation helpers implemented, original palette preserved with reflow/focus refinements. Schema adds optional explicit project date only.
+- [x] M04-R1-D02 Generate stable artwork and authored ordered project pages, related links from authoritative membership, and curator-flag/order-only Selected Work. Handle aliases with primary canonical compatibility pages and exclude aliases from sitemap.
+  Dependencies: D01; public projection unchanged. Missing actual content yields truthful empty output.
+  Evidence: Existing artwork/work routes migrated; projects routes added; central projected data supplies ordered/related views; alias canonical/noindex compatibility and sitemap exclusion implemented.
+- [x] M04-R1-D03 Provide a simple accessible same-tab full-image link as enlargement; no unnecessary lightbox or forced cropping/autoplay.
+  Dependencies: D01. Native keyboard/touch link and browser back path to be tested.
+  Evidence: Reproduction uses a native same-tab derivative link and browser Back; keyboard/touch assertions pending.
+- [x] M04-R1-D04 Build a clearly labelled, noindex synthetic component preview only in disposable test roots, with no production input override/fixture import and no artist-identity representation.
+  Dependencies: D01–D03. Browser tooling uses pinned Playwright and temporary browser cache; missing host capabilities are a genuine blocker, not a passing skip.
+  Evidence: Disposable specimen-site helper requires a synthetic identity/banner before actual template builds; real production source has no fixture imports/overrides. Playwright 1.63.0 installed; loopback Chromium 153.0.8010.12 launched/closed successfully with temporary cache, no system changes.
+  Final review follow-up: add the promised noindex tag to normal synthetic-preview pages; aliases already noindex. This is a test-site courtesy, not a confidentiality claim or production robots change. Verify the tag in viewport tests.
+  Resolution: Mandatory tag added only in disposable layout copy; final targeted presentation run exits 0 (7/7 pass), including actual noindex assertions, with no production code change.
+- [x] M04-R1-D05 Add meaningful browser checks at 360/768/1440px for portrait/landscape/long metadata, natural ratios/reflow, project/related ordering, keyboard and touch; document component behavior.
+  Dependencies: D04.
+  Evidence: tests/presentation.test.mjs implements viewport/actual HTTP/keyboard/touch/order/alias checks; docs/design.md and README.md document behavior/tooling. Results pending.
+- [x] M04-R1-D06 Synchronize the touch test with native image navigation before asserting its URL, without weakening the required tap/return behavior.
+  Source: DERIVED from verification failure. Evidence: npm run verify exited 1; build/check pass, all 3 desktop viewport/keyboard/order checks and aliases pass, but immediate post-tap URL assertion failed (49 passing / 2 failed including parent). Wait for the actual expected navigation event; a missing navigation must still fail.
+  Resolution: waitForURL runs concurrently with tap; actual image navigation and native Back now pass, no sleeps/skips/weakened assertion. npm test rerun exited 0, all 51 tests pass.
+- [x] M04-R1-P01 Preserve stable URLs, central public predicate, natural proportions, identity/assets/framework/protected refs and external-effect/privacy boundaries.
   Source: USER and DERIVED. Dependencies: all changes.
-  Evidence: Synthetic checksum/dry-run/repeat/failure/shape tests and unchanged actual arrays/output pass. Intake rejects output inside the public checkout, reads only caller-selected export and explicit cache files, and never writes masters/production content.
-- [x] M03-R1-P02 Preserve identity/assets/framework major/protected refs/deployment controls and host settings; use only approved temporary synthetic inputs.
-  Source: USER. Dependencies: all operations.
-  Evidence: Intended diff limited to intake/tests/docs/dependency; all original routes/publication checks pass. Actual inputs only /tmp/opencode synthetic images. Protected refs/deployment/host configuration remain unchanged.
-- [x] M03-R1-V01 Verify dry-run produces no output, source checksums unchanged, repeat/collision/invalid/missing-metadata/failure cleanup and cache integrity behavior.
-  Dependencies: D04. Commands/environment/results pending.
-  Evidence: First targeted run exited 1; do not claim passing orientation/profile acceptance until D05 and rerun succeed.
-  Resolution evidence: Verified Node 22.23.3/npm 10.9.9, node --test tests/ingestion.test.mjs exited 0 (5/5 pass); all stated dry-run/repeat/review preservation/collision/corrupt cache/invalid/missing-ICC/exception cleanup/source-hash assertions pass.
-- [x] M03-R1-V02 Verify derivative dimensions/formats, orientations/profile conversion/metadata stripping and isolated import-to-loopback-preview; run applicable build/publication/route regression checks.
-  Dependencies: D04. Commands/environment/results pending. Human colour fidelity and real public intake explicitly deferred to M09.
-  Evidence: npm ci && npm run verify && npm run ingest -- --help exited 0 under verified Node 22.23.3/npm 10.9.9; 0 check diagnostics, 10 pages, 44 tests passed. Final targeted CLI exercise enhancement rerun exited 0 with 5 tests passed. Tests confirm rotated portrait, three aspect ratios, bounded JPEG/WebP/AVIF dimensions, tagged sRGB/synthetic swatch tolerance, approved rights only, and labelled loopback HTTP image response. No human colour judgment inferred.
-- [x] M03-R1-V03 Review decoder audit results, intended diff/canonical references/state/protected refs; checkpoint only after required technical acceptance.
+  Evidence: Actual browser ratios/routes/canonical/alias/source-order tests pass; public projection markers remain intact, no actual identity/assets/framework-major/deployment change. Protected refs rechecked unchanged.
+- [x] M04-R1-P02 Keep real catalogue/curation/professional content empty; fixtures cannot leak or count as actual work/visual approval.
+  Source: USER. Dependencies: all changes.
+  Evidence: Actual arrays remain []; actual output publication tests pass with no fixture/artwork/media data. Only separate discarded specimen sites receive synthetic data, identity/banner and robots; no artistic acceptance claimed.
+- [x] M04-R1-V01 Run viewport/keyboard/touch/project/related/full-image browser checks with actual browser/version/environment recorded; no skips as passes.
+  Dependencies: D05. Results pending.
+  Evidence: First full run fails touch synchronization; not a passing browser milestone yet. D06 resolves/diagnoses before rerun.
+  Resolution evidence: npm test exited 0 on Linux/Node 22.23.3/npm 10.9.9, Playwright 1.63.0/Chromium 153.0.8010.12; all 360/768/1440px (height 900, DPR 1) portrait/landscape/long title/metadata ratios/reflow, keyboard focus/full-image/Back, mobile 360x800 touch, authored order/related links/curation and aliases/sitemap checks pass. Independent temporary site is clearly labelled and synthetic, not real content approval.
+- [x] M04-R1-V02 Run applicable schema/publication/build/route regressions, verify fixture preview isolation and optional field honesty.
+  Dependencies: D05. Evidence: Original npm run verify check/build passed (0 diagnostics, 11 pages); only test synchronization changed subsequently. Final npm test exits 0, 51 tests pass including schema/ingestion/full publication/baseline routes and browser checks; fixtures absent from actual dist, empty real arrays, unsupported edition omitted. M04 does not claim full WCAG/human/colour acceptance.
+- [x] M04-R1-V03 Review intended diff/canonical reconciliation/state/protected refs and checkpoint after required technical checks.
   Dependencies: V01, V02, P01, P02.
-  Evidence: npm ls sharp --all exited 0 (direct 0.35.5, Astro optional 0.34.5). Filtered npm audit --json preserved actual exit 1: same 4 findings, vulnerable sharp confined to node_modules/astro/node_modules/sharp; no clean-audit claim. Native versions/capabilities and intended dependency diff inspected. git status/diff/check/log/ls-remote exited 0; protected refs 755df7f/3bc95c7 unchanged, development remote 19bc4e6. Canonical intake markers/reference docs and synchronized headers reviewed before checkpoint; transport recorded on next initialization/failure re-entry.
+  Evidence: Intended tracked/new-file diff reviewed; git status/diff/check/stat/log and ls-remote exit 0. Protected refs master 755df7f/backup 3bc95c7 unchanged; development remote M03 420792b. docs/design.md reconciles component/alias/fixture behavior, canonical publication references preserved, headers synchronized. All required checks precede checkpoint; transport recorded on next initialization/failure re-entry.
 
-No required M03 human gate; real colour/intake acceptance belongs to M09. No superseded IDs. Closeout: records/M03-ingestion.md. Next: M04 after verified M03 checkpoint push. Remaining audit limitations are not resolved by pipeline acceptance.
+No required M04 subjective human gate; owner presentation approval remains M09. No superseded IDs. Closeout records/M04-presentation.md; next M05 after verified M04 checkpoint push.

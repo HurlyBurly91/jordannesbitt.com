@@ -1,38 +1,26 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { artworks } from "@/data/artworks";
-import { dateLabel, dimensionLabel } from "@/lib/catalogue";
+import ArtworkView from "@/components/ArtworkView.astro";
+import { catalogue, artworks, projectsForArtwork } from "@/data/catalogue";
+import { dateLabel } from "@/lib/catalogue";
+import { relatedWorks } from "@/lib/presentation";
+import { identity } from "@/config/identity";
 
 export function getStaticPaths() {
-  return artworks
-    .map((artwork) => ({
-      params: { slug: artwork.slug },
-      props: { artwork },
-    }));
+  return artworks.flatMap((artwork) => [artwork.slug, ...artwork.aliases].map((slug) => ({
+    params: { slug }, props: { artwork, alias: slug !== artwork.slug },
+  })));
 }
-
-const { artwork } = Astro.props;
-const image = artwork.reproductions.find((image) => image.role === "primary");
-const details = [artwork.materials, ...artwork.dimensions.map(dimensionLabel)].filter(Boolean).join(" · ");
+const { artwork, alias } = Astro.props;
+const path = `/artwork/${artwork.slug}/`;
+const primary = artwork.reproductions.find((image) => image.role === "primary");
+const schema = {
+  "@context": "https://schema.org", "@type": "VisualArtwork", name: artwork.title,
+  url: new URL(path, identity.siteUrl).href, creator: { "@type": "Person", name: identity.name },
+  ...(artwork.materials ? { material: artwork.materials } : {}),
+  ...(primary ? { image: { "@type": "ImageObject", contentUrl: new URL(primary.src, identity.siteUrl).href, caption: primary.alt, width: primary.width, height: primary.height } } : {}),
+};
 ---
-
-<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by Jordan Nesbitt.`}>
-  <article class="artwork-detail">
-    <div class="artwork-image">
-      {image ? (
-        <img src={image.src} alt={image.alt} width={image.width} height={image.height} />
-      ) : (
-        <div class="art-placeholder portrait">
-          <span class="placeholder-label">{artwork.title}</span>
-        </div>
-      )}
-    </div>
-    <header>
-      <p class="eyebrow">{artwork.medium}</p>
-      <h1>{artwork.title}</h1>
-      <p>{dateLabel(artwork.date)}</p>
-      {details && <p class="artwork-details">{details}</p>}
-      <a class="text-link" href={`/work/${artwork.medium}`}>Back to {artwork.medium}</a>
-    </header>
-  </article>
+<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} schema={[schema]}>
+  <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)} />
 </BaseLayout>

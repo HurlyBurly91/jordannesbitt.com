@@ -1,0 +1,8 @@
+---
+import type { Artwork } from "@/lib/catalogue";
+import { selectedWorks } from "@/lib/presentation";
+import ArtworkCard from "./ArtworkCard.astro";
+interface Props { artworks: Artwork[]; }
+const selected = selectedWorks(Astro.props.artworks);
+---
+{selected.length ? <section class="work-grid selected-work" aria-label="Curated selected work">{selected.map((work) => <ArtworkCard artwork={work} />)}</section> : <p class="empty-state">No selected work is published yet.</p>}

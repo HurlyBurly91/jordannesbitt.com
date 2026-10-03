@@ -1,0 +1,8 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { projects } from "@/data/catalogue";
+---
+<BaseLayout title="Projects" description="Authored projects and series by Jordan Nesbitt.">
+  <header class="page-intro"><p class="eyebrow">Projects</p><h1>Projects and series.</h1></header>
+  {projects.length ? <ol class="project-index">{projects.map((project) => <li><a href={`/projects/${project.slug}/`}><h2>{project.title}</h2>{project.description && <p>{project.description}</p>}</a></li>)}</ol> : <p class="empty-state">No projects are published yet.</p>}
+</BaseLayout>

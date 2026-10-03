@@ -1,7 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import ArtworkCard from "@/components/ArtworkCard.astro";
-import ArtworkPlaceholder from "@/components/ArtworkPlaceholder.astro";
 import { artworks, media } from "@/data/artworks";
 
 export function getStaticPaths() {
@@ -26,17 +25,13 @@ const { item, works } = Astro.props;
   <header class="page-intro medium-page">
     <p class="eyebrow">Medium</p>
     <h1>{item.label}</h1>
-    <p>{works.length > 0 ? `${works.length} selected work${works.length === 1 ? "" : "s"}.` : "Selection in preparation."}</p>
+    <p>{works.length > 0 ? `${works.length} published work${works.length === 1 ? "" : "s"}.` : "No work is published in this medium yet."}</p>
   </header>
   {works.length > 0 ? (
     <section class="work-grid" aria-label={`${item.label} works`}>
       {works.map((work) => <ArtworkCard artwork={work} />)}
     </section>
   ) : (
-    <section class="editorial-grid archive-preview" aria-label={`${item.label} works in preparation`}>
-      <ArtworkPlaceholder label={`${item.label} 01`} variant="portrait" index={1} />
-      <ArtworkPlaceholder label={`${item.label} 02`} variant="landscape" index={2} />
-      <ArtworkPlaceholder label={`${item.label} 03`} variant="square" index={3} />
-    </section>
+    <p class="empty-state"><a class="text-link" href="/archive/">Browse the archive</a></p>
   )}
 </BaseLayout>

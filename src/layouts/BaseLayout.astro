@@ -1,15 +1,19 @@
 ---
 import "../styles/global.css";
 import { identity } from "@/config/identity";
+import { safeJson } from "@/lib/presentation";
 
 interface Props {
   title?: string;
   description?: string;
+  canonicalPath?: string;
+  schema?: unknown[];
+  alias?: boolean;
 }
 
-const { title, description = identity.descriptor } = Astro.props;
+const { title, description = identity.descriptor, canonicalPath = Astro.url.pathname, schema = [], alias = false } = Astro.props;
 const pageTitle = title ? `${title} — ${identity.name}` : identity.name;
-const canonical = new URL(Astro.url.pathname, identity.siteUrl);
+const canonical = new URL(canonicalPath, identity.siteUrl);
 const path = Astro.url.pathname;
 const isActive = (href: string) =>
   href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`);
@@ -39,7 +43,9 @@ const artistSchema = {
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <title>{pageTitle}</title>
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(artistSchema)} />
+    {alias && <meta name="robots" content="noindex,follow" />}
+    <script is:inline type="application/ld+json" set:html={safeJson(artistSchema)} />
+    {schema.map((item) => <script is:inline type="application/ld+json" set:html={safeJson(item)} />)}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -54,6 +60,7 @@ const artistSchema = {
       </nav>
     </header>
     <main id="main">
+      {alias && <p class="compatibility-note">Permanent address: <a href={canonicalPath}>{title}</a></p>}
       <slot />
     </main>
     <footer class="site-footer">

@@ -19,6 +19,12 @@ npm run test:smoke # tests the already-built dist through a loopback Astro previ
 npm run preview
 ```
 
+Install the test browser once with `npm run browser:install` (pinned Playwright,
+Chromium headless shell in `/tmp/opencode/jordannesbitt-browsers`; no system
+package installation). `npm run verify` includes actual browser checks against
+clearly labelled disposable synthetic sites. Missing browser capabilities fail
+verification rather than being silently skipped.
+
 If this machine's default Node is older, use the verified temporary runtime:
 
 ```bash

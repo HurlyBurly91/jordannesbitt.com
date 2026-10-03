@@ -93,7 +93,7 @@ export const artworkSchema = z.object({
   }
 });
 export const projectSchema = z.object({
-  ...base, description: text.optional(), memberIds: z.array(id).min(1),
+  ...base, date: dateSchema.optional(), description: text.optional(), memberIds: z.array(id).min(1),
 }).strict().superRefine((project, ctx) => {
   if (new Set(project.memberIds).size !== project.memberIds.length) ctx.addIssue({ code: "custom", message: "Duplicate project member" });
 });

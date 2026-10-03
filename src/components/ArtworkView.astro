@@ -1,0 +1,34 @@
+---
+import type { Artwork, Project } from "@/lib/catalogue";
+import { dateLabel, dimensionLabel, media } from "@/lib/catalogue";
+import Reproduction from "./Reproduction.astro";
+import ArtworkCard from "./ArtworkCard.astro";
+interface Props { artwork: Artwork; projects?: Project[]; related?: Artwork[]; }
+const { artwork, projects = [], related = [] } = Astro.props;
+const medium = media.find((item) => item.slug === artwork.medium)?.label ?? "Computational";
+---
+<article class="artwork-detail">
+  <div class="artwork-images">
+    {artwork.reproductions.map((image, index) => <Reproduction image={image} lead={index === 0} />)}
+  </div>
+  <header>
+    <p class="eyebrow">{medium}</p>
+    <h1>{artwork.title}</h1>
+    <p>{dateLabel(artwork.date)}</p>
+    <dl class="object-details">
+      <dt>Medium</dt><dd>{medium}</dd>
+      {artwork.techniques.length > 0 && <><dt>Process</dt><dd>{artwork.techniques.join(", ")}</dd></>}
+      {artwork.materials && <><dt>Materials</dt><dd>{artwork.materials}</dd></>}
+      {artwork.dimensions.map((size) => <><dt>{size.kind[0].toUpperCase() + size.kind.slice(1)} size</dt><dd>{dimensionLabel(size).split(": ").slice(1).join(": ")}</dd></>)}
+      {artwork.edition && <><dt>Edition</dt><dd>{artwork.edition.number ? `${artwork.edition.number} of ` : "Size: "}{artwork.edition.size}{artwork.edition.artistProofs !== undefined ? `; ${artwork.edition.artistProofs} artist’s proofs` : ""}</dd>
+        {artwork.edition.signed !== undefined && <><dt>Signature</dt><dd>{artwork.edition.signed ? "Signed" : "Unsigned"}</dd></>}
+        {artwork.edition.numbered !== undefined && <><dt>Numbering</dt><dd>{artwork.edition.numbered ? "Numbered" : "Unnumbered"}</dd></>}
+      </>}
+    </dl>
+    {artwork.description && <p class="object-description">{artwork.description}</p>}
+    {projects.length > 0 && <nav aria-label="Projects containing this work"><h2>In context</h2><ul>{projects.map((project) => <li><a class="text-link" href={`/projects/${project.slug}/`}>{project.title}</a></li>)}</ul></nav>}
+    <a class="text-link" href={artwork.medium === "computational" ? "/projects/" : `/work/${artwork.medium}/`}>Back to {artwork.medium === "computational" ? "projects" : medium}</a>
+    <slot />
+  </header>
+</article>
+{related.length > 0 && <section class="related-work" aria-labelledby="related-title"><header class="section-heading"><p class="eyebrow">Authored connections</p><h2 id="related-title">Related work</h2></header><div class="work-grid">{related.map((work) => <ArtworkCard artwork={work} />)}</div></section>}

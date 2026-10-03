@@ -3,7 +3,7 @@ import { once } from "node:events";
 import { createServer } from "node:net";
 import { setTimeout as delay } from "node:timers/promises";
 
-export async function startPreview() {
+export async function startPreview({ root = process.cwd() } = {}) {
   const reservation = createServer();
   reservation.listen(0, "127.0.0.1");
   await once(reservation, "listening");
@@ -12,7 +12,7 @@ export async function startPreview() {
 
   const child = spawn(process.execPath, [
     "node_modules/astro/astro.js", "preview", "--host", "127.0.0.1", "--port", String(port),
-  ], { env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"] });
+  ], { cwd: root, env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" }, stdio: ["ignore", "pipe", "pipe"] });
   let output = "";
   let spawnError;
   child.on("error", (error) => { spawnError = error; });

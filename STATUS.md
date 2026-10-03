@@ -1,10 +1,10 @@
 # Status
 
 ```yaml
-Milestone: M03
+Milestone: M04
 State: COMPLETE
-Active-Request: M03-R1
-Specification: milestones/M03-ingestion.md
+Active-Request: M04-R1
+Specification: milestones/M04-presentation.md
 ```
 
-M03 technical acceptance complete; records/M03-ingestion.md. Clean install/build/regressions: 44 tests pass; final actual-CLI intake/preview checks: 5 pass. Source preservation, cache/failure and synthetic orientation/profile checks verified; no real intake or colour approval. Next: M04 after M03 checkpoint push. Grant through M08: records/M00-preparation.md; residual audit findings remain nonpassing.
+M04 technical acceptance complete; records/M04-presentation.md. Build/check passed; all 51 tests pass; final fixture-noindex browser checks pass 7/7. Native full-image paths, authored ordering and viewport/keyboard/touch verified on synthetic sites. Real content empty; artistic approval M09. Next M05 after checkpoint push; grant through M08 in records/M00-preparation.md.
