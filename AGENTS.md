@@ -55,6 +55,24 @@ Run applicable tests and inspect their actual exit codes. Record command, enviro
 
 M01-M08 are technical delivery contracts; their completion does not approve public content or artistic presentation. Their explicitly deferred content and visual acceptance belongs to M09. This separation does not permit bypassing any human gate inside an active contract.
 
+## Model effort policy
+
+Default all agent work in this project to **GPT-6.1 Sol LOW**.
+
+Do not routinely ask the owner to choose an effort level. Unless the next specific task has unusually high risk in numerical/physics work, architecture, concurrency, security, destructive-data operations, or difficult debugging, assume LOW and continue.
+
+Only when such a high-risk section is actually next, interrupt the owner with exactly:
+
+`MODEL LEVEL: HIGH — <one-sentence reason>`
+
+Use HIGH only for that specific high-risk section. Escalating model effort does not expand repository, publication, destructive-action, external-effect, or human-approval authority.
+
+When that high-risk section is complete, explicitly say exactly:
+
+`MODEL LEVEL: LOW — safe to return to default.`
+
+Then resume LOW by default. If the current client/runtime cannot provide the requested level, report the precise limitation rather than silently substituting another model or effort level.
+
 ## Authorization and Git policy
 
 The owner requires explicit permission for repository modifications. The 2026-10-03 request authorizes this planning/state-machine setup on redesign/astro-foundation. It does NOT yet authorize website implementation or publication.

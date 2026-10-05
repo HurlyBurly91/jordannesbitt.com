@@ -124,3 +124,19 @@ Reconstruction:4491ff0 origin/development/protected refs match; no tracked chang
   Source: USER acceptance/DERIVED human gate. Dependencies: completed presentation implementation/checks/local review.
 
 M09 remains ACTIVE, not COMPLETE. M09-R1 human/content gates persist. Final source/rights/manifest/business approval and M10/M11 authority remain absent. This group replaces the rejected presentation behavior, not its preserved metadata or historical requirement meanings.
+
+## M09-R3 — Project-wide model effort default
+
+Source: USER, 2026-10-05. This is an operating-policy change, not website implementation or M09 visual/content acceptance.
+
+- [x] M09-R3-01 Default all project agent work to GPT-6.1 Sol LOW and do not routinely ask the owner to choose an effort level.
+  Source: USER.
+- [x] M09-R3-02 Escalate only when the next specific task has unusually high numerical/physics, architectural, concurrency, security, destructive-data, or difficult-debugging risk, and interrupt with exactly: `MODEL LEVEL: HIGH — <one-sentence reason>`.
+  Source: USER.
+- [x] M09-R3-03 After that high-risk section is complete, explicitly say exactly: `MODEL LEVEL: LOW — safe to return to default.`, then resume LOW by default.
+  Source: USER.
+- [x] M09-R3-P01 Model-effort escalation never enlarges authorization for Git, publication, destructive actions, external effects, or human approval gates.
+  Source: DERIVED from existing project policy.
+- [x] M09-R3-V01 Persist the policy in AGENTS.md without changing the active M09-R2 HUMAN_VERIFICATION gate or historical M01 model-verification evidence.
+  Evidence: AGENTS.md contains the project-wide model effort policy; STATUS.md remains M09 / ACTIVE / HUMAN_VERIFICATION / M09-R2.
+
