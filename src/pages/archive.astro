@@ -5,13 +5,16 @@ import { searchEntries, availabilityLabels } from "@/lib/search";
 import { filterEntries, defaultFilters } from "@/lib/archive";
 import { safeJson } from "@/lib/presentation";
 import { identity } from "@/config/identity";
+import CatalogueImage from "@/components/CatalogueImage.astro";
 const entries = searchEntries(catalogue);
+const primaryImages = new Map(catalogue.artworks.map((work) => [work.id, work.reproductions.find((image) => image.role === "primary")]));
 const sorted = filterEntries(entries, defaultFilters);
 const years = [...new Set(entries.map((entry) => String(entry.year ?? "unknown")))].sort((a, b) => Number(b) - Number(a));
 const availability = [...new Set(entries.map((entry) => entry.availability))];
 ---
 <BaseLayout title="Archive" description={`Published artwork archive of ${identity.name}.`}>
   <header class="page-intro archive-intro"><p class="eyebrow">Archive</p><h1>Published work.</h1><p>A comprehensive index, distinct from the authored selection.</p></header>
+  <details class="archive-filter-panel"><summary>Search and filters</summary>
   <form class="archive-filters" data-archive-form>
     <fieldset disabled><legend>Filter the published archive</legend>
       <div class="filter-fields">
@@ -25,6 +28,7 @@ const availability = [...new Set(entries.map((entry) => entry.availability))];
       <div class="filter-actions"><button type="submit">Apply filters</button><button type="button" data-reset>Reset filters</button></div>
     </fieldset>
   </form>
+  </details>
   <noscript><p class="no-script">Filters require JavaScript; all published works remain available below. You can also browse medium or project links.</p></noscript>
   {populatedMedia.length > 0 && <nav class="archive-medium-links" aria-label="Published media">{populatedMedia.map((item) => <a class="text-link" href={`/work/${item.slug}/`}>{item.label} ({item.count})</a>)}</nav>}
   <p class="archive-count" role="status" aria-live="polite" aria-atomic="true" data-result-count>{entries.length} result{entries.length === 1 ? "" : "s"} of {entries.length} published works</p>
@@ -32,7 +36,7 @@ const availability = [...new Set(entries.map((entry) => entry.availability))];
   <ol class="archive-list" data-archive-list>
     {sorted.map((entry) => <li class="archive-entry" data-work-id={entry.id}>
       <a class="archive-object" href={`/artwork/${entry.slug}/`}>
-        {entry.thumbnail && <img src={entry.thumbnail.src} alt={entry.thumbnail.alt} width={entry.thumbnail.width} height={entry.thumbnail.height} loading="lazy" decoding="async" />}
+        {primaryImages.get(entry.id) && <div class="card-image"><CatalogueImage image={primaryImages.get(entry.id)!} /></div>}
         <h2>{entry.title}</h2>
       </a>
       <p>{entry.date}<br />{entry.mediumLabel}</p><p>{availabilityLabels[entry.availability]}</p>

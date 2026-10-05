@@ -34,6 +34,7 @@ test("archive browser filters/reset/history/restoration/keyboard/no-JS and categ
   const context = await browser.newContext({ viewport: { width: 360, height: 800 } });
   const page = await context.newPage();
   await page.goto(`${site.origin}/archive/`);
+  await page.getByText("Search and filters", { exact: true }).click();
   await page.getByRole("button", { name: "Apply filters" }).waitFor();
   assert.equal(await page.locator(".archive-entry:visible").count(), 3);
   await page.getByLabel("Search", { exact: true }).fill("watercolour");
@@ -71,6 +72,7 @@ test("archive browser filters/reset/history/restoration/keyboard/no-JS and categ
   const noJs = await browser.newContext({ javaScriptEnabled: false });
   const plain = await noJs.newPage();
   await plain.goto(`${site.origin}/archive/`);
+  await plain.getByText("Search and filters", { exact: true }).click();
   assert.equal(await plain.locator(".archive-entry").count(), 3);
   assert.match(await plain.locator(".no-script").innerText(), /all published works remain available/i);
   assert.equal(await plain.getByRole("button", { name: "Apply filters" }).isDisabled(), true);
@@ -91,6 +93,7 @@ test("separate 1,000-record synthetic scaling exercise records build/runtime wit
   const context = await browser.newContext({ viewport: { width: 768, height: 900 } });
   const page = await context.newPage();
   await page.goto(`${site.origin}/archive/`);
+  await page.getByText("Search and filters", { exact: true }).click();
   await page.waitForFunction(() => !document.querySelector("fieldset").disabled);
   assert.equal(await page.locator(".archive-entry:visible").count(), 1000);
   const start = performance.now();

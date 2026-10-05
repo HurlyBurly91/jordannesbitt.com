@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import axe from "axe-core";
+import sharp from "sharp";
 import { assertBudget } from "./output-quality.mjs";
 
 export async function auditAccessibility(page) {
@@ -16,6 +17,21 @@ export async function prepareScreenshot(page) {
     for (const image of images) image.loading = "eager";
     await Promise.all(images.map((image) => image.decode()));
   });
+}
+export async function captureFullPage(page, path) {
+  const { width, height } = await page.evaluate(() => ({ width: innerWidth, height: Math.ceil(Math.max(document.body.scrollHeight, document.documentElement.scrollHeight)) }));
+  if (height <= 32000) {
+    await page.screenshot({ path, fullPage: true });
+    return { method: "native-full-page", width, height, tiles: 1 };
+  }
+  // Firefox caps screenshot height at32767. Document-coordinate clips keep the
+  // original CSS viewport/zoom; lossless joining changes neither layout nor scale.
+  const tiles = [];
+  for (let top = 0; top < height; top += 16000) {
+    tiles.push({ input: await page.screenshot({ fullPage: true, clip: { x: 0, y: top, width, height: Math.min(16000, height - top) } }), left: 0, top });
+  }
+  await sharp({ create: { width, height, channels: 3, background: "#f0ede5" } }).composite(tiles).png().toFile(path);
+  return { method: "lossless-document-tiles", width, height, tiles: tiles.length, tileLimit: 16000, viewportChanged: false, zoomChanged: false };
 }
 export async function measurePage(browser, origin, path) {
   const context = await browser.newContext({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 1 });

@@ -10,6 +10,7 @@ if (form && data && list) {
   const empty = document.querySelector<HTMLElement>("[data-no-results]")!;
   const rows = new Map([...list.querySelectorAll<HTMLElement>("[data-work-id]")].map((row) => [row.dataset.workId!, row]));
   const field = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+  const panel = form.closest<HTMLDetailsElement>("details");
   function render(filters: Filters) {
     const matches = filterEntries(entries, filters);
     const ids = new Set(matches.map((entry) => entry.id));
@@ -21,6 +22,7 @@ if (form && data && list) {
   }
   function apply(filters: Filters, history = true) {
     render(filters);
+    if (filterQuery(filters) && panel) panel.open = true;
     const url = `${location.pathname}${filterQuery(filters)}`;
     if (history && url !== `${location.pathname}${location.search}`) window.history.pushState(null, "", url);
   }

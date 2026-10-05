@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile, mkdtemp, rm } from "node:fs/promises";
+import sharp from "sharp";
 import { resolve } from "node:path";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { inspectOutput, elements, outputFiles } from "../scripts/lib/output-quality.mjs";
 import { releaseIssues, contentDigest } from "../scripts/lib/release-gate.mjs";
-import { auditAccessibility, measurePage, launchBrowser } from "../scripts/lib/browser-quality.mjs";
+import { auditAccessibility, measurePage, launchBrowser, captureFullPage } from "../scripts/lib/browser-quality.mjs";
 import { isolatedProject, repository } from "./helpers/build-project.mjs";
 import { specimenSite } from "./helpers/specimen-site.mjs";
 import { professionalCases } from "./fixtures/professional.mjs";
@@ -54,6 +55,25 @@ test("explicit local preview mode is noindex without changing production robot/d
     const robots = elements(await readFile(file, "utf8")).find((node) => node.tag === "meta" && node.attrs.name === "robots");
     assert.equal(robots?.attrs.content, "noindex,nofollow");
   }
+});
+
+test("long-page captures preserve every pixel boundary and the original viewport/zoom", async (t) => {
+  const directory = await mkdtemp("/tmp/opencode/jordannesbitt-capture-test-");
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const browser = await launchBrowser();
+  t.after(() => browser.close());
+  const page = await browser.newPage({ viewport: { width: 360, height: 900 }, deviceScaleFactor: 1 });
+  await page.setContent('<style>body{margin:0}.a{height:14000px;background:#a02020}.b{height:13000px;background:#207020}.c{height:13000px;background:#203070}</style><div class="a"></div><div class="b"></div><div class="c"></div>');
+  const file = resolve(directory, "synthetic-long-page.png");
+  await captureFullPage(page, file);
+  const metadata = await sharp(file).metadata();
+  assert.equal(metadata.width, 360);
+  assert.equal(metadata.height, 40000);
+  for (const [top, colour] of [[0, [160, 32, 32]], [13999, [160, 32, 32]], [14000, [32, 112, 32]], [15999, [32, 112, 32]], [16000, [32, 112, 32]], [26999, [32, 112, 32]], [27000, [32, 48, 112]], [31999, [32, 48, 112]], [32000, [32, 48, 112]], [39999, [32, 48, 112]]]) {
+    const pixel = await sharp(file).extract({ left: 10, top, width: 1, height: 1 }).removeAlpha().raw().toBuffer();
+    assert.deepEqual([...pixel], colour, `unaltered pixel at row ${top}`);
+  }
+  assert.deepEqual(await page.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scale: visualViewport.scale })), { width: 360, height: 900, dpr: 1, scale: 1 });
 });
 
 test("representative synthetic templates pass actual axe/reflow/keyboard and mobile lab budgets", async (t) => {

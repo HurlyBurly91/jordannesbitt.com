@@ -7,13 +7,15 @@ import MediaPlayer from "./MediaPlayer.astro";
 interface Props { artwork: Artwork; projects?: Project[]; related?: Artwork[]; }
 const { artwork, projects = [], related = [] } = Astro.props;
 const medium = mediumLabel(artwork.medium);
+const primary = artwork.reproductions.find((image) => image.role === "primary");
+const additional = artwork.reproductions.filter((image) => image !== primary);
 ---
 <article class="artwork-detail">
-  <div class="artwork-images">
+  <div class="artwork-images object-primary">
     {artwork.film && <MediaPlayer artwork={artwork} />}
-    {artwork.reproductions.map((image, index) => <Reproduction image={image} lead={index === 0} />)}
+    {primary && <Reproduction image={primary} lead mode="object" />}
   </div>
-  <header>
+  <header class="object-information">
     <p class="eyebrow">{medium}</p>
     <h1>{artwork.title}</h1>
     <p>{dateLabel(artwork.date)}</p>
@@ -37,5 +39,6 @@ const medium = mediumLabel(artwork.medium);
     <a class="text-link" href={artwork.medium === "computational" ? "/projects/" : `/work/${artwork.medium}/`}>Back to {artwork.medium === "computational" ? "projects" : medium}</a>
     <slot />
   </header>
+  {additional.length > 0 && <section class="object-additional artwork-images" aria-label="Additional reproductions">{additional.map((image) => <Reproduction image={image} mode="additional" sizes="(min-width: 760px) 42vw, 88vw" />)}</section>}
 </article>
-{related.length > 0 && <section class="related-work" aria-labelledby="related-title"><header class="section-heading"><p class="eyebrow">Authored connections</p><h2 id="related-title">Related work</h2></header><div class="work-grid">{related.map((work) => <ArtworkCard artwork={work} />)}</div></section>}
+{related.length > 0 && <section class="related-work" aria-labelledby="related-title"><header class="section-heading"><p class="eyebrow">Authored connections</p><h2 id="related-title">Related work</h2></header><div class="work-grid">{related.map((work) => <ArtworkCard artwork={work} mode="related" />)}</div></section>}

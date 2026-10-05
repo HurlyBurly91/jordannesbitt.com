@@ -3,6 +3,7 @@ import "../styles/global.css";
 import { identity } from "@/config/identity";
 import { safeJson, selectedWorks } from "@/lib/presentation";
 import { artworks, projects, films, availableWorks, professional } from "@/data/catalogue";
+import ImageInspection from "@/components/ImageInspection.astro";
 
 interface Props {
   title?: string;
@@ -81,5 +82,6 @@ const artistSchema = {
       <p>{identity.location}</p>
       <p>© {new Date().getFullYear()}</p>
     </footer>
+    <ImageInspection />
   </body>
 </html>

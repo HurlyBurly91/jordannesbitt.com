@@ -1,22 +1,22 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import Reproduction from "@/components/Reproduction.astro";
-import ArtworkCard from "@/components/ArtworkCard.astro";
 import { artworks, projects, professional, populatedMedia } from "@/data/catalogue";
 import { selectedWorks } from "@/lib/presentation";
 import { identity } from "@/config/identity";
+import SelectedWork from "@/components/SelectedWork.astro";
 const lead = artworks.find((work) => work.homepageLead);
 const image = lead?.reproductions.find((image) => image.role === "primary");
 const selected = selectedWorks(artworks);
 ---
 <BaseLayout image={image}>
   <section class="home-hero" aria-labelledby="home-title">
-    {lead && image && <div class="home-lead"><Reproduction image={image} lead sizes="92vw" /><p><a class="text-link" href={`/artwork/${lead.slug}/`}>{lead.title}</a></p></div>}
+    {lead && image && <div class="home-lead"><Reproduction image={image} lead mode="home" sizes="(min-width: 900px) 68vw, 88vw" /><p><a class="text-link" href={`/artwork/${lead.slug}/`}>{lead.title}</a></p></div>}
     <header class="home-identity"><h1 id="home-title">{identity.name}</h1><p>{identity.descriptor}</p><p>{identity.location}</p></header>
     {!lead && <p data-release-blocker="missing-homepage-lead">No reviewed homepage work is published yet.</p>}
   </section>
   {professional?.statement.length > 0 && <section class="home-statement">{professional.statement.map((paragraph) => <p>{paragraph}</p>)}</section>}
   {projects.length > 0 && <section class="home-projects"><header class="section-heading"><p class="eyebrow">Authored context</p><h2>Projects and series</h2></header><ol>{projects.map((project) => <li><a href={`/projects/${project.slug}/`}><h3>{project.title}</h3>{project.description && <p>{project.description}</p>}</a></li>)}</ol></section>}
-  {selected.length > 0 && <section class="home-selected"><header class="section-heading"><p class="eyebrow">Selection</p><h2>Selected work</h2></header><div class="work-grid">{selected.map((work) => <ArtworkCard artwork={work} />)}</div></section>}
+  {selected.length > 0 && <section class="home-selected"><header class="section-heading"><p class="eyebrow">Selection</p><h2>Selected work</h2></header><SelectedWork artworks={selected} /></section>}
   {populatedMedia.length > 0 && <nav class="archive-medium-links" aria-label="Published media">{populatedMedia.map((item) => <a class="text-link" href={`/work/${item.slug}/`}>{item.label}</a>)}</nav>}
 </BaseLayout>

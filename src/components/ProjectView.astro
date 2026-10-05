@@ -11,6 +11,6 @@ const { project, members } = Astro.props;
   {project.description && <p>{project.description}</p>}
 </header>
 <ol class="ordered-sequence" aria-label="Authored project sequence">
-  {members.map((work, index) => <li><span class="sequence-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><ArtworkCard artwork={work} /></li>)}
+  {members.map((work, index) => <li class:list={[index % 3 === 0 ? "sequence-feature" : "sequence-pair"]}><span class="sequence-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span><ArtworkCard artwork={work} mode="project" scale={index % 3 === 0 ? "feature" : "standard"} /></li>)}
 </ol>
 <p class="page-return"><a class="text-link" href="/projects/">All projects</a></p>

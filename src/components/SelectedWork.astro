@@ -5,4 +5,4 @@ import ArtworkCard from "./ArtworkCard.astro";
 interface Props { artworks: Artwork[]; }
 const selected = selectedWorks(Astro.props.artworks);
 ---
-{selected.length ? <section class="work-grid selected-work" aria-label="Curated selected work">{selected.map((work) => <ArtworkCard artwork={work} />)}</section> : <p class="empty-state">No selected work is published yet.</p>}
+{selected.length ? <section class="selected-work" aria-label="Curated selected work"><ol class="selected-sequence">{selected.map((work, index) => <li class:list={[index % 4 === 0 ? "selected-feature" : index % 4 === 1 ? "selected-companion" : "selected-pair"]}><ArtworkCard artwork={work} mode="selected" scale={index % 4 === 0 ? "feature" : index % 4 === 1 ? "companion" : "standard"} /></li>)}</ol></section> : <p class="empty-state">No selected work is published yet.</p>}

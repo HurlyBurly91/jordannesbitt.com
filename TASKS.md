@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R1
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R2
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -69,3 +69,57 @@ Pilot checkpoint cdcb339b5ef1086ece7111e74e0f64d9162faebf committed/pushed and m
   Source: DERIVED from contract and USER restrictions. Dependencies: later owner decisions; not a blocker to the currently authorized local pilot.
 
 No superseded IDs. No final M09 closeout while human/content gates remain unresolved. Authorized pilot implementation/automated work is finished; waiting at the genuine owner-review gate. Further feedback creates M09-R2 before coding. Snapshot, review summaries and registry are local artefacts referenced by path/evidence only, not competing public project state. Preserve/back up /tmp/opencode/jordannesbitt-m09/id-registry.json and the frozen snapshot before clearing temporary outputs; registry loss must not silently reassign neutral IDs.
+
+## M09-R2 — Owner-rejected scale and gallery/inspection redesign
+
+Source: USER, 2026-10-05. Owner visual review rejects current presentation: artwork is so oversized that even approximately20% Firefox zoom at1440px does not support usable browsing; same-tab full-image inspection failed. Explicit presentation-only follow-up authorizes generic component/CSS/inspection/review-code and documentation checkpoints on redesign/astro-foundation, using the **same frozen169-image snapshot** and unchanged private metadata/plan. No new permanent metadata, source editing, public assets, publishing/manifest/final selection/deployment/real services. Stop for owner visual acceptance, not M09 completion.
+
+Reconstruction:4491ff0 origin/development/protected refs match; no tracked changes. Unfamiliar empty untracked `jordannesbitt-art@0.1.0` inspected and preserved/not staged. Preserve M09-R1-H01 (classification/date/identity/group/colour choices remain unaccepted) and H02 (final public/content/rights/business gate); new H01 below is revised-presentation acceptance. HUMAN_VERIFICATION→FOLLOW_UP recorded before code, then IMPLEMENTATION→AUTOMATED_VERIFICATION→HUMAN_VERIFICATION. No requirement IDs silently replaced or human checks bypassed; historical simple-link technical tests do not constitute visual approval.
+
+- [x] M09-R2-01 Study primary behavioral/visual references https://www.davidzwirner.com/artists/amy-sillman and https://www.davidzwirner.com/artworks/lisa-yuskavage-in-the-company-of-models-bf6f5, with https://www.kentridge.studio/william-kentridge-projects/ secondary sequencing reference. Emulate hierarchy/restraint/scale/density/whitespace and overview-object separation only, never copy markup/CSS/branding/type/assets/prose/proprietary behavior.
+  Source: USER. Evidence: supplied pages and linked Sillman survey fetched/read-only viewed at1440×900/DPR1/visualViewport.scale1; local reference screenshots and dimension/hierarchy observations /tmp/opencode/jordannesbitt-reference-study. Contained work plane/subordinate modest object metadata, separated survey/context, quiet headers and authored project context observed. Their literal two-column survey, cookie/newsletter/gallery branding not imported; adapt requested3-column index behavior, not copy. No artwork/code/branding/prose added to app.
+- [x] M09-R2-02 Rework Archive/medium/browse as contained visual indexes: roughly3works across1440px,2intermediate/1narrow, concise subordinate metadata, deliberate density/whitespace and viewport/absolute caps. Several neighboring works visible at normal zoom; explicit editorial treatment for exceptional proportions only, no automatic crop/column-fill.
+  Source: USER.
+- [x] M09-R2-03 Selected Work is an ordered curated mode, larger than index but not homogeneous grid/oversized slideshow; intentional paired/varied rhythm and whitespace, neighbors perceptible, portraits bounded to useful viewport.
+  Source: USER. Preserve supplied sequence/selection; no new curation facts.
+- [x] M09-R2-04 Project/group pages preserve exact ordered/cross-medium members/context with restrained title/context and intentional larger moments alternating with smaller paired/grouped works; no invented series names/claims.
+  Source: USER.
+- [x] M09-R2-05 Individual object page initially shows complete primary work comfortably in viewport, normally about70–75vh accounting for header/context; contained intrinsic image, isolated inspection, compact subordinate separated metadata and useful additional views.
+  Source: USER. Only supplied actual metadata displayed; private review labels remain neutral disclosure, never permanent title.
+- [x] M09-R2-06 Replace failed same-tab inspection with deliberate accessible restrained lightbox/modal or demonstrably better separated inspection mode: explicit click/tap, complete natural ratio, larger-than-viewport inspection when useful, keyboard/touch, Escape close/focus return; optional direct derivative link remains. No zoom/cursor/animation spectacle, autoplay or browser-zoom conflict.
+  Source: USER.
+- [x] M09-R2-07 Rework homepage at100% around one dominant but bounded genuine work, concise existing identity/practice text, restrained project/selection introductions/whitespace and supported paths. Preserve paper/ink/oxide, serif+restrained sans/severe editorial identity; no Zwirner branding or gallery-only nav, SaaS cards/rounded panels/dashboard/ecommerce effects.
+  Source: USER.
+- [x] M09-R2-08 Regenerate private real-image review at **100% browser zoom** for1440/768/360, each covering home/drawing-medium/archive/Selected Work/allprovisionalgroup samples/portrait/landscape/square object and opened inspection. Screenshots must demonstrate ordinary scale, not compensation by zoom-out.
+  Source: USER. Exact frozen snapshot checksum2abd063c70708d9b2ce9cf9b5c858de1cd735baf7be0d8ae88beb81a9efeb57e and existing private visual-plan metadata unchanged. Record CSSpx viewport/deviceScaleFactor/visualViewport scale; Firefox100% evidence if available, no host installation/configuration changes.
+- [x] M09-R2-09 Re-run full/relevant real pilot checks: no crop/distortion, keyboard/Escape/focus restoration/touch, archive filters/reset, no-JS basic browsing, privacy/publication isolation and reflow; release:check remains BLOCKED_CONTENT without gate relaxation.
+  Source: USER.
+- [~] M09-R2-10 Return ACTIVE/HUMAN_VERIFICATION with new exact local package/screenshots, before/after sizing/layout architecture summary, remaining presentation ambiguities and observed test results; confirm code/docs-only Git checkpoint with no real assets/private metadata. Do not mark M09 complete.
+  Source: USER.
+- [x] M09-R2-P01 Preserve original/export aspect ratio/full edges, no destructive crop/distortion/automatic white-balance/perspective/retouch/room views. Square export framing does not imply physical artwork shape.
+  Source: USER.
+- [x] M09-R2-P02 Presentation only: leave provisional dates/classifications/permanent titles/physicaldimensions/edition/prices/availability/group names/member order/publication/manifest/rights/biography/CV/recipient unchanged. Provisional groups never promoted. Preserve identity config/predicate/major/master/backup/hosting/DNS/external-effect/private-source boundaries and existing unfamiliar file.
+  Source: USER and DERIVED.
+- [x] M09-R2-D01 Implement presentation-mode components/CSS size tokens, dense browse grid, editorial sequence/project rhythm, compact object/header/metadata and restrained home; generic explicit display variants, not private data mutation.
+  Source: DERIVED. Dependencies:01 reference study/requirement capture.
+  Evidence: shared natural-ratio CatalogueImage,3/2/1browse planes, responsive archive/native filter disclosure, separate editorial slots and compact primary/additional/home planes. Home/narrow-object intrinsic-height refinement verified in final V01/V02; metadata/member order unchanged. Not owner aesthetic acceptance.
+- [x] M09-R2-D02 Implement reusable native-dialog inspection controls/fit-versus-larger view, accessible fallback and precise focus/keyboard/touch/reduced-motion lifecycle; keep production static-first/minimal JS.
+  Source: DERIVED. Dependencies:05,06.
+  Evidence: native fit/pixel-scroll/Close/Escape/Tab-boundary/focus/scroll restoration and direct/noJS fallback verified by targeted7/7presentation tests and final full/real checks. Temporary local Firefox155.0 available/verified, no host configuration changes. Initial lifecycle/driver failures and corrections retained in records/M09-R2-presentation-checkpoint.md.
+- [x] M09-R2-D03 Update synthetic/full and real-pilot verification/capture to assert normal100% scale/density/object bounds/inspection lifecycle and capture opened modal; freeze same snapshot/plan, store all real artifacts locally.
+  Source: DERIVED. Dependencies:D01,D02.
+  Evidence: shared bounds/lifecycle checker, synthetic shapes/long titles, real viewport/fullpage/fit/pixel captures and same-snapshot/private-fact comparator verified. Lossless long-page tile capture preserves viewport/zoom/pixels; explicit browser availability/limits. Coverage routes never alter pilot/group metadata.
+- [x] M09-R2-V01 Run relevant/full automated checks and deliberate inspection/navigation/layout regressions; record commands/runtime/exit/failures, never fake tool/browser passes.
+  Source: DERIVED. Dependencies:D01–D03.
+  Final evidence: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run verify'` exits0;71/71pass,0fail/skip/diagnostics. Linux/Astro5.18.2/Chromium153.0.8010.12/axe4.13.0/loopback/DPR1. Includes shapes/long-title/containment/inspection/archive/metadata/private-boundary/cache/release/budgets;40000px capture endpoints/tile pixels/unchanged viewport and no-excess-empty-plane regression. Actual empty13pages/109localreferences/0artworkimages/maxJS2049bytesgzip. Initial failures/intermediate reruns retained in checkpoint record; no field/full-WCAG/human claim.
+- [x] M09-R2-V02 Generate/inspect real100%-zoom viewport and fullpage screenshots plus modal states for allrequested classes, no artist/rights/offer assertions or image mutation, unchanged snapshot/plan/source dates/classifications; preserve production empty/BLOCKED_CONTENT and report before/after actual pixel bounds.
+  Source: DERIVED. Dependencies:V01.
+  Failed Firefox-height run/intermediate mobile-plane review and corrections are retained in the checkpoint record; neither constitutes final passing evidence.
+  Final evidence: same exact review command with `--baseline /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-03T20-13-49-968Z-546dd887` exits0; current /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-05T15-35-15-731Z-8bc9cae4.169inputs/10unchangedrepresentatives/312PNGs/138pagechecks/18openedfit+pixelinspections;bothbrowsers/all3viewports scale1/DPR1;0axeviolations/0reflow/0unapprovedassertions across188HTMLpages. Snapshot/plan checksums unchanged; exact private facts digest e1e80ae43465082759971ac7805e2b26fed39b3c51a28d8a772ea21b92f09faa matches before package;169/169sourcebytes+mtimepreserved. Actual final home/mobile object/768selection/1440archive/all5fullgroupsequences/squareobject/portrait+landscapefit and pixel states inspected alongside earlier Chromium views.1440drawing max image1152→306px,selection1152→432px;primary72svhcap and whole-image viewport fit verified. Real keyboard/tap/Tab/Escape/Close/focus/scroll, facets/reset and noJS direct-image/back pass. Three-run realmobile mediansLCP460–920ms/CLS0/initialtransfer17835–90916bytes; not field/physicalcolour/owner approval. Final owner-summary capture-count wording corrected to312; MJSsyntax check exits0; final actual release exits1/BLOCKED_CONTENT/same8issues. No aesthetic acceptance inferred.
+- [~] M09-R2-V03 Reconcile design/quality docs and state, inspect/stage only intended code/docs (not unfamiliar file/realdata), commit/push verified intermediate checkpoint on development branch, stop at new H01 with olderH checks retained.
+  Source: DERIVED. Dependencies:V01,V02,P01,P02.
+  Pre-checkpoint evidence: design/quality reconciled and intermediate records/M09-R2-presentation-checkpoint.md added (not closeout). Intended runtime/review/test diff and allnewfiles inspected; git diff --check exits0. Actual arrays/identity/media/manifest/package major/predicate/release guards unchanged. Origin4491ff0/master755df7f/backup3bc95c7 rechecked; unfamiliar empty file remains untracked/unstaged. Only named code/docs will be staged; verified checkpoint transport and synchronized human phase next.
+- [ ] M09-R2-H01 Owner accepts/revises professional normal-scale presentation, index density/editorial rhythm/object fit/inspection and recognizable identity against reference; automation cannot declare aesthetic acceptance.
+  Source: USER acceptance/DERIVED human gate. Dependencies: completed presentation implementation/checks/local review.
+
+M09 remains ACTIVE, not COMPLETE. M09-R1 human/content gates persist. Final source/rights/manifest/business approval and M10/M11 authority remain absent. This group replaces the rejected presentation behavior, not its preserved metadata or historical requirement meanings.
