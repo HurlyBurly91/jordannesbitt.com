@@ -7,8 +7,8 @@ Date:2026-10-05. **Intermediate checkpoint only, not an M09 closeout.** Contract
 The owner rejected oversized real-image browsing and same-tab enlargement, authorizing presentation-only generic code/docs and development-branch checkpoints. Grant is retained in records/M00-preparation.md and TASKS.md. Reference study adapted hierarchy/restraint/containment only; no reference code/branding/prose/assets imported.
 
 - M09-R2-01–09, P01/P02, D01–D03 and V01/V02: technically verified with evidence below; not artistic/content acceptance.
-- M09-R2-10/V03: checkpoint transport and synchronized human-review state are recorded after commit/push verification.
-- M09-R2-H01: owner normal-scale visual/inspection acceptance remains required.
+- M09-R2-10/V03: verified development checkpoint transport and synchronized ACTIVE/HUMAN_VERIFICATION state; evidence below.
+- M09-R2-H01: AWAITING_HUMAN normal-scale visual/inspection acceptance.
 - M09-R1-H01: classifications/date proxies/identity/group/colour decisions still unaccepted.
 - M09-R1-H02: final public-source/content/rights/manifest/business approval still unresolved.
 - No superseded IDs; historical simple-link tests are not owner presentation approval.
@@ -49,4 +49,8 @@ First real run `review-2026-10-05T15-14-56-641Z-8a83f0e7` failed Firefox's32767p
 
 M09-R2-H01 must accept/revise ordinary-scale density/editorial rhythm/object fit/inspection/recognizable identity. All R1 metadata/colour/public-source/content/rights/business gates persist; no final launch manifest or M10/M11 grant exists. Private neutral review labels/disclosure add more text than eventual approved public content. Export lighting/framing/untagged-sRGB assumptions and uncertain relationships remain unchanged. Headless/emulated-touch checks do not prove physical-device/full-WCAG/assistive-technology/physical-art colour/owner acceptance. Existing nonpassing dependency-audit limitations remain in docs/operations.md, not resolved or newly claimed passing here.
 
-Only named code/docs will be staged. The unfamiliar empty `jordannesbitt-art@0.1.0` remains untouched/untracked. Development origin was verified at4491ff0 before changes; master755df7f and backup3bc95c7 match preserved refs. Final checkpoint/transport evidence follows verified commit/push, with ACTIVE/HUMAN_VERIFICATION and no M09 COMPLETE assertion.
+Only named26code/docs paths were staged. The unfamiliar empty `jordannesbitt-art@0.1.0` remains untouched/untracked. Development origin was verified at4491ff0 before changes; master755df7f and backup3bc95c7 match preserved refs.
+
+## Verified checkpoint transport
+
+`git diff --check`, intended tracked/new-file/durable-state inspection, `git diff --cached --check`, staged stat/name inventory and recent log checks passed. `git commit -m "Add M09 gallery-scale layouts and accessible image inspection" && git push origin redesign/astro-foundation` exits0: **96241ff1ba91a1f249f9d47a0b4f8d7069b4dee8**,26code/docs files, no real assets/private source metadata/production catalogue/identity/manifest changes. `git rev-parse HEAD`, `git status --short`, `git show --format=short --stat HEAD` and `git ls-remote origin refs/heads/redesign/astro-foundation refs/heads/master refs/heads/backup/pre-astro-redesign` exit0: development/origin match96241ff, protected refs unchanged, no tracked pending changes and only the preserved empty untracked file. Final documentation transport records ACTIVE/HUMAN_VERIFICATION and the new awaiting-owner gate; M09 is not COMPLETE or closed out.

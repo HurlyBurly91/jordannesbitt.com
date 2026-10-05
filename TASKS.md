@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R2
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -94,7 +94,7 @@ Reconstruction:4491ff0 origin/development/protected refs match; no tracked chang
   Source: USER. Exact frozen snapshot checksum2abd063c70708d9b2ce9cf9b5c858de1cd735baf7be0d8ae88beb81a9efeb57e and existing private visual-plan metadata unchanged. Record CSSpx viewport/deviceScaleFactor/visualViewport scale; Firefox100% evidence if available, no host installation/configuration changes.
 - [x] M09-R2-09 Re-run full/relevant real pilot checks: no crop/distortion, keyboard/Escape/focus restoration/touch, archive filters/reset, no-JS basic browsing, privacy/publication isolation and reflow; release:check remains BLOCKED_CONTENT without gate relaxation.
   Source: USER.
-- [~] M09-R2-10 Return ACTIVE/HUMAN_VERIFICATION with new exact local package/screenshots, before/after sizing/layout architecture summary, remaining presentation ambiguities and observed test results; confirm code/docs-only Git checkpoint with no real assets/private metadata. Do not mark M09 complete.
+- [x] M09-R2-10 Return ACTIVE/HUMAN_VERIFICATION with new exact local package/screenshots, before/after sizing/layout architecture summary, remaining presentation ambiguities and observed test results; confirm code/docs-only Git checkpoint with no real assets/private metadata. Do not mark M09 complete.
   Source: USER.
 - [x] M09-R2-P01 Preserve original/export aspect ratio/full edges, no destructive crop/distortion/automatic white-balance/perspective/retouch/room views. Square export framing does not imply physical artwork shape.
   Source: USER.
@@ -116,10 +116,11 @@ Reconstruction:4491ff0 origin/development/protected refs match; no tracked chang
   Source: DERIVED. Dependencies:V01.
   Failed Firefox-height run/intermediate mobile-plane review and corrections are retained in the checkpoint record; neither constitutes final passing evidence.
   Final evidence: same exact review command with `--baseline /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-03T20-13-49-968Z-546dd887` exits0; current /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-05T15-35-15-731Z-8bc9cae4.169inputs/10unchangedrepresentatives/312PNGs/138pagechecks/18openedfit+pixelinspections;bothbrowsers/all3viewports scale1/DPR1;0axeviolations/0reflow/0unapprovedassertions across188HTMLpages. Snapshot/plan checksums unchanged; exact private facts digest e1e80ae43465082759971ac7805e2b26fed39b3c51a28d8a772ea21b92f09faa matches before package;169/169sourcebytes+mtimepreserved. Actual final home/mobile object/768selection/1440archive/all5fullgroupsequences/squareobject/portrait+landscapefit and pixel states inspected alongside earlier Chromium views.1440drawing max image1152→306px,selection1152→432px;primary72svhcap and whole-image viewport fit verified. Real keyboard/tap/Tab/Escape/Close/focus/scroll, facets/reset and noJS direct-image/back pass. Three-run realmobile mediansLCP460–920ms/CLS0/initialtransfer17835–90916bytes; not field/physicalcolour/owner approval. Final owner-summary capture-count wording corrected to312; MJSsyntax check exits0; final actual release exits1/BLOCKED_CONTENT/same8issues. No aesthetic acceptance inferred.
-- [~] M09-R2-V03 Reconcile design/quality docs and state, inspect/stage only intended code/docs (not unfamiliar file/realdata), commit/push verified intermediate checkpoint on development branch, stop at new H01 with olderH checks retained.
+- [x] M09-R2-V03 Reconcile design/quality docs and state, inspect/stage only intended code/docs (not unfamiliar file/realdata), commit/push verified intermediate checkpoint on development branch, stop at new H01 with olderH checks retained.
   Source: DERIVED. Dependencies:V01,V02,P01,P02.
   Pre-checkpoint evidence: design/quality reconciled and intermediate records/M09-R2-presentation-checkpoint.md added (not closeout). Intended runtime/review/test diff and allnewfiles inspected; git diff --check exits0. Actual arrays/identity/media/manifest/package major/predicate/release guards unchanged. Origin4491ff0/master755df7f/backup3bc95c7 rechecked; unfamiliar empty file remains untracked/unstaged. Only named code/docs will be staged; verified checkpoint transport and synchronized human phase next.
-- [ ] M09-R2-H01 Owner accepts/revises professional normal-scale presentation, index density/editorial rhythm/object fit/inspection and recognizable identity against reference; automation cannot declare aesthetic acceptance.
+  Transport evidence: named26code/docs paths staged/reviewed; git diff --cached --check exits0; commit/push exits0 for96241ff1ba91a1f249f9d47a0b4f8d7069b4dee8 on redesign/astro-foundation. Git show/status/ls-remote exits0, matching development head; master755df7f/backup3bc95c7 unchanged; only unfamiliar empty file remains untracked. No real assets/private metadata/actualcontent staged. Final canonical headers now ACTIVE/HUMAN_VERIFICATION; intermediate record explicitly not closeout. Stop at owner visual gate; further feedback creates M09-R3 before implementation.
+- [H] M09-R2-H01 Owner accepts/revises professional normal-scale presentation, index density/editorial rhythm/object fit/inspection and recognizable identity against reference; automation cannot declare aesthetic acceptance.
   Source: USER acceptance/DERIVED human gate. Dependencies: completed presentation implementation/checks/local review.
 
 M09 remains ACTIVE, not COMPLETE. M09-R1 human/content gates persist. Final source/rights/manifest/business approval and M10/M11 authority remain absent. This group replaces the rejected presentation behavior, not its preserved metadata or historical requirement meanings.
