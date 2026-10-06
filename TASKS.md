@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
+Phase: AUTOMATED_VERIFICATION
 Active-Request: M09-R4
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -155,7 +155,7 @@ Source: USER, 2026-10-05. The disposable /tmp review state was lost before owner
   Source: DERIVED.
 - [~] M09-R4-V01 Run targeted/full tests proving the persistent default, allowed test scratch, and unchanged release/privacy behavior.
   Source: DERIVED.
-  Planned verification: branch CI/full `npm run verify` under Node 22 plus strict release behavior; evidence recorded after the pushed implementation checkpoint.
+  Evidence so far: GitHub Actions run 37392445611 completed successfully under Node 22 through `npm ci` and `npm run build`. Full local `npm run verify`/strict release behavior remains to be run before V01 is marked VERIFIED.
 - [ ] M09-R4-V02 Commit/push only intended code/tests/docs/state, then return to the unresolved M09-R2 owner visual-review gate.
   Source: DERIVED.
 
