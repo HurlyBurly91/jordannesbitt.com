@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R10
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -453,7 +453,8 @@ Reconstruction: clean HEAD/origin476a5ff match;master755df7f/backup3bc95c7 prese
 - [x] M09-R10-V01 Run relevant/full/state/release checks,inspect actual error/focus/preview/restart/private/public-preservation proof;record results/limitations without human acceptance.
   Source: DERIVED. Dependencies:D01,D02.
   Final evidence: Node22.23.3/npm10.9.9 full `npm run verify` exits0,statecheckPASS,84/84tests/0fail-skip-diagnostics;previous83 retained plus a–j case. Actualempty13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/backend/models/intake/colour/export/policyarchitecture preservation diff exits0. Final `npm run studio:validation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/validation-demo-2026-10-06T20-16-18-903Z-76a94b0d`,11steps/22PNGs,1440×900/DPR1/normalzoom,0axeviolations/incomplete/reflow;owner ExactinvalidSave and invalidPreview actionable/localYearerror-focus/unsavedpreservation→explicitUnknown→Save→actualcomponentPreview/restart pass. Authoritativeownerstate/registry bytes and169/169sourcebytesmtime unchanged;allrealdata private,no sourceapproval/actualexport. Strictrelease remains1/BLOCKED_CONTENT/same8issues. Initial desktop error-grid placement refined below Year before final full/demo reruns. R8-H01 FAILED/notaccepted;no owner usability/colour/public-content acceptance inferred.
-- [~] M09-R10-V02 Reconcile docs/IDs/evidence,review intended code-docs-only checkpoint/transport and return exact start/demo commands plus short owner test at human gate.
+- [x] M09-R10-V02 Reconcile docs/IDs/evidence,review intended code-docs-only checkpoint/transport and return exact start/demo commands plus short owner test at human gate.
   Source: DERIVED. Dependencies:V01.
-- [ ] M09-R10-H01 Owner repeats screencast-invalidDate→Save/Preview actionableerror/focus→validYearORUnknown→Save/Preview/restart usability;review absence of unrelated mandatory optional fields. Automation is not acceptance;R8-H01/older factual/final-public gates stay unresolved.
+  Handoff: docs/studio/guide andintermediate records/M09-R10-actionable-validation-checkpoint.md reconciled;no finalcloseout. Source/state/protectedrefs/intenteddiff/staged12code-tests-docs-onlypaths/cachedcheck reviewed. Commit/push exits0 for57cfc83c654f4132caf26e7831ef62805d3a6530 withmatchingorigin;master755df7f/backup3bc95c7 preserved. No actualmedia/draft/private metadata/rights/sourcecontent staged;no publicsrc/backend/schema/intake/colour/security/state-architecture changes. Final ACTIVE/HUMAN_VERIFICATION/M09-R10 withOwnerH01pending andR8-H01explicitFAILED/unaccepted;startupNode22npmrunstudio,exactprivatevalidationdemo path inV01. OwnertestExactblank→clickSave/Preview→Yearlocalerror/focus→validYearORUnknown→Save→currentPreview/restart;no sourceexport/launchapproval.
+- [H] M09-R10-H01 Owner repeats screencast-invalidDate→Save/Preview actionableerror/focus→validYearORUnknown→Save/Preview/restart usability;review absence of unrelated mandatory optional fields. Automation is not acceptance;R8-H01/older factual/final-public gates stay unresolved.
   Source: USER/DERIVED. Dependencies:V02.

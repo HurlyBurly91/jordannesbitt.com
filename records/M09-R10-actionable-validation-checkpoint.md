@@ -4,7 +4,7 @@ Intermediate technical evidence only,not M09 closeout or owner acceptance. **M09
 
 ## Delivered semantics and IDs
 
-R10-01–08/P01/P02/D01/D02/V01 technically verified;V02 records final checkpoint/humanpointer. H01 awaits owner repeated workflow. Save and Preview remain actionable for field-invalid edits. Save attempt shows concise action summary,field-local aria-invalid/describederror,opens containingAdvanced ifneeded,scrolls/focuses firstinvalidcontrol and keeps allotherunsavedvalues. Correction clears relevant clienterrors withoutrefresh;in-flight operations alone temporarilydisablewithstatus.
+R10-01–08/P01/P02/D01/D02/V01/V02 technically verified;H01 AWAITING_HUMAN repeated ownerworkflow. Save and Preview remain actionable for field-invalid edits. Save attempt shows concise action summary,field-local aria-invalid/describederror,opens containingAdvanced ifneeded,scrolls/focuses firstinvalidcontrol and keeps allotherunsavedvalues. Correction clears relevant clienterrors withoutrefresh;in-flight operations alone temporarilydisablewithstatus.
 
 Exact/Circa stillrequire supported integerYear1–9999;Unknown requiresnone. Enteredmalformed/out-of-range values remain visible for correction,not silently converted toUnknown. Private optional dimensions/price/availability/edition/materials/process/project/rights/sourceapproval remain unknown/absent whenunsupplied. Chosen partialfacts stillvalidatehonestly. Client-visible feedback replaces invisible native-submit suppression;unchanged canonicalserver validation governsstorage.
 
@@ -36,3 +36,7 @@ Allrealimage/draft/source-linkedprivate metadata/screenshots/report/manifests pe
 ## Human gate
 
 OwnermustrepeatExactinvalidYear→Save/Preview→localerror/focus→validYearORUnknown→Save→Preview/restart and review clarity/optional-fact handling. R8-H01 remainsFAILED/unaccepted,not fabricatedpassedafterautomation. R10-H01 and older actualcolour/rights/content/business/curation/launchmanifest/finalpublicvisual checks remainunresolved. Genericcode/tests/docs-only checkpointunderexistingboundedgrant,then ACTIVE/HUMAN_VERIFICATION/M09-R10;no finalmilestonecloseout/COMPLETE/M10/M11authority.
+
+## Verified checkpoint transport
+
+Intenteddiff/domain/IDs/state/newrecord/status/recentlog/origin/protectedrefs and staged12code-tests-docs-onlypathinventory/cached--check inspected. Commit/push exits0 for **57cfc83c654f4132caf26e7831ef62805d3a6530**, `Make Studio Save and Preview validation actionable`, matchingdevelopmentorigin;master755df7f/backup3bc95c7 unchanged andtrackedworktreeclean. No real assets/private draftmetadata/actualpubliccontent/source-rightsapproval/launchmanifest staged. Publicsrc/canonicalbackend/ingestion-colour/export-security/state-machinepolicy untouched. Finaldocumentation preserves ACTIVE/HUMAN_VERIFICATION/M09-R10,R8-H01 FAILED/notaccepted,H01awaitingowner andalloldergates;neverM09COMPLETE.
