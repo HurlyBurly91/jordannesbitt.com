@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R8
+Phase: FOLLOW_UP
+Active-Request: M09-R9
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R8 verified83tests/0diagnostics,explicitscopedcolourdecision→readyfocusededitor→Save/restartpersisted. Actualuntagged6step/12PNGsequence/0axe-incomplete-reflow at /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270;ownerstate/registry/169sources preserved. Canonical colour/model/publicsite/export unchanged;readonlyadapter only. Docs/checkpoint then HUMAN_VERIFICATION;oldergates/BLOCKED_CONTENT persist,no COMPLETE.
+M09-R9 captures the owner-authorized migration of the existing durable-state control plane to the experimental experience-augmented architecture. Preserve all live project truth and unresolved M09-R8/older human gates; this migration changes recovery/precedent/checkpoint policy only, not website behavior or publication authority. Reference: durable-state-machine commit 6b3ebc329de5355f6a06c3725438001999786cc8.

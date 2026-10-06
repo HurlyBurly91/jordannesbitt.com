@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R8
+Phase: FOLLOW_UP
+Active-Request: M09-R9
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -370,3 +370,42 @@ Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownempt
   Source: DERIVED. Dependencies:V01.
 - [ ] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
   Source: USER/DERIVED. Dependencies:V02. Older human/final-content/manual checks preserved.
+
+## M09-R9 — Experience-augmented durable-state migration
+
+Source: USER, 2026-10-06. Migrate this repository's existing durable-state control plane in place to the current experimental experience-augmented architecture from HurlyBurly91/durable-state-machine at reference commit `6b3ebc329de5355f6a06c3725438001999786cc8`, using `DURABLE_STATE_MACHINE_EXPERIENCE_AUGMENTED.md` and `templates/experience-augmented/`. This is a state-machine migration only, not a website/product change. Owner explicitly confirmed HIGH for this persistent-architecture section.
+
+- [~] M09-R9-01 Refactor existing durable-state policy in place to the experience-augmented architecture without template-resetting the live project.
+  Source: USER.
+  Requirement: Preserve project-specific operating policy and merge overlapping rules rather than blindly appending duplicate policy sections.
+- [ ] M09-R9-02 Preserve all project truth: PROJECT roadmap; milestone contracts; current M09 identity; unresolved M09-R8 and older human gates; stable request/requirement/task IDs; supersession links; blockers; verification evidence; records; docs; canonical source references; Git/privacy/publication/model-effort rules.
+  Source: USER.
+- [ ] M09-R9-03 Add the optional advisory experience layer so baseline durable state remains sufficient when experience retrieval is disabled.
+  Source: USER.
+  Requirement: Experience precedent is subordinate to explicit requirements/current evidence and is not required for reconstruction, verification, human gates, milestone completion or closeout.
+- [ ] M09-R9-04 Adopt bounded investigative-loop granularity: reuse an existing request/derived task for routine trials under one persisted question; do not allocate IDs, mutate STATUS, write record prose, retrieve precedent or checkpoint Git for every observation.
+  Source: USER.
+- [ ] M09-R9-05 Checkpoint durable state only at semantic/reconstruction-cost boundaries; keep exhaustive frame/sample/measurement evidence in generated artifacts and only compact resume-critical conclusions in TASKS/records.
+  Source: USER.
+- [ ] M09-R9-06 Preserve corrected human-verification re-entry and unresolved older human tasks while follow-up work is active.
+  Source: USER.
+- [ ] M09-R9-07 Refactor RUN_PROMPT.txt to reconstruct state selectively, distinguish durable boundaries from inner-loop trials, use experiences only at strategic boundaries, preserve human gates and work correctly with experience retrieval disabled.
+  Source: USER.
+- [ ] M09-R9-08 Preserve docs/ selective loading and all BEGIN/Reference/END canonical source-to-document relationships; do not change application behavior for this migration.
+  Source: USER.
+- [ ] M09-R9-09 Validate migration against current live state and the reference architecture, including final diff review for accidental deletion/replacement of project-specific state.
+  Source: USER.
+- [ ] M09-R9-P01 Do not copy bootstrap values, renumber existing IDs, fictionalize completed history, infer human acceptance, discard evidence, alter public website behavior/content, publish/deploy, modify master/backup branches, or expose private material.
+  Source: USER.
+- [ ] M09-R9-P02 Preserve M09-R8 implementation/evidence and its unresolved H01 exactly as live prior work; this infrastructure migration neither completes nor supersedes that owner review.
+  Source: DERIVED from current durable state.
+- [ ] M09-R9-D01 Compare current durable files with the experimental reference and implement a coherent merged policy, experience store, bounded-resume prompt and optional validation tooling as needed.
+  Source: DERIVED.
+  Requires: M09-R9-01 through M09-R9-08, P01, P02.
+- [ ] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
+  Source: DERIVED.
+- [ ] M09-R9-V02 Inspect intended diff and protected refs; commit/push only state-machine code/docs/validation files on redesign/astro-foundation, then restore the live owner-review state for M09-R8 without marking M09 complete.
+  Source: DERIVED.
+
+Current migration entry state: target head `b610adff909dd5e96f71fa9f0a0d05bc496b4256`; reference architecture commit `6b3ebc329de5355f6a06c3725438001999786cc8`. M09-R8 remains technically verified but awaiting owner H01; all older M09 human/content/rights/colour/launch gates remain unresolved.
+
