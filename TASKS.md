@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R6
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R7
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -273,3 +273,53 @@ Reconstruction: existing checkout/origin5b973f7 match; master755df7f/backup3bc95
   Source: USER/DERIVED human gate. Dependencies:V02.
 - [H] M09-R6-H02 Owner approves actual public-source records/media/rights/professional/contact/availability/curation/launchmanifest and final real-public visual/reproduction/content acceptance separately; provisional R2 baseline does not close M09.
   Source: USER and active milestone contract. Older unresolved R1/R5 gates remain preserved.
+
+## M09-R7 — Artist-facing Studio UX simplification
+
+Source: USER, latest owner review. Studio is functionally promising but confusing; this is UX/information architecture refinement, not major feature work or public-site redesign. Preserve authoritative catalogue/schema/intake/private persistence/publication-repository gates/validation/safety and accepted M09-R2 presentation. Normal use must be image-first/task-oriented without knowing internal IDs; technical/infrequent controls remain Advanced. Bounded UI/tests/docs/private-demo implementation on development branch under existing code/docs checkpoint authority, never actual public-source/rights/launch approval.
+
+Reconstruction: origin/checkout73a8aca match; master755df7f/backup3bc95c7 unchanged;only unfamiliar empty untracked file preserved. Read PROJECT/STATUS/TASKS/active contract/studio boundary and guide/design rules/current UI/store capabilities/tests/demo. Existing backend can attach alternate views then update a primary through validated canonical save; no new role model or weakened gate needed. R6-H01 and older unresolved human checks remain; owner feedback does not imply final acceptance. LOW is appropriate for this UI-only section; do not alter security/export design.
+
+- [x] M09-R7-01 After explicit one/multiple image selection make primary choice obvious: New artwork; Another view/detail of existing artwork; Process/reference image (not standalone public artwork). Hide conceptual IDs/enums/predicates/derivative internals initially; safe private defaults, prominent image and immediately open pending/new draft editor without falsely complete intake/publication.
+  Source: USER.
+- [x] M09-R7-02 Another view/detail chooses target by clicking artwork thumbnails/title/date, then human-readable primary/detail/alternate/framed-installation/process-documentation use. Preserve internal roles and expert reverse/specific role distinctions; no silent identity merges.
+  Source: USER. Dependencies:01.
+- [x] M09-R7-03 Simple image-led editor with Title/date exact-circa-unknown/medium/process/materials/optional dimensions/alt/project-series/availability/conditional price-currency. Visual ordered image management and obvious actual-component Preview. Edition/separate typed sizes/framing-condition/detailed acquisition/technical-provenance under expandable sections; optional fields not required.
+  Source: USER. Dependencies:01.
+- [x] M09-R7-04 Thumbnail media library replaces repeated per-card dropdown forms: click/multi-select,clear unattached/attached/reference-only states,obvious visual attachment target; reliable accessible click workflow instead of unnecessary drag/drop. IDs/hashes in details only.
+  Source: USER. Dependencies:02.
+- [x] M09-R7-05 Visual project title/context/membership thumbnails/add-remove/direct sequence editing/Preview Project; no normal raw member-ID lists.
+  Source: USER.
+- [x] M09-R7-06 Visual ordered Selected Work with thumbnails/direct reorder/add-remove/preview; clear current homepage image and thumbnail choice/immediate preview. No ordinary database-flag editing.
+  Source: USER.
+- [x] M09-R7-07 Plain artist-facing language: Draft,On public site,Prepare for public site,What is this image?,How should this image be used? Concise ordinary PRIVATE DRAFT/Nothing here is public; technical wording/details deferred and accurate actual-public/private distinction retained.
+  Source: USER.
+- [x] M09-R7-08 Keep full safety near public preparation: dry-run first/exact public path+metadata+derivative disclosure/rights/owner approval/--allow-public-export/typed EXPORT token/no auto commit-deploy-manifest. Normal simplification must never hide or bypass deliberate final gates.
+  Source: USER and existing studio contract.
+- [x] M09-R7-09 Improve tool hierarchy/readable type/spacing/grouping/active-selection/thumb sizes/primary actions; avoid narrow empty form columns/repeated explanatory paragraphs/dropdown density/raw state dumps in ordinary views. Keep every expert capability in Advanced/Technical/Export details.
+  Source: USER.
+- [x] M09-R7-10 Persistent small-private demo: Anew artwork,Bexplicit second alternate/detailphoto,Cprocess-reference only,Dnormalmetadata,ESelectedorder,Fhomepagelead,Gcreate-projectorder,Hactualcomponentpreviews,IdryrunPrepareforpublicsite without actual export. Normal desktop/video-friendly screenshots; no new artistic facts/owner approval.
+  Source: USER. Dependencies:01–09.
+- [x] M09-R7-11 Preserve prior tests/add simplified UI interactions; verify no model/safety/capability regressions,private persistence,no IDs required,correct media attachment,reference not artwork,project/selectionorder,edited previews,gated export,full npm run verify and strict BLOCKED_CONTENT. Return HUMAN_VERIFICATION,not M09 COMPLETE/public redesign.
+  Source: USER. Dependencies:10.
+- [x] M09-R7-P01 Preserve src/ public presentation/canonical models and scripts/lib/studio backend/security/export/intake/storage semantics; persistent neutral IDs/source bytes/mtime/owner working drafts/private data/protected refs/unknown untracked file. Only UI orchestration over existing validated endpoints,tests/demo/docs/state.
+  Source: USER and DERIVED. Public-source real data and older human/rights/content gates remain unapproved.
+- [x] M09-R7-P02 Do not remove optional/technical capabilities or infer primary/source/identity/rights approval; do not add major features/new dependencies/public CMS/deployment/master/DNS/services/manifest/checkout/M09complete. Existing gates remain and LOW remains default.
+  Source: USER.
+- [x] M09-R7-D01 Refactor Studio HTML/CSS/JS into visual task flow and progressive disclosure using existing APIs; preserve unsaved edits during refresh/job polling,ensure explicit image identity/primary transitions remain validated.
+  Source: DERIVED. Dependencies:captured requirements/current capabilities.
+  Evidence: Studio-only HTML/CSS/JS refactor delivers pending/image-led editor,thumbnail target/library/member/selection/lead controls,plain labels,progressive rare/technical fields and exact final approval/export disclosure. Primary changes use unchanged attach-alternate then canonical save; current primary retained as alternate. Polling preserves unsaved form fields; no public/CMS/backend redesign.
+- [x] M09-R7-D02 Update prior browser selectors/assertions,add visual workflow interaction coverage and refresh persistent A–I demo without raw IDs in ordinary UI; preserve real owner drafts.
+  Source: DERIVED. Dependencies:D01.
+  Evidence: all7prior Studio cases preserved (browser controls/selectors updated for names/thumbnail actions),new image-first interaction case covers newdraft/noIDs/intended attachment/primary/referenceonly/visualorderedproject-selected/home/reload/actual preview. Initial broad-name selector conflicts corrected with scope; targeted newcase passes. Fresh A–I demo driver uses isolated persistent workspace/registry copy,never overwrites current owner drafts or authoritative ID allocations. Full/real verification pending.
+- [x] M09-R7-V01 Run relevant/full verification,exact backend/public-presentation preservation diff and strict release checks; inspect actual demo/screenshots/axes/reflow/data permanence/safety results.
+  Source: DERIVED. Dependencies:D01,D02,11.
+  Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,80/80tests,0fail/skip/diagnostics; allprior79checks retained withnewvisualinteraction. Actual13pages/0images/2049bytesmaxJSgzip. Exact `git diff --exit-code HEAD -- src scripts/lib/studio-*.mjs scripts/lib/ingestion.mjs` preservation check exits0; public presentation/schema/backend/safety untouched. Real persistent demo/release checks next.
+  First real UXdemo exits0:43captures/0violations/0reflow,169sources andauthoritative registry/Studio state untouched. Screenshot review finds existing editor should be concealed while choosing an attachment target and active-item wording should not be confused with Selected Work; minorUI clarification added,refresh pending. One360pxStudio color-contrast automated rule remains INCONCLUSIVE/manual,not a passing check. Strict release stillBLOCKED_CONTENT. No backend/public presentation changes.
+  Final evidence: fullpostclarification `npm run verify` exits0,80/80tests/0fail-skip-diagnostics. Fresh UXdemo `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/ux-demo-2026-10-06T05-47-31-290Z-0f3a8a89` exits0,43UI/A–I/componentcaptures/0violations/0reflow at1440/768/360×900,DPR1/normalzoom. One360Studioartworks color-contrastINCONCLUSIVE rule retained forH02; no fullconformance claim. Two isolated private demo artworks,alternatephoto,reference-onlymedia,visualproject/Selectedorder/lead/editedpreviews and blockedunapproveddryrun pass; successfulapproveddryrun/exports tested onlysynthetically. Authoritativeownerstate+registry bytehashes unchanged;169/169sourcebytes+mtime preserved. Source/backend/pipeline preservation diff exits0 and actualrelease exits1/BLOCKED_CONTENT/same8issues. Final desktop intake-target/home/initialeditor/project screenshots inspected; not owner usability/art acceptance.
+- [~] M09-R7-V02 Reconcile docs/evidence/IDs;verified intended code/docs-only checkpoint and return ACTIVE/HUMAN_VERIFICATION with exact start/demo paths and genuine remaining approvals.
+  Source: DERIVED. Dependencies:V01.
+- [ ] M09-R7-H01 Owner tests image-first normal intake/editor/library/project/selection/home/preview/public-preparation usability and expert disclosure; automation cannot approve usability or real content.
+  Source: USER/DERIVED human gate. Dependencies:V02. R6/R1/R5 factual/rights/final-content gates persist.
+- [ ] M09-R7-H02 Manually resolve one current360pxStudioartworks color-contrast INCONCLUSIVE automated rule; preserve older R5 manual/source-colour gates and do not count incomplete as a passing rule.
+  Source: DERIVED from final demo report. Dependencies:V01. Details in persistent report; no confirmed violation or public-presentation change.

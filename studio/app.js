@@ -1,60 +1,126 @@
 const $ = (id) => document.getElementById(id);
-let token, state, editingArtwork, editingProject, projectMembers = [], selected = [], exportPlan, currentPreview;
-const roles = ["primary", "alternate", "detail", "framed", "installation", "documentation", "reverse", "process"];
-const dimensions = ["image", "sheet", "framed", "object"];
-// Keep select names independent of their currently selected embedded option.
-for (const select of document.querySelectorAll("label > select")) {
-  select.setAttribute("aria-label", [...select.parentElement.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent).join("").trim());
-}
 const field = (form, name) => form.elements.namedItem(name);
 const lines = (value) => value.split(/\n/).map((value) => value.trim()).filter(Boolean);
+let token, state, editingArtwork, editingProject, editingImages = [], projectMembers = [], selected = [], leadId = "", exportPlan, currentPreview;
+let editorDirty = false, selectedDirty = false, intakeTarget = "", mediaTarget = "", pendingEditorJob;
+const mediaSelection = new Set(), incomingJobs = new Map();
+const roles = [
+  ["primary", "Primary image"], ["detail", "Detail"], ["alternate", "Alternate view"],
+  ["framed", "Framed view"], ["installation", "Installation view"],
+  ["process", "Process image"], ["documentation", "Documentation"], ["reverse", "Reverse view"],
+];
+const dimensions = ["image", "sheet", "framed", "object"];
 function message(text, error = false) { $("message").textContent = text; $("message").setAttribute("role", error ? "alert" : "status"); }
+function node(tag, text, className) { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; }
+function action(handler) { return async (event) => { event?.preventDefault(); try { await handler(event); } catch (error) { message(error.message, true); } }; }
+function button(text, handler) { const element = node("button", text); element.type = "button"; element.addEventListener("click", action(handler)); return element; }
 async function api(path, data, raw) {
   const headers = { "x-studio-token": token };
   if (raw) headers["x-studio-options"] = encodeURIComponent(JSON.stringify(data));
   else if (data !== undefined) headers["Content-Type"] = "application/json";
   const response = await fetch(path, { method: data === undefined ? "GET" : "POST", headers, body: raw ?? (data === undefined ? undefined : JSON.stringify(data)) });
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Studio request failed");
+  if (!response.ok) throw new Error(result.error || "This change could not be saved");
   return result;
 }
-function action(handler) { return async (event) => { event?.preventDefault(); try { await handler(event); } catch (error) { message(error.message, true); } }; }
-function node(tag, text, className) { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; }
-function button(text, handler) { const element = node("button", text); element.type = "button"; element.addEventListener("click", action(handler)); return element; }
 function options(select, values, empty = "Choose") {
   const old = select.value; select.replaceChildren(new Option(empty, ""));
   for (const entry of values) select.add(new Option(entry.title || entry.id, entry.id));
   if ([...select.options].some((option) => option.value === old)) select.value = old;
 }
+function roleOptions(select, includePrimary = true) {
+  select.replaceChildren();
+  for (const [value, label] of roles) if (includePrimary || value !== "primary") select.add(new Option(label, value));
+  select.value = "alternate";
+}
+function title(work) { return state.workflow[work.id]?.titleProvided ? work.title : "Untitled artwork"; }
+function dateLabel(work) {
+  if (!work.date || work.date.certainty === "unknown") return "";
+  return work.date.label || `${work.date.certainty === "circa" ? "c. " : ""}${work.date.year}${work.date.endYear ? "–" + work.date.endYear : ""}`;
+}
 function phase(record) {
-  const workflow = state.workflow[record.id] || {};
   const actual = state.actualPublic.some((work) => work.id === record.id);
-  return [actual ? "Public source; editor is a private copy" : "PRIVATE LOCAL DRAFT", workflow.approved ? "Public-source approved" : workflow.reviewed ? "Reviewed locally" : "Review pending", record.featured ? "Selected" : "", record.homepageLead ? "Homepage lead" : "", ["available", "edition-available"].includes(record.availability?.state) ? "Available (draft facts)" : ""].filter(Boolean).join(" · ");
+  return [actual ? "On public site · editing a draft copy" : "Draft", record.featured ? "Selected Work" : "", record.homepageLead ? "Homepage image" : ""].filter(Boolean).join(" · ");
+}
+function mediaFor(image) { return state.media.find((entry) => entry.reproduction.src === image?.src); }
+function imageFor(work) { return mediaFor(work.reproductions.find((image) => image.role === "primary") || work.reproductions[0]); }
+function thumb(media, alt) {
+  const frame = node("span", undefined, "thumb-frame");
+  if (media) { const image = document.createElement("img"); image.src = `/media/${media.id}/thumb`; image.alt = alt || ""; frame.append(image); }
+  else frame.append(node("span", "Photo unavailable", "hint"));
+  return frame;
+}
+function workCard(work, label, handler, active = false) {
+  const card = button("", handler); card.className = "thumbnail-card"; card.dataset.artworkId = work.id;
+  card.setAttribute("aria-label", `${label} ${title(work)}`); card.setAttribute("aria-pressed", String(active));
+  card.append(thumb(imageFor(work), title(work)), node("strong", title(work)));
+  if (dateLabel(work)) card.append(node("small", dateLabel(work)));
+  if (active) card.append(node("span", label === "Open" ? "Editing" : label === "Current homepage image" ? "Current homepage image" : "Chosen", "selection-mark"));
+  return card;
+}
+function workPicker(container, label, handler, active, exclude = []) {
+  container.replaceChildren();
+  for (const work of state.catalogue.artworks) if (!exclude.includes(work.id)) container.append(workCard(work, label, () => handler(work.id), work.id === active));
+  if (!container.children.length) container.append(node("p", "No other artworks to choose yet.", "hint"));
+}
+function showTab(id) {
+  for (const panel of document.querySelectorAll(".tab-panel")) panel.hidden = panel.id !== id;
+  for (const control of document.querySelectorAll("[data-tab]")) control.setAttribute("aria-current", control.dataset.tab === id ? "page" : "false");
+  if (id === "curation") openCuration();
+}
+function showIntake(purpose = "artwork", target = "") {
+  showTab("collection"); $("intake-panel").hidden = false;
+  $("artwork-form").hidden = true;
+  document.querySelector(`[name="purpose"][value="${purpose}"]`).checked = true;
+  intakeTarget = target; updateIntake(); $("intake-panel").scrollIntoView({ block: "start" });
+}
+function purpose() { return document.querySelector('[name="purpose"]:checked').value; }
+function updateIntake() {
+  const attach = purpose() === "attach";
+  $("intake-target-panel").hidden = !attach;
+  $("intake-submit").textContent = attach ? "Add photo to artwork" : purpose() === "media" ? "Keep as process / reference" : "Create draft";
+  workPicker($("intake-targets"), "Choose artwork", (id) => { intakeTarget = id; updateIntake(); }, intakeTarget);
+  $("intake-target-summary").textContent = intakeTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === intakeTarget))}` : "Click the artwork this photo belongs to.";
+}
+function relationship() {
+  if (purpose() === "attach" && !intakeTarget) throw new Error("Click an artwork to choose where this photo belongs");
+  return { purpose: purpose(), artworkId: intakeTarget, role: $("intake-role").value === "primary" ? "alternate" : $("intake-role").value, assumeSrgb: $("assume-srgb").checked };
 }
 async function refresh({ editor = false } = {}) {
   state = await api("/api/state");
-  $("write-mode").textContent = state.repositoryWritesEnabled ? "Repository writing explicitly enabled for this run; exact review/approval/export confirmation still required." : "Repository writes DISABLED — private editing and dry-run only.";
+  $("write-mode").textContent = state.repositoryWritesEnabled ? "Repository writing is enabled for this run. Exact owner approval, dry-run and typed confirmation are still required." : "Repository writes are disabled. Start with --allow-public-export only after granting explicit public-source permission.";
   $("work-list").replaceChildren();
-  for (const work of state.catalogue.artworks) {
-    const item = button("", () => openArtwork(work.id)); item.className = "work-entry";
-    item.append(node("strong", state.workflow[work.id].titleProvided ? work.title : `Untitled private draft · ${work.id}`), node("small", phase(work)));
-    $("work-list").append(item);
-  }
-  if (!state.catalogue.artworks.length) $("work-list").append(node("p", "Add selected images to begin. Nothing is automatically published."));
-  for (const id of ["intake-artwork", "project-add-member", "selected-add-work", "homepage-lead"]) options($(id), state.catalogue.artworks);
-  $("jobs").replaceChildren(...state.jobs.slice(-8).reverse().map((job) => node("p", `${job.status === "running" ? "Generating derivatives…" : job.status.toUpperCase()} · ${job.result?.artworkId || job.result?.mediaId || job.id.slice(0,8)}${job.error ? "\n" + job.error : ""}`)));
-  renderMedia(); renderProjects(); renderReview();
+  for (const work of state.catalogue.artworks) { const card = workCard(work, "Open", () => openArtwork(work.id), work.id === editingArtwork); card.append(node("small", phase(work))); $("work-list").append(card); }
+  if (!state.catalogue.artworks.length) $("work-list").append(node("p", "Start by adding a photo.", "hint"));
+  $("jobs-panel").hidden = !state.jobs.length;
+  $("jobs").replaceChildren(...state.jobs.slice(-5).reverse().map((job) => node("p", `${job.status === "running" ? "Preparing photo…" : job.status === "complete" ? "Photo ready" : "Photo could not be prepared"}${job.error ? ": " + job.error : ""}`)));
+  renderMedia(); renderProjects(); renderReview(); updateIntake();
   if (editor && editingArtwork) openArtwork(editingArtwork);
+  await finishIncomingJobs();
 }
-function formSet(form, name, value) {
-  const control = field(form, name);
-  if (control.type === "checkbox") control.checked = value === true; else control.value = value ?? "";
+async function makePrimary(artworkId, source) {
+  const work = state.catalogue.artworks.find((work) => work.id === artworkId);
+  await api("/api/artwork/save", { id: artworkId, record: { ...work, reproductions: work.reproductions.map((image) => ({ ...image, role: image.src === source ? "primary" : image.role === "primary" ? "alternate" : image.role })) } });
 }
-function optional(form, name) { const value = field(form, name).value.trim(); return value || undefined; }
+async function finishIncomingJobs() {
+  for (const [id, context] of [...incomingJobs]) {
+    const job = state.jobs.find((job) => job.id === id); if (!job || job.status === "running") continue;
+    incomingJobs.delete(id);
+    if (job.status === "error") { if (pendingEditorJob === id) { pendingEditorJob = null; $("pending-draft").textContent = job.error; } continue; }
+    if (context.primary && job.result.artworkId) {
+      const media = state.media.find((entry) => entry.id === job.result.mediaId);
+      await makePrimary(job.result.artworkId, media.reproduction.src); state = await api("/api/state");
+    }
+    if (id === pendingEditorJob || (context.purpose === "attach" && !editorDirty)) {
+      pendingEditorJob = null; openArtwork(job.result.artworkId); $("intake-panel").hidden = true;
+    }
+  }
+}
+function formSet(form, name, value) { const control = field(form, name); if (control.type === "checkbox") control.checked = value === true; else control.value = value ?? ""; }
+function optional(form, name) { return field(form, name).value.trim() || undefined; }
 function number(form, name) { const value = optional(form, name); return value === undefined ? undefined : Number(value); }
 function date(form, optionalDate = false) {
-  const certainty = field(form, "certainty").value;
-  if (!certainty && optionalDate) return undefined;
+  const certainty = field(form, "certainty").value; if (!certainty && optionalDate) return undefined;
   return { certainty, ...(certainty === "unknown" ? {} : { year: number(form, "year"), endYear: number(form, "endYear") }), ...(field(form, "dateLabel") && optional(form, "dateLabel") ? { label: optional(form, "dateLabel") } : {}) };
 }
 function currencyPrecision(currency) { return new Intl.NumberFormat("en-CA", { style: "currency", currency }).resolvedOptions().maximumFractionDigits; }
@@ -63,140 +129,187 @@ function priceMinor(value, currency) {
   const precision = currencyPrecision(currency), [whole, fraction = ""] = value.split(".");
   if (fraction.length > precision) throw new Error(`This currency supports ${precision} decimal places`);
   const amount = Number(whole + fraction.padEnd(precision, "0"));
-  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error("Price must be positive and within supported minor-unit precision");
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error("Price must be positive and within supported currency precision");
   return amount;
 }
 function priceDisplay(price) { if (!price) return ""; const precision = currencyPrecision(price.currency), text = String(price.amountMinor).padStart(precision + 1, "0"); return precision ? text.slice(0, -precision) + "." + text.slice(-precision) : text; }
-function createInput(label, name, value = "", type = "text") {
-  const wrapper = node("label", label), input = document.createElement("input"); input.name = name; input.type = type; input.value = value; if (type === "number") { input.step = "any"; input.min = "0"; } wrapper.append(input); return wrapper;
+function createInput(label, name, value = "", type = "text") { const wrapper = node("label", label), input = document.createElement("input"); input.name = name; input.type = type; input.value = value; if (type === "number") { input.step = "any"; input.min = "0"; } wrapper.append(input); return wrapper; }
+function createSelect(label, name, values, selectedValue) { const wrapper = node("label", label), select = document.createElement("select"); select.name = name; select.setAttribute("aria-label", label); for (const value of values) select.add(new Option(Array.isArray(value) ? value[1] : value, Array.isArray(value) ? value[0] : value)); select.value = selectedValue; wrapper.append(select); return wrapper; }
+function updateSimpleFields() {
+  const form = $("artwork-form"); $("year-field").hidden = field(form, "certainty").value === "unknown";
+  $("simple-offer").hidden = !["available", "edition-available"].includes(field(form, "availability").value);
+  $("price-fields").hidden = field(form, "offerMode").value !== "price";
 }
-function createSelect(label, name, values, selectedValue) {
-  const wrapper = node("label", label), select = document.createElement("select"); select.name = name;
-  select.setAttribute("aria-label", label);
-  for (const value of values) select.add(new Option(value, value)); select.value = selectedValue; wrapper.append(select); return wrapper;
+function prominentImage(media) { $("editor-image").replaceChildren(); if (media) { const image = document.createElement("img"); image.src = `/media/${media.id}/primary`; image.alt = media.reproduction.alt; $("editor-image").append(image); } }
+function openPendingEditor(jobId, file) {
+  pendingEditorJob = jobId; editingArtwork = null; editorDirty = false;
+  const form = $("artwork-form"); form.hidden = false; form.reset(); $("editor-title").textContent = "New artwork"; $("artwork-phase").textContent = "Draft";
+  $("pending-draft").hidden = false; $("pending-draft").textContent = "Preparing your photo. Nothing is public. The editor will be ready when the photo finishes.";
+  for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = true;
+  const image = document.createElement("img"), url = URL.createObjectURL(file); image.src = url; image.alt = "Selected photo for a new draft"; image.onload = () => URL.revokeObjectURL(url); $("editor-image").replaceChildren(image);
+  $("reproduction-fields").replaceChildren(); form.scrollIntoView({ block: "start" });
 }
 function openArtwork(id) {
-  editingArtwork = id; const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
-  const form = $("artwork-form"); form.hidden = false; form.reset();
-  $("artwork-id").textContent = work.id; $("artwork-phase").textContent = phase(work);
+  editingArtwork = id; pendingEditorJob = null; editorDirty = false; const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
+  showTab("collection"); const form = $("artwork-form"); form.hidden = false; form.reset();
+  for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = false;
+  $("pending-draft").hidden = true; $("editor-title").textContent = title(work); $("artwork-id").textContent = `Neutral identity: ${work.id}`; $("artwork-phase").textContent = phase(work);
   for (const name of ["slug", "medium", "kind", "materials", "description", "framing", "condition", "published", "featured", "selectedOrder"]) formSet(form, name, work[name]);
-  formSet(form, "title", state.workflow[id].titleProvided ? work.title : "");
-  formSet(form, "aliases", work.aliases.join("\n")); formSet(form, "techniques", work.techniques.join("\n"));
+  formSet(form, "title", state.workflow[id].titleProvided ? work.title : ""); formSet(form, "aliases", work.aliases.join("\n")); formSet(form, "techniques", work.techniques.join("\n"));
   for (const name of ["certainty", "year", "endYear"]) formSet(form, name, work.date[name]); formSet(form, "dateLabel", work.date.label);
-  const offer = work.availability;
-  formSet(form, "availability", offer.state); formSet(form, "offerMode", offer.mode); formSet(form, "offerReviewed", offer.reviewed); formSet(form, "currency", offer.price?.currency); formSet(form, "price", priceDisplay(offer.price));
-  for (const [name,key] of [["editionSize","size"],["editionNumber","number"],["artistProofs","artistProofs"]]) formSet(form, name, work.edition?.[key]);
+  const offer = work.availability; formSet(form, "availability", offer.state); formSet(form, "offerMode", offer.mode); formSet(form, "offerReviewed", offer.reviewed); formSet(form, "currency", offer.price?.currency); formSet(form, "price", priceDisplay(offer.price));
+  for (const [name, key] of [["editionSize", "size"], ["editionNumber", "number"], ["artistProofs", "artistProofs"]]) formSet(form, name, work.edition?.[key]);
   for (const name of ["signed", "numbered"]) formSet(form, name, work.edition?.[name] === undefined ? "" : String(work.edition[name]));
   formSet(form, "privateNote", state.notes[id]);
+  const object = work.dimensions.find((entry) => entry.kind === "object"); for (const key of ["width", "height", "depth"]) formSet(form, `object-${key}`, object?.[key]); formSet(form, "object-unit", object?.unit || "cm");
   $("dimension-fields").replaceChildren();
-  for (const kind of dimensions) {
-    const size = work.dimensions.find((entry) => entry.kind === kind), group = node("div"); group.append(node("h3", `${kind[0].toUpperCase()+kind.slice(1)} size`));
-    for (const key of ["width", "height", "depth"]) group.append(createInput(key, `${kind}-${key}`, size?.[key] ?? "", "number"));
-    group.append(createSelect("Unit", `${kind}-unit`, ["cm", "mm", "in"], size?.unit || "cm")); $("dimension-fields").append(group);
-  }
-  renderReproductions(work.reproductions);
-  $("work-projects").replaceChildren(node("h3", "Project membership"));
-  for (const project of state.catalogue.projects) $("work-projects").append(node("p", `${project.title}${project.memberIds.includes(id) ? " · Member" : ""} (edit membership/order in Projects)`));
+  for (const kind of dimensions.filter((kind) => kind !== "object")) { const size = work.dimensions.find((entry) => entry.kind === kind), group = node("div"); group.append(node("h3", `${kind === "sheet" ? "Paper / sheet" : kind[0].toUpperCase() + kind.slice(1)} size`)); for (const key of ["width", "height", "depth"]) group.append(createInput(key, `${kind}-${key}`, size?.[key] ?? "", "number")); group.append(createSelect("Unit", `${kind}-unit`, ["cm", "mm", "in"], size?.unit || "cm")); $("dimension-fields").append(group); }
+  editingImages = structuredClone(work.reproductions); renderReproductions(); renderArtworkProjects(); prominentImage(imageFor(work)); updateSimpleFields();
+  $("artwork-technical").replaceChildren(); for (const media of state.media.filter((media) => work.reproductions.some((image) => image.src === media.reproduction.src))) $("artwork-technical").append(node("p", `${media.name} · source SHA256 ${media.sourceSha256}`, "technical-block"));
+  renderWorkListSelection();
 }
-function renderReproductions(images) {
-  const container = $("reproduction-fields"); container.replaceChildren();
-  images.forEach((image, index) => {
+function renderWorkListSelection() { for (const card of $("work-list").querySelectorAll("[data-artwork-id]")) card.setAttribute("aria-pressed", String(card.dataset.artworkId === editingArtwork)); }
+function renderArtworkProjects() {
+  $("work-projects").replaceChildren();
+  for (const project of state.catalogue.projects) { const link = button(project.title, () => { showTab("projects"); openProject(project.id); }); link.className = "project-chip"; if (project.memberIds.includes(editingArtwork)) link.prepend(node("span", "✓ ")); $("work-projects").append(link); }
+  if (!state.catalogue.projects.length) $("work-projects").append(button("Create a project", () => { showTab("projects"); openProject(); }));
+}
+function syncPrimaryAlt() { const primary = editingImages.find((image) => image.role === "primary"); if (primary) primary.alt = field($("artwork-form"), "mainAlt").value.trim(); }
+function renderReproductions() {
+  $("reproduction-fields").replaceChildren();
+  const primary = editingImages.find((image) => image.role === "primary"); formSet($("artwork-form"), "mainAlt", primary?.alt);
+  editingImages.forEach((image, index) => {
     const group = node("div", undefined, "view-editor"); group.dataset.source = image.src;
-    const media = state.media.find((entry) => entry.reproduction.src === image.src);
-    if (media) { const picture = document.createElement("img"); picture.src = `/media/${media.id}/thumb`; picture.alt = image.alt; group.append(picture); }
-    group.append(node("p", `View ${index+1} · ${image.width}×${image.height} pixels`), createSelect("Role", "view-role", roles, image.role), createInput("Alt text", "view-alt", image.alt), createInput("Optional caption", "view-caption", image.caption || ""));
+    const row = node("div", undefined, "photo-row"); const media = mediaFor(image); if (media) { const picture = document.createElement("img"); picture.src = `/media/${media.id}/thumb`; picture.alt = image.alt; row.append(picture); }
+    row.append(node("strong", roles.find(([value]) => value === image.role)?.[1] || image.role)); group.append(row);
     const controls = node("div", undefined, "view-controls");
-    controls.append(button("Up", () => moveView(index, -1)), button("Down", () => moveView(index, 1)), button("Remove view from draft", () => { const values = reproductionValues(); values.splice(index,1); renderReproductions(values); })); group.append(controls); container.append(group);
+    controls.append(button("Move earlier", () => moveView(index, -1)), button("Move later", () => moveView(index, 1)), button("Remove photo", () => { syncPrimaryAlt(); editingImages.splice(index, 1); editorDirty = true; renderReproductions(); }));
+    if (image.role !== "primary") controls.append(button("Use as primary image", () => { syncPrimaryAlt(); for (const entry of editingImages) if (entry === image) entry.role = "primary"; else if (entry.role === "primary") entry.role = "alternate"; editorDirty = true; renderReproductions(); prominentImage(media); }));
+    group.append(controls);
+    const details = node("details"), summary = node("summary", "Photo details");
+    const role = createSelect("How should this image be used?", "view-role", roles, image.role), alt = createInput(`Photo description ${index + 1}`, "view-alt", image.alt), caption = createInput("Caption (optional)", "view-caption", image.caption || "");
+    role.querySelector("select").addEventListener("change", (event) => {
+      syncPrimaryAlt();
+      if (event.target.value === "primary") { for (const entry of editingImages) if (entry === image) entry.role = "primary"; else if (entry.role === "primary") entry.role = "alternate"; }
+      else image.role = event.target.value;
+      editorDirty = true; renderReproductions();
+    });
+    alt.querySelector("input").addEventListener("input", (event) => { image.alt = event.target.value; if (image.role === "primary") formSet($("artwork-form"), "mainAlt", image.alt); editorDirty = true; });
+    caption.querySelector("input").addEventListener("input", (event) => { image.caption = event.target.value.trim() || undefined; editorDirty = true; });
+    details.append(summary, role, alt, caption, node("p", `${image.width}×${image.height} pixels · ${image.src}`, "technical-block")); group.append(details); $("reproduction-fields").append(group);
   });
 }
-function reproductionValues() {
-  const originals = state.catalogue.artworks.find((work) => work.id === editingArtwork).reproductions;
-  return [...$("reproduction-fields").children].map((group) => ({ ...originals.find((image) => image.src === group.dataset.source), role: group.querySelector('[name="view-role"]').value, alt: group.querySelector('[name="view-alt"]').value.trim(), caption: group.querySelector('[name="view-caption"]').value.trim() || undefined }));
+function moveView(index, direction) { syncPrimaryAlt(); const other = index + direction; if (other < 0 || other >= editingImages.length) return; [editingImages[index], editingImages[other]] = [editingImages[other], editingImages[index]]; editorDirty = true; renderReproductions(); }
+async function saveArtwork() {
+  if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
+  const form = $("artwork-form"), previous = state.catalogue.artworks.find((work) => work.id === editingArtwork), sizes = [];
+  for (const kind of dimensions) { const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`); if (width !== undefined || height !== undefined || depth !== undefined) { if (width === undefined || height === undefined) throw new Error(`${kind} size needs width and height, or leave its fields blank`); sizes.push({ kind, width, height, depth, unit: field(form, `${kind}-unit`).value }); } }
+  const availability = { state: field(form, "availability").value, reviewed: field(form, "offerReviewed").checked };
+  const offered = ["available", "edition-available"].includes(availability.state);
+  if (offered) availability.mode = optional(form, "offerMode");
+  const price = optional(form, "price"), currency = optional(form, "currency")?.toUpperCase(); if (offered && availability.mode === "price" && price) { if (!currency) throw new Error("A price needs its currency"); availability.price = { amountMinor: priceMinor(price, currency), currency }; }
+  const editionSize = number(form, "editionSize"), editionNumber = number(form, "editionNumber"), proofs = number(form, "artistProofs"), signed = optional(form, "signed"), numbered = optional(form, "numbered"); let edition;
+  if ([editionSize, editionNumber, proofs, signed, numbered].some((entry) => entry !== undefined)) { if (!editionSize) throw new Error("Supply an edition size when entering edition facts"); edition = { size: editionSize, number: editionNumber, artistProofs: proofs, signed: signed === undefined ? undefined : signed === "true", numbered: numbered === undefined ? undefined : numbered === "true" }; }
+  syncPrimaryAlt();
+  const record = { ...previous, title: field(form, "title").value.trim() || `Private draft ${previous.id} (title not supplied)`, slug: field(form, "slug").value.trim(), aliases: lines(field(form, "aliases").value), medium: field(form, "medium").value, kind: field(form, "kind").value, date: date(form), techniques: lines(field(form, "techniques").value), materials: optional(form, "materials"), description: optional(form, "description"), dimensions: sizes, reproductions: editingImages, published: field(form, "published").checked, featured: field(form, "featured").checked, selectedOrder: field(form, "featured").checked ? number(form, "selectedOrder") : undefined, availability, edition, framing: optional(form, "framing"), condition: optional(form, "condition") };
+  await api("/api/artwork/save", { id: editingArtwork, record, note: field(form, "privateNote").value }); await refresh({ editor: true }); message("Draft saved. Nothing has been made public."); return editingArtwork;
 }
-function moveView(index, direction) { const values = reproductionValues(), other = index + direction; if (other < 0 || other >= values.length) return; [values[index],values[other]] = [values[other],values[index]]; renderReproductions(values); }
-$("artwork-form").addEventListener("submit", action(async () => {
-  const form = $("artwork-form"), previous = state.catalogue.artworks.find((work) => work.id === editingArtwork);
-  const sizes = [];
-  for (const kind of dimensions) {
-    const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`);
-    if (width !== undefined || height !== undefined || depth !== undefined) { if (width === undefined || height === undefined) throw new Error(`${kind} size needs width and height, or leave all its fields blank`); sizes.push({ kind, width, height, depth, unit: field(form, `${kind}-unit`).value }); }
-  }
-  const availability = { state: field(form,"availability").value, reviewed: field(form,"offerReviewed").checked, mode: optional(form,"offerMode") };
-  const price = optional(form,"price"), currency = optional(form,"currency")?.toUpperCase();
-  if (price) { if (!currency) throw new Error("A supplied price needs its currency"); availability.price = { amountMinor: priceMinor(price,currency), currency }; }
-  const editionSize = number(form,"editionSize"), editionNumber = number(form,"editionNumber"), proofs = number(form,"artistProofs"), signed = optional(form,"signed"), numbered = optional(form,"numbered");
-  let edition;
-  if ([editionSize,editionNumber,proofs,signed,numbered].some((entry) => entry !== undefined)) {
-    if (!editionSize) throw new Error("Supply edition size when entering edition facts");
-    edition = { size: editionSize, number: editionNumber, artistProofs: proofs, signed: signed === undefined ? undefined : signed === "true", numbered: numbered === undefined ? undefined : numbered === "true" };
-  }
-  const record = { ...previous, title: field(form,"title").value.trim(), slug: field(form,"slug").value.trim(), aliases: lines(field(form,"aliases").value), medium: field(form,"medium").value, kind: field(form,"kind").value, date: date(form), techniques: lines(field(form,"techniques").value), materials: optional(form,"materials"), description: optional(form,"description"), dimensions: sizes, reproductions: reproductionValues(), published: field(form,"published").checked, featured: field(form,"featured").checked, selectedOrder: field(form,"featured").checked ? number(form,"selectedOrder") : undefined, availability, edition, framing: optional(form,"framing"), condition: optional(form,"condition") };
-  await api("/api/artwork/save", { id: editingArtwork, record, note: field(form,"privateNote").value });
-  await refresh({editor:true}); message("Saved private artwork. Previous review/source approval is invalidated by edits; no repository publication occurred.");
-}));
-function relationship() { return { purpose: $("intake-purpose").value, artworkId: $("intake-artwork").value, role: $("intake-role").value, assumeSrgb: $("assume-srgb").checked }; }
-$("files").addEventListener("change", () => {
-  $("selected-file-preview").replaceChildren();
-  for (const file of $("files").files) { const card = node("div",undefined,"media-card"), image = document.createElement("img"), url = URL.createObjectURL(file); image.src = url; image.alt = `Explicitly selected local file ${file.name}`; image.addEventListener("load", () => URL.revokeObjectURL(url), {once:true}); card.append(image,node("p",file.name)); $("selected-file-preview").append(card); }
-});
+$("artwork-form").addEventListener("input", () => { editorDirty = true; updateSimpleFields(); });
+$("artwork-form").addEventListener("submit", action(saveArtwork));
+for (const input of document.querySelectorAll('[name="purpose"]')) input.addEventListener("change", updateIntake);
+$("show-intake").addEventListener("click", () => showIntake()); $("media-add-images").addEventListener("click", () => showIntake("media")); $("close-intake").addEventListener("click", () => { $("intake-panel").hidden = true; $("artwork-form").hidden = !editingArtwork; });
+$("add-artwork-view").addEventListener("click", () => showIntake("attach", editingArtwork));
+$("files").addEventListener("change", () => { $("selected-file-preview").replaceChildren(); for (const file of $("files").files) { const card = node("div", undefined, "thumbnail-card"), image = document.createElement("img"), frame = node("span", undefined, "thumb-frame"), url = URL.createObjectURL(file); image.src = url; image.alt = "Selected photo"; image.addEventListener("load", () => URL.revokeObjectURL(url), { once: true }); frame.append(image); card.append(frame, node("small", file.name)); $("selected-file-preview").append(card); } });
 $("intake-form").addEventListener("submit", action(async () => {
-  for (const file of $("files").files) {
-    const bytes = await file.arrayBuffer(), sha256 = [...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map((byte) => byte.toString(16).padStart(2,"0")).join("");
-    await api("/api/intake", { ...relationship(), name: file.name, lastModified: file.lastModified, sha256 }, bytes);
+  if (editorDirty) throw new Error("Save the artwork you are editing before adding more photos");
+  const settings = relationship(), usePrimary = $("intake-role").value === "primary";
+  if (settings.purpose === "attach" && usePrimary && $("files").files.length > 1) throw new Error("Choose one primary image at a time");
+  for (const [index, file] of [...$("files").files].entries()) {
+    const bytes = await file.arrayBuffer(), sha256 = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+    const result = await api("/api/intake", { ...settings, name: file.name, lastModified: file.lastModified, sha256 }, bytes);
+    incomingJobs.set(result.jobId, { purpose: settings.purpose, primary: settings.purpose === "attach" && usePrimary });
+    if (settings.purpose === "artwork" && index === 0) openPendingEditor(result.jobId, file);
   }
-  await refresh(); message("Selected files queued for private derivative generation. Watch Intake status; originals are unchanged.");
+  await refresh(); message(settings.purpose === "media" ? "Preparing your process / reference photos. They are not artwork records." : "Preparing your photos. The draft stays private.");
 }));
-$("load-snapshot").addEventListener("click", action(async () => { const choices = await api("/api/snapshot"); options($("snapshot-id"), choices.map((entry) => ({ id:entry.id,title:`${entry.id} · ${entry.orientation} · ${entry.width}×${entry.height}px` })),"Choose one frozen image"); message("Loaded only the configured frozen manifest. Select one image explicitly."); }));
-$("import-snapshot").addEventListener("click", action(async () => { if (!$("snapshot-id").value) throw new Error("Choose a frozen image ID"); await api("/api/snapshot/import",{ id:$("snapshot-id").value,...relationship() }); await refresh(); message("Selected frozen image queued; no provisional catalogue/group/curation imported."); }));
+$("load-snapshot").addEventListener("click", action(async () => { const choices = await api("/api/snapshot"); options($("snapshot-id"), choices.map((entry) => ({ id: entry.id, title: `${entry.id} · ${entry.orientation} · ${entry.width}×${entry.height}px` })), "Choose a frozen image"); }));
+$("import-snapshot").addEventListener("click", action(async () => { if (!$("snapshot-id").value) throw new Error("Choose a frozen image in these technical controls"); const settings = relationship(), result = await api("/api/snapshot/import", { id: $("snapshot-id").value, ...settings }); incomingJobs.set(result.jobId, { purpose: settings.purpose, primary: settings.purpose === "attach" && $("intake-role").value === "primary" }); if (settings.purpose === "artwork") pendingEditorJob = result.jobId; await refresh(); message("Preparing the selected photo. No facts or groups have been approved."); }));
+function attachments(media) { return state.catalogue.artworks.filter((work) => work.reproductions.some((image) => image.src === media.reproduction.src)); }
 function renderMedia() {
-  $("media-library").replaceChildren();
-  for (const media of state.media) {
-    const card = node("div",undefined,"media-card"), image = document.createElement("img"); image.src = `/media/${media.id}/thumb`; image.alt = media.reproduction.alt;
-    card.append(image,node("p",media.name),node("p",media.disposition,"hint"));
-    const workLabel = node("label","Attach to artwork"), select = document.createElement("select"); select.setAttribute("aria-label","Attach to artwork"); options(select,state.catalogue.artworks); workLabel.append(select);
-    const roleLabel = createSelect("View role","role",roles.filter((role)=>role!=="primary"),"alternate");
-    card.append(workLabel,roleLabel,button("Attach this view",async()=>{ await api("/api/media/attach",{mediaId:media.id,artworkId:select.value,role:roleLabel.querySelector("select").value}); await refresh({editor:true}); message("View attached to the explicitly selected work; public source unchanged."); })); $("media-library").append(card);
-  }
+  $("media-library").replaceChildren(); state.media.forEach((media, index) => {
+    const linked = attachments(media), card = button("", () => { mediaSelection.has(media.id) ? mediaSelection.delete(media.id) : mediaSelection.add(media.id); renderMedia(); }); card.className = "thumbnail-card"; card.dataset.mediaId = media.id; card.setAttribute("aria-label", `Select photo ${index + 1}`); card.setAttribute("aria-pressed", String(mediaSelection.has(media.id)));
+    card.append(thumb(media, ""), node("strong", linked.length ? "Artwork photo" : media.disposition.includes("reference") ? "Process / reference only" : "Unattached photo"));
+    card.append(node("small", linked.map(title).join(", ") || "Private")); if (mediaSelection.has(media.id)) card.append(node("span", "Selected", "selection-mark")); $("media-library").append(card);
+  });
+  $("media-selection-panel").hidden = !mediaSelection.size; $("media-selection-count").textContent = `${mediaSelection.size} photo${mediaSelection.size === 1 ? "" : "s"} selected`;
+  workPicker($("media-targets"), "Attach to", (id) => { mediaTarget = id; renderMedia(); }, mediaTarget);
+  $("media-target-summary").textContent = mediaTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === mediaTarget))}` : "Click the artwork these photos belong to.";
+  $("media-details").replaceChildren(); for (const media of state.media.filter((media) => mediaSelection.has(media.id))) $("media-details").append(node("p", `${media.name} · ${media.id}\nSHA256 ${media.sourceSha256}\n${media.reproduction.width}×${media.reproduction.height}px`, "technical-block"));
 }
+$("clear-media-selection").addEventListener("click", () => { mediaSelection.clear(); renderMedia(); });
+$("attach-selected-media").addEventListener("click", action(async () => {
+  if (!mediaTarget) throw new Error("Click the target artwork first"); if (editorDirty) throw new Error("Save your artwork changes before attaching photos");
+  const role = $("media-role").value;
+  if (role === "primary" && mediaSelection.size > 1) throw new Error("Choose one primary image at a time");
+  for (const id of mediaSelection) { await api("/api/media/attach", { mediaId: id, artworkId: mediaTarget, role: role === "primary" ? "alternate" : role }); state = await api("/api/state"); if (role === "primary") await makePrimary(mediaTarget, state.media.find((media) => media.id === id).reproduction.src); }
+  mediaSelection.clear(); await refresh(); message("Photos added to the chosen artwork. Nothing is public.");
+}));
 function sequence(container, ids, changed) {
-  container.replaceChildren(); ids.forEach((id,index)=>{
-    const work=state.catalogue.artworks.find((work)=>work.id===id), item=node("li",work?.title||id), controls=node("div",undefined,"sequence-controls");
-    for(const [label,direction] of [["Up",-1],["Down",1]]) controls.append(button(label,()=>{const other=index+direction;if(other<0||other>=ids.length)return;[ids[index],ids[other]]=[ids[other],ids[index]];changed();}));
-    controls.append(button("Remove",()=>{ids.splice(index,1);changed();})); item.append(controls); container.append(item);
+  container.replaceChildren(); ids.forEach((id, index) => { const work = state.catalogue.artworks.find((work) => work.id === id), item = node("li"), content = node("div"); item.dataset.artworkId = id; item.append(thumb(imageFor(work), title(work))); content.append(node("strong", title(work))); if (dateLabel(work)) content.append(node("small", dateLabel(work)));
+    const controls = node("div", undefined, "sequence-controls"); for (const [label, direction] of [["Move earlier", -1], ["Move later", 1]]) { const control = button(label, () => { const other = index + direction; if (other < 0 || other >= ids.length) return; [ids[index], ids[other]] = [ids[other], ids[index]]; changed(); }); control.disabled = index + direction < 0 || index + direction >= ids.length; controls.append(control); }
+    controls.append(button("Remove", () => { ids.splice(index, 1); changed(); })); content.append(controls); item.append(content); container.append(item);
   });
 }
-function renderProjects() {
-  $("project-list").replaceChildren(); for(const project of state.catalogue.projects) $("project-list").append(button(`${project.title} · ${state.workflow[project.id]?.approved?"Public-source approved":"Private working copy"}`,()=>openProject(project.id)));
-}
+function renderProjects() { $("project-list").replaceChildren(); for (const project of state.catalogue.projects) { const item = button("", () => openProject(project.id)); item.className = "thumbnail-card"; item.dataset.projectId = project.id; const first = state.catalogue.artworks.find((work) => work.id === project.memberIds[0]); item.append(thumb(first ? imageFor(first) : null, ""), node("strong", project.title)); $("project-list").append(item); } }
 function openProject(id) {
-  editingProject=id||null; projectMembers=[]; const form=$("project-form");form.hidden=false;form.reset();$("project-id").textContent=id||"New private project";
-  if(id){const project=state.catalogue.projects.find((entry)=>entry.id===id);for(const name of ["title","slug","description","published"])formSet(form,name,project[name]);formSet(form,"aliases",project.aliases.join("\n"));for(const name of ["certainty","year","endYear"])formSet(form,name,project.date?.[name]);formSet(form,"privateNote",state.notes[id]);projectMembers=[...project.memberIds];}
+  editingProject = id || null; projectMembers = []; const form = $("project-form"); form.hidden = false; form.reset(); $("project-id").textContent = id ? `Neutral identity: ${id}` : "A neutral identity will be assigned when saved";
+  if (id) { const project = state.catalogue.projects.find((entry) => entry.id === id); for (const name of ["title", "slug", "description", "published"]) formSet(form, name, project[name]); formSet(form, "aliases", project.aliases.join("\n")); for (const name of ["certainty", "year", "endYear"]) formSet(form, name, project.date?.[name]); formSet(form, "privateNote", state.notes[id]); projectMembers = [...project.memberIds]; }
   renderProjectSequence();
 }
-function renderProjectSequence(){sequence($("project-members"),projectMembers,renderProjectSequence);}
-$("new-project").addEventListener("click",()=>openProject());
-$("add-project-member").addEventListener("click",action(()=>{const id=$("project-add-member").value;if(!id||projectMembers.includes(id))throw new Error("Choose a new unique member");projectMembers.push(id);renderProjectSequence();}));
-$("project-form").addEventListener("submit",action(async()=>{
-  const form=$("project-form"), old=editingProject?state.catalogue.projects.find((entry)=>entry.id===editingProject):{};
-  const project=await api("/api/project/save",{record:{...old,id:editingProject||undefined,slug:optional(form,"slug"),title:field(form,"title").value.trim(),aliases:lines(field(form,"aliases").value),date:date(form,true),description:optional(form,"description"),memberIds:projectMembers,published:field(form,"published").checked},note:field(form,"privateNote").value});
-  await refresh();openProject(project.id);message("Saved private project and exact ordered membership; no provisional series promotion.");
-}));
-function renderSelected(){sequence($("selected-sequence"),selected,renderSelected);}
-function openCuration(){selected=state.catalogue.artworks.filter((work)=>work.featured).sort((a,b)=>(a.selectedOrder??999999)-(b.selectedOrder??999999)).map((work)=>work.id);renderSelected();$("homepage-lead").value=state.catalogue.artworks.find((work)=>work.homepageLead)?.id||"";}
-$("add-selected").addEventListener("click",action(()=>{const id=$("selected-add-work").value;if(!id||selected.includes(id))throw new Error("Choose an artwork not already selected");selected.push(id);renderSelected();}));
-$("save-curation").addEventListener("click",action(async()=>{await api("/api/curation",{selectedIds:selected,homepageLeadId:$("homepage-lead").value});await refresh();openCuration();message("Saved private Selected Work sequence and unique homepage lead; prior approval is invalidated.");}));
-function reviewRecord(){const id=$("review-record").value;return [...state.catalogue.artworks,...state.catalogue.projects].find((record)=>record.id===id);}
-function showReview(){const record=reviewRecord();$("review-phase").textContent=record?phase(record):"Choose a record";$("approval-record").textContent=record?JSON.stringify({record,derivatives:record.reproductions?.flatMap((image)=>[image.src,...image.variants.map((variant)=>variant.src)])||[],privateNotesAndSourcePathsExcluded:true},null,2):"";}
-function renderReview(){options($("review-record"),[...state.catalogue.artworks,...state.catalogue.projects]);showReview();$("export-records").replaceChildren();for(const record of [...state.catalogue.artworks,...state.catalogue.projects]){const label=node("label",undefined,"check"),input=document.createElement("input");input.type="checkbox";input.value=record.id;input.dataset.kind="reproductions"in record?"artwork":"project";label.append(input,document.createTextNode(`${record.title} · ${state.workflow[record.id]?.approved?"Approved digest":"Approval required"}`));$("export-records").append(label);}}
-$("review-record").addEventListener("change",showReview);
-$("build-preview").addEventListener("click",action(async()=>{
-  message("Building current production-component draft preview…");$("build-preview").disabled=true;
-  try{currentPreview=await api("/api/preview/build",{});await refresh();$("preview-links").replaceChildren();const record=state.catalogue.artworks.find((work)=>work.id===editingArtwork)||state.catalogue.artworks[0];const paths=[["Homepage","/"],["Selected Work","/work/"],["Archive","/archive/"],["Projects","/projects/"],["Artwork",`/artwork/${record.slug}/`],["Medium",`/work/${record.medium}/`],...state.catalogue.projects.map((project)=>[project.title,`/projects/${project.slug}/`])];for(const[label,path]of paths){const link=node("a",`Preview ${label}`);link.href=currentPreview.origin+path;link.target="_blank";link.rel="noopener noreferrer";$("preview-links").append(link);}message("Private current-component preview ready. Open the relevant pages, then explicitly record local review.");}finally{$("build-preview").disabled=false;}
-}));
-$("mark-reviewed").addEventListener("click",action(async()=>{const record=reviewRecord();if(!record)throw new Error("Choose a record");await api("/api/review",{id:record.id});await refresh();$("review-record").value=record.id;showReview();message("Local review recorded; public-source approval remains a separate action.");}));
-$("approve-source").addEventListener("click",action(async()=>{const record=reviewRecord();if(!record)throw new Error("Choose a record");await api("/api/approve",{id:record.id,confirmation:$("approval-confirmation").value,rightsConfirmed:$("rights-confirmed").checked});$("approval-confirmation").value="";$("rights-confirmed").checked=false;await refresh();$("review-record").value=record.id;showReview();message("Exact public-source approval recorded. No repository files written; prepare a separate dry-run plan.");}));
-$("prepare-export").addEventListener("click",action(async()=>{const checked=[...$("export-records").querySelectorAll("input:checked")];exportPlan=await api("/api/export/plan",{artworkIds:checked.filter((input)=>input.dataset.kind==="artwork").map((input)=>input.value),projectIds:checked.filter((input)=>input.dataset.kind==="project").map((input)=>input.value)});$("export-plan").textContent=JSON.stringify(exportPlan,null,2);$("write-export").disabled=!exportPlan.repositoryWritesEnabled;message("Dry-run prepared. Review exact canonical JSON, derivative hashes and Git-visible paths; no public files changed.");}));
-$("write-export").addEventListener("click",action(async()=>{if(!exportPlan)throw new Error("Prepare a current dry-run first");const result=await api("/api/export/write",{token:exportPlan.token,confirmation:$("export-confirmation").value});$("export-confirmation").value="";exportPlan=null;$("export-plan").textContent=JSON.stringify(result,null,2);await refresh();message("Approved public-source files written. No Git commit, deployment or launch-manifest approval performed.");}));
-for(const control of document.querySelectorAll("[data-tab]"))control.addEventListener("click",()=>{for(const panel of document.querySelectorAll(".tab-panel"))panel.hidden=panel.id!==control.dataset.tab;for(const item of document.querySelectorAll("[data-tab]"))item.setAttribute("aria-current",item===control?"page":"false");if(control.dataset.tab==="curation")openCuration();});
-$("refresh").addEventListener("click",action(()=>refresh({editor:true})));
-try{const session=await(await fetch("/api/session")).json();token=session.token;await refresh();message("Private local Studio ready. Start with explicitly selected images; nothing is automatically public.");setInterval(async()=>{if(state.jobs.some((job)=>job.status==="running")){try{await refresh();}catch(error){message(error.message,true);}}},1500);}catch(error){message(error.message,true);}
+function renderProjectSequence() { sequence($("project-members"), projectMembers, renderProjectSequence); workPicker($("project-picker"), "Add to project", (id) => { projectMembers.push(id); renderProjectSequence(); }, "", projectMembers); }
+$("new-project").addEventListener("click", () => openProject());
+async function saveProject() {
+  const form = $("project-form"), old = editingProject ? state.catalogue.projects.find((entry) => entry.id === editingProject) : {};
+  if (!field(form, "title").value.trim() || !projectMembers.length) throw new Error("Give this project a title and choose at least one artwork");
+  const project = await api("/api/project/save", { record: { ...old, id: editingProject || undefined, slug: optional(form, "slug"), title: field(form, "title").value.trim(), aliases: lines(field(form, "aliases").value), date: date(form, true), description: optional(form, "description"), memberIds: projectMembers, published: field(form, "published").checked }, note: field(form, "privateNote").value }); await refresh(); openProject(project.id); message("Project saved. Nothing is public."); return project.id;
+}
+$("project-form").addEventListener("submit", action(saveProject));
+function renderSelected() { sequence($("selected-sequence"), selected, () => { selectedDirty = true; renderSelected(); }); workPicker($("selected-picker"), "Add to Selected Work", (id) => { selected.push(id); selectedDirty = true; renderSelected(); }, "", selected); }
+function openCuration() {
+  if (!selectedDirty) selected = state.catalogue.artworks.filter((work) => work.featured).sort((a, b) => (a.selectedOrder ?? 999999) - (b.selectedOrder ?? 999999)).map((work) => work.id);
+  leadId = state.catalogue.artworks.find((work) => work.homepageLead)?.id || ""; renderSelected(); renderHomepage();
+}
+function renderHomepage() {
+  $("current-lead").replaceChildren(); const lead = state.catalogue.artworks.find((work) => work.id === leadId);
+  if (lead) { const card = workCard(lead, "Current homepage image", () => previewPage("home"), true); $("current-lead").append(card); } else $("current-lead").append(node("p", "Choose the image you want on the homepage.", "hint"));
+  workPicker($("homepage-picker"), "Use on homepage", async (id) => { const savedOrder = state.catalogue.artworks.filter((work) => work.featured).sort((a, b) => (a.selectedOrder ?? 999999) - (b.selectedOrder ?? 999999)).map((work) => work.id); await api("/api/curation", { selectedIds: savedOrder, homepageLeadId: id }); await refresh(); leadId = id; renderHomepage(); message("Homepage image saved. Preview it below; nothing is public."); }, leadId);
+}
+async function saveCuration() { await api("/api/curation", { selectedIds: selected, homepageLeadId: leadId }); selectedDirty = false; await refresh(); openCuration(); message("Selected Work saved. Nothing is public."); }
+$("save-curation").addEventListener("click", action(saveCuration));
+async function buildPreview() {
+  if (editorDirty) await saveArtwork(); message("Preparing your preview…"); currentPreview = await api("/api/preview/build", {}); await refresh();
+  $("preview-links").replaceChildren(); const record = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0];
+  for (const [label, path] of [["Homepage", "/"], ["Selected Work", "/work/"], ["Archive", "/archive/"], ["Projects", "/projects/"], ["Artwork", `/artwork/${record.slug}/`], ["Medium", `/work/${record.medium}/`], ...state.catalogue.projects.map((project) => [project.title, `/projects/${project.slug}/`])]) { const link = node("a", `Preview ${label}`); link.href = currentPreview.origin + path; link.target = "_blank"; link.rel = "noopener noreferrer"; $("preview-links").append(link); }
+  message("Preview ready. Your work is still private."); return currentPreview;
+}
+async function previewPage(kind) {
+  const popup = window.open("about:blank", "_blank"); if (popup) popup.opener = null;
+  try { if (kind === "project") await saveProject(); if (kind === "selected" && selectedDirty) await saveCuration(); const preview = await buildPreview(); const work = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0], project = state.catalogue.projects.find((entry) => entry.id === editingProject); const path = kind === "project" ? `/projects/${project.slug}/` : kind === "selected" ? "/work/" : kind === "home" ? "/" : `/artwork/${work.slug}/`; if (popup) popup.location.href = preview.origin + path; else { showTab("review"); message("Open the preview link below."); } } catch (error) { popup?.close(); throw error; }
+}
+for (const id of ["preview-artwork", "preview-artwork-bottom"]) $(id).addEventListener("click", action(() => previewPage("artwork")));
+$("preview-project").addEventListener("click", action(() => previewPage("project"))); $("preview-selected").addEventListener("click", action(() => previewPage("selected"))); $("preview-homepage").addEventListener("click", action(() => previewPage("home")));
+$("build-preview").addEventListener("click", action(buildPreview));
+function reviewRecord() { return [...state.catalogue.artworks, ...state.catalogue.projects].find((record) => record.id === $("review-record").value); }
+function showReview() { const record = reviewRecord(); $("review-phase").textContent = record ? state.workflow[record.id]?.approved ? "Public-source approval recorded; writing is still separate." : state.workflow[record.id]?.reviewed ? "Reviewed locally; source approval is still separate." : "Draft — preview and check first." : "Choose an artwork or project"; $("approval-record").textContent = record ? JSON.stringify({ record, derivatives: record.reproductions?.flatMap((image) => [image.src, ...image.variants.map((variant) => variant.src)]) || [], privateNotesAndSourcePathsExcluded: true }, null, 2) : ""; }
+function renderReview() {
+  options($("review-record"), [...state.catalogue.artworks.map((work) => ({ id: work.id, title: title(work) })), ...state.catalogue.projects]); showReview(); $("export-records").replaceChildren();
+  for (const record of [...state.catalogue.artworks, ...state.catalogue.projects]) { const label = node("label", undefined, "check"), input = document.createElement("input"); input.type = "checkbox"; input.value = record.id; input.dataset.kind = "reproductions" in record ? "artwork" : "project"; label.append(input, document.createTextNode(`${"reproductions" in record ? title(record) : record.title} · ${state.workflow[record.id]?.approved ? "Exact public-source approval recorded" : "Approval required"}`)); $("export-records").append(label); }
+}
+$("review-record").addEventListener("change", showReview);
+$("mark-reviewed").addEventListener("click", action(async () => { const record = reviewRecord(); if (!record) throw new Error("Choose an artwork or project"); await api("/api/review", { id: record.id }); await refresh(); $("review-record").value = record.id; showReview(); message("Local review recorded. Public-source approval is still separate."); }));
+$("approve-source").addEventListener("click", action(async () => { const record = reviewRecord(); if (!record) throw new Error("Choose an artwork or project"); await api("/api/approve", { id: record.id, confirmation: $("approval-confirmation").value, rightsConfirmed: $("rights-confirmed").checked }); $("approval-confirmation").value = ""; $("rights-confirmed").checked = false; await refresh(); $("review-record").value = record.id; showReview(); message("Exact public-source approval recorded. No repository files written; prepare a separate dry-run."); }));
+$("prepare-export").addEventListener("click", action(async () => { const checked = [...$("export-records").querySelectorAll("input:checked")]; exportPlan = await api("/api/export/plan", { artworkIds: checked.filter((input) => input.dataset.kind === "artwork").map((input) => input.value), projectIds: checked.filter((input) => input.dataset.kind === "project").map((input) => input.value) }); $("export-plan").textContent = JSON.stringify(exportPlan, null, 2); $("export-details").open = true; $("write-export").disabled = !exportPlan.repositoryWritesEnabled; message("Dry-run prepared. Inspect exact metadata, image hashes and public paths before writing; no public files changed."); }));
+$("write-export").addEventListener("click", action(async () => { if (!exportPlan) throw new Error("Prepare a current dry-run first"); const result = await api("/api/export/write", { token: exportPlan.token, confirmation: $("export-confirmation").value }); $("export-confirmation").value = ""; exportPlan = null; $("export-plan").textContent = JSON.stringify(result, null, 2); await refresh(); message("Approved public-source files written. No commit, deployment or launch-manifest approval performed."); }));
+for (const control of document.querySelectorAll("[data-tab]")) control.addEventListener("click", () => showTab(control.dataset.tab));
+$("refresh").addEventListener("click", action(() => refresh())); roleOptions($("intake-role")); roleOptions($("media-role"));
+try { const session = await (await fetch("/api/session")).json(); token = session.token; await refresh(); message("Studio ready. Nothing here is public."); setInterval(async () => { if (state.jobs.some((job) => job.status === "running") || incomingJobs.size) { try { await refresh(); } catch (error) { message(error.message, true); } } }, 1000); } catch (error) { message(error.message, true); }

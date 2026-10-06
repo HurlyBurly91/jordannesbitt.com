@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R6
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R7
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R6 awaits owner authoring/polish and actual-public-content review. Start Node22 `npm run studio` (127.0.0.1,defaultno-write); private state ~/.local/share/jordannesbitt-art/m09/studio. Demo /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/demo-2026-10-06T03-41-38-903Z-e8cf03d7:38UI/componentcaptures/0observedaxe-incomplete-reflow,169sources+registry unchanged.79tests/0diagnostics;R2baseline preserved,code/docs checkpoint64f9e44 pushed/transport verified. Source/rights/launch approvals and older gates remain;release BLOCKED_CONTENT,never COMPLETE.
+M09-R7 UX verified80tests/0diagnostics;43A–I/UI/current-componentcaptures/0violations-reflow,one360pxcontrastINCONCLUSIVE manualcase. Public src/backend/security/intake unchanged; ownerstate/registry bytes and169sources preserved. Demo /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/ux-demo-2026-10-06T05-47-31-290Z-0f3a8a89 (isolatedworkspace). Docs/evidence/checkpoint then HUMAN_VERIFICATION. Defaultno-write/rights-source-final gates/BLOCKED_CONTENT persist; never COMPLETE.
