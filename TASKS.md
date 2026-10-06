@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R6
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -240,7 +240,7 @@ Reconstruction: existing checkout/origin5b973f7 match; master755df7f/backup3bc95
   Source: USER.
 - [x] M09-R6-17 Automated coverage: original preservation/private-outsideGit/no production-search-sitemap leaks/clear validation/duplicateIDs-slugs/mediaattachment/project+Selectedordering/leaduniqueness/dryrununchanged/exactapprovedexport/no accidental publication/loopback/traversal-symlink/corrupt images/interrupted intake falsely-complete prevention; run full existing suite, release stays BLOCKED_CONTENT.
   Source: USER. Dependencies:03–12.
-- [~] M09-R6-18 Persistent small-corpus demo showing complete add/edit/preview lifecycle, exact studio start command/private draft location/explicit export explanation, screenshots of UI/current-component previews and precise remaining real-public-content approval. Return ACTIVE/HUMAN_VERIFICATION, never COMPLETE.
+- [x] M09-R6-18 Persistent small-corpus demo showing complete add/edit/preview lifecycle, exact studio start command/private draft location/explicit export explanation, screenshots of UI/current-component previews and precise remaining real-public-content approval. Return ACTIVE/HUMAN_VERIFICATION, never COMPLETE.
   Source: USER. Dependencies:17.
 - [x] M09-R6-P01 Preserve static Astro/major/authoritative schema/intake/public projection/media/release algorithms, registry IDs/source bytes/mtime, original art/ratios/colour, private data and protected refs; marked-region references/invariants read before any edit.
   Source: USER and domain rules.
@@ -265,10 +265,11 @@ Reconstruction: existing checkout/origin5b973f7 match; master755df7f/backup3bc95
   Next demo executed native media-only intake successfully, then driver attempted collapsed frozen-image controls and timed out; driver now explicitly opens native disclosure. No actual artwork/publication approval occurred; retained private media/state and unchanged registry/source. Resume current demo from explicit small subset only.
   Completed first38-capture realdemo preserves169sources/registry/R2geometry and0reflow, but4axe violations identify scrollable canonical-disclosure pre blocks lacking keyboardfocus. Added explicit labelled focusable regions, retained CSP, and made demo continuation preserve owner drafts/reuse only marked demonstration project/curation. Not a passing realdemo until refreshed checks; no real source approval/export.
   Final verification: post-refinement full identical `npm run verify` exits0,79/79pass,0fail/skip/diagnostics. Strict `npm run release:check` exits1/BLOCKED_CONTENT/same8owner-content issues. Actual13pages/0images/2049bytesmaxJSgzip and empty search arrays,Studio assets excluded from deployment. Latest persistent demo exits0 with38UI/componentcaptures/0axeviolations/0incomplete/0reflow across1440/768/360×900/DPR1/scale1; unchanged R2 bounds/rhythm. Independent handoff audit exits0: actual studio CLI127.0.0.1/start/defaultwriteDisabled/tokenrequired/3privatedrafts/no source approvals/emptyactualcatalogue+search/all169sourcebytesmtime/registry continuity. No further implementation or automated failures remain.
-- [~] M09-R6-V02 Produce/inspect persistent small-real-input UI demonstration/screenshots/preview, reconcile docs/IDs/evidence and intended code/docs-only checkpoint; synchronize human-review state and exact commands.
+- [x] M09-R6-V02 Produce/inspect persistent small-real-input UI demonstration/screenshots/preview, reconcile docs/IDs/evidence and intended code/docs-only checkpoint; synchronize human-review state and exact commands.
   Source: DERIVED. Dependencies:V01,18,P01,P02.
   Verified realdemo: current `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/demo-2026-10-06T03-41-38-903Z-e8cf03d7`,38UI/current-componentcaptures,0axeviolations/incomplete/reflow,169/169sourcebytes+mtime and registrydigest preserved. Three explicit existingIDs become private demonstration drafts; no automatic169catalogue or sourceapproval. Actualworkingroot ~/.local/share/jordannesbitt-art/m09/studio,previewsite understudio/previews. Independent handoff verification passes actualCLI127/defaultno-write/token/3drafts/emptyactualcatalogue-search/no approvedprivateworkflow/allsourcepreservation. Screenshot UI editor/curation/home inspected; README/current-component screenshots and reportprivate. Fullpostrefinement79tests/0diagnostics and releaseBLOCKED verified. Docs/source review/code-only checkpoint and synchronizedhumanstate next.
-- [ ] M09-R6-H01 Owner tests practical local intake/edit/media identity/project+Selectedordering/lead/preview/review/explicit export usability and readable polish. Automated demo does not approve real rights/content/export.
+  Transport evidence: intended existing/new code/tests/docs/staged31pathinventory reviewed;gitdiff--check/cachedcheck/status/log/remote/protectedrefs pass. Commit/push exits0 for64f9e445d2fca4524cd40fe80f4b40267c3b845f on redesign/astro-foundation; matching origin,master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. No actualcontent/media/private notes/drafts/demo screenshots/rightsapprovals staged; no release or real export. Canonical state now ACTIVE/HUMAN_VERIFICATION; scoped HIGH ended explicitly and LOW resumed. Docs/studio.md and studio/README.md explain exact startup/private storage/review-source approval-dryrun-runtimewritegrant-confirmation flow. Stop for H01/H02; final M09 closeout prohibited.
+- [H] M09-R6-H01 Owner tests practical local intake/edit/media identity/project+Selectedordering/lead/preview/review/explicit export usability and readable polish. Automated demo does not approve real rights/content/export.
   Source: USER/DERIVED human gate. Dependencies:V02.
-- [ ] M09-R6-H02 Owner approves actual public-source records/media/rights/professional/contact/availability/curation/launchmanifest and final real-public visual/reproduction/content acceptance separately; provisional R2 baseline does not close M09.
+- [H] M09-R6-H02 Owner approves actual public-source records/media/rights/professional/contact/availability/curation/launchmanifest and final real-public visual/reproduction/content acceptance separately; provisional R2 baseline does not close M09.
   Source: USER and active milestone contract. Older unresolved R1/R5 gates remain preserved.

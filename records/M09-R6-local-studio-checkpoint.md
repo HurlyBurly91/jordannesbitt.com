@@ -4,7 +4,7 @@
 
 ## IDs and preserved boundaries
 
-M09-R6-01–17/P01/P02/D01–D03/V01 are technically verified.18/V02 capture final demonstration/evidence/transport/human pointer. H01 requires owner practical workflow/polish review; H02 requires genuine public source/media/rights/professional/contact/business/curation/manifest/final presentation approval. Historical M09-R2-H01 is SUPERSEDED for provisional baseline direction by M09-R6-01 and H02, never silently treated as final real-public approval. R1/R5 unresolved factual/colour/content/manual checks persist.
+M09-R6-01–18/P01/P02/D01–D03/V01/V02 are technically verified. H01/H02 are AWAITING_HUMAN: practical workflow/polish review and genuine public source/media/rights/professional/contact/business/curation/manifest/final presentation approval. Historical M09-R2-H01 is SUPERSEDED for provisional baseline direction by M09-R6-01 and H02, never silently treated as final real-public approval. R1/R5 unresolved factual/colour/content/manual checks persist.
 
 Static Astro5/canonical artwork/project schemas/intake/public predicate/media/release algorithms preserved. Canonical reproduction roles gain requested alternate/framed/documentation distinctions, with reference-only media remaining private. No second artwork model, database/cloud/public CMS/login/admin route, sales duplicate catalogue, major upgrade, public drafts or real external effects. New authoring/export/storage orchestration lives outside deployed routes; administrative sidecars track jobs/provenance/notes/review digests, not alternative artwork facts.
 
@@ -51,3 +51,7 @@ Independent private handoff audit verifies actualCLI start/127/token/defaultno-w
 Owner must review authoring practicality/optional fact handling/media identity/order/curation/approval/export UX/polish, then supply/approve actual factual public content/reproduction rights/alt/dates/medium/kind/relationships/availability-optional prices/edition/framing/professionalAbout-CV/contact/selection/projectorder/lead/source disclosure and exact owner launch manifest separately. Actual content/manifest remain empty/unapproved. Existing incompletecontrast/colour/source decisions persist where not covered by this demonstration. Existing nonpassing dependency audit is not resolved or newly called passing.
 
 Only intended code/tests/docs/state are checkpointed on redesign/astro-foundation; no artwork/draft records/private notes/media/screenshots/approval facts. Unfamiliar empty untracked file preserved. M09 returns ACTIVE/HUMAN_VERIFICATION after verified transport; no final closeout/COMPLETE/M10/M11 authority.
+
+## Verified checkpoint transport
+
+Intended source/domain/durable-state/new-file review,git diff--check/recentlog/status/remote/protectedrefs and staged31code-tests-docs-only inventory/cached--check pass. Commit/push exits0 for **64f9e445d2fca4524cd40fe80f4b40267c3b845f**, `Add M09 local artwork Studio and explicit source export workflow`. Post-push HEAD/origin match;master755df7f/backup3bc95c7 unchanged and only preserved unknown empty untracked file remains. No real assets/source-linked private metadata/actualcontent/identity/launchmanifest or approvalfacts staged. Final documentation records ACTIVE/HUMAN_VERIFICATION with H01/H02 awaiting owner, not an M09 closeout.
