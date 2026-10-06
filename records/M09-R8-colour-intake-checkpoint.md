@@ -4,7 +4,7 @@ Intermediate technical evidence, **not M09 completion or owner content/colour/ri
 
 ## IDs and scope
 
-M09-R8-01–09/P01/P02/D01/D02/V01 technically verified;10/V02 record sequence/transport/human pointer. H01 requires owner ordinary-image decision/edit/save/restart review; older R7/R6/R1/R5 human/source/colour/final-content/manual checks persist. M09-R7-01 pending-editor timing is SUPERSEDED by R8-04 only,not silent removal of other image-first behavior or final approval.
+M09-R8-01–10/P01/P02/D01/D02/V01/V02 technically verified. H01 remains AWAITING_HUMAN ordinary-image decision/edit/save/restart review; older R7/R6/R1/R5 human/source/colour/final-content/manual checks persist. M09-R7-01 pending-editor timing is SUPERSEDED by R8-04 only,not silent removal of other image-first behavior or final approval.
 
 Readonly profile-question adapter uses existing direct sharp100Mpixel/single-image checks and30MiBbounded authenticated selected bytes. It returns checksum/profile presence only and creates no inputcopies/jobs/drafts/registry allocation/default. The actual ingestion pipeline revalidates/converts/encodes as before; no second colour model/auto white-balance/crop/profile correction/new assumption. Existing guard/token/Host/Origin/path/export authority reused,not expanded. LOW workflow correction.
 
@@ -41,3 +41,19 @@ AuthoritativeownerStudio state/registry byte-for-byteunchanged;169/169sourcebyte
 ## Human handoff
 
 Fromcheckout/Node22,`npm run studio` opens ownerStudio on127.0.0.1;defaultsourcewritingdisabled and existingpersistentworkingdata unchanged. Open artifactREADME/report/screenshots for exact sequence;`JORDANNESBITT_M09_DATA=<artifact>/workspace npm run studio` opens isolated saved demonstration. studio/README.md/docs/studio.md record profile-question scope/readiness and unchanged final export gates. Ownerrepeats ordinaryuntagged/tagged/batchchoice/edit/save/restart andreviews remaining realcolour/rights/publiccontent/launch gates. Return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE/finalcloseout.
+
+## R8 handoff reconciliation after the completed migration
+
+Latest explicit owner instruction limits this resume to M09-R8-V02 and supported R8-10 completion,with H01 unresolved. Reconstruction follows current AGENTS.md/RUN_PROMPT.txt; headers previously agreed ACTIVE/AUTOMATED_VERIFICATION/M09-R8. Development HEAD/origin d0fc8a295e0de3283995248a92739a569d6f7788 match with clean worktree; master755df7f/backup3bc95c7 preserved. No new request or completed migration work reopened.
+
+Existing R8 implementation/evidence checkpoint b610adff909dd5e96f71fa9f0a0d05bc496b4256 is an ancestor. `git diff --exit-code b610adf..HEAD -- src studio scripts/lib/studio-store.mjs scripts/lib/studio-server.mjs scripts/lib/studio-export.mjs scripts/lib/studio-paths.mjs scripts/lib/studio-preview.mjs scripts/lib/ingestion.mjs scripts/studio.mjs scripts/studio-demo.mjs scripts/studio-intake-demo.mjs tests docs/studio.md records/M09-R8-colour-intake-checkpoint.md` exits0 before this handoff. Studio guide/domain rules,stable IDs/supersession and persistent6step/12screenshot demo README/report agree. No migration-induced application regression or uncertainty found; prior83test/demo/sourcepreservation/BLOCKED_CONTENT evidence remains historical verified evidence,not a newly executed application/release run.
+
+Current Node22.23.3/npm10.9.9 `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run state:check'` exits0 for reconstruction. Structural validation also checks the final human-review headers before checkpoint. Only STATUS.md,TASKS.md and this intermediate R8 evidence record change; no Studio/public design/catalogue/pipeline/publication implementation or private data change. R8-10/V02 complete the supported handoff; H01 stays awaiting actual owner acceptance. M09 is ACTIVE/HUMAN_VERIFICATION/M09-R8,never COMPLETE or closed out.
+
+Owner startup from /home/jordan/jordannesbitt.com with the verified temporary Node22 runtime:
+
+```bash
+npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'
+```
+
+Short H01 test: choose an ordinary private untagged image and New artwork;confirm the human profile question and explicitly choose Use sRGB for this image;check that the prepared editor opens in the viewport with Title focused and common fields editable;enter Title/Medium/Alt and Save draft without optional dimensions/price/edition fields;Ctrl+C,start again,reopen and confirm values persist. Check decline creates no draft and any multi-image sRGB choice is scoped to that selection,not a later import. Report whether the normal flow is clear and free of repeated CLI errors;do not approve public-source export or launch as part of this usability test.

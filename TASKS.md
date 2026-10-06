@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R8
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -350,8 +350,9 @@ Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownempt
   Source: USER.
 - [x] M09-R8-09 Interaction tests: untagged→explicit sRGB→readyeditor;decline→nodraft;tagged→noquestion;multipleuntagged→scopedchoice;no duplicateerrorlog;focus/scroll;commonfieldedits/persistence afterSave/restart;full existing verification green.
   Source: USER. Dependencies:01–08.
-- [~] M09-R8-10 Actual authorized private untagged corpus image demo/screenshot orshortscreencast sequence: Select→UsesRGB→editor→editTitle/Medium/Alt→Save→restart/reopen persisted. No real source data/assets/metadata in Git;return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE.
+- [x] M09-R8-10 Actual authorized private untagged corpus image demo/screenshot orshortscreencast sequence: Select→UsesRGB→editor→editTitle/Medium/Alt→Save→restart/reopen persisted. No real source data/assets/metadata in Git;return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE.
   Source: USER. Dependencies:09.
+  Handoff evidence: existing V01/records/M09-R8-colour-intake-checkpoint.md and persistent README/report support all6steps/12screenshots/restart persistence; source approvals/writes remain false. Returned ACTIVE/HUMAN_VERIFICATION for H01,not owner acceptance or milestone completion.
 - [x] M09-R8-P01 Preserve src/public design/catalogue,canonical ingestion/colour handling/EXIF/aspect/sourcebytes,private root/IDs/current owner drafts,validation/security/export/release/protectedrefs/unknownuntrackedfile. Bounded readonly profile adapter inherits existing request guards and limits; no arbitrary path endpoint/new write authority.
   Source: USER and DERIVED.
 - [x] M09-R8-P02 No global sRGB memory,no rights/source/launch/artistry approval inferred,no public data/Git private assets/deployment/master/services/checkout/M09complete. R7/older human checks remain unaccepted except explicit timing supersession above.
@@ -366,9 +367,10 @@ Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownempt
   Source: DERIVED. Dependencies:D01,D02.
   Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,83/83tests/0fail-skip-diagnostics. Previous80checks retained with3newcolour-readiness-restart cases;actual13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/canonicalingest/colour/export/path/preview/release preservation diff exits0;only readonlyadapter and UIworkflow added. Real untaged-corpus sequence and strictrelease check next.
   Actual sequence: `npm run studio:intake-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270`,6steps/12viewport-fullPNGs/0axeviolations-incomplete-reflow,1440×900/DPR1/normalzoom. Actual untagedauthorisedimage has0draft/jobsbeforeexplicitchoice;private manifest explicit-sRGBprofile;readyeditor titlefocus/currentviewport/enabledcontrols;Title/Medium/Alt edit+Save/realserverstop-start/reopenvaluespersisted. Source169/169bytes+mtime/ownerState+authoritativeregistrybytes unchanged. Screenshotcolourquestion/readyform/restart inspected. No actualcontent/sourceapproval/export;strictrelease exits1/BLOCKED_CONTENT/same8issues. Full-WCAG/physicalcolour/human acceptance not inferred.
-- [~] M09-R8-V02 Reconcile docs/evidence/IDs,verify intended code/docs-only checkpoint and synchronized human state,return exact studio/demo paths and remaining real owner approvals.
+- [x] M09-R8-V02 Reconcile docs/evidence/IDs,verify intended code/docs-only checkpoint and synchronized human state,return exact studio/demo paths and remaining real owner approvals.
   Source: DERIVED. Dependencies:V01.
-- [ ] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
+  Latest USER resume scope: finish only this handoff and supported R8-10; no new request group or reopening completed R9. Reconstructed AGENTS/RUN_PROMPT/PROJECT/STATUS/contract/TASKS; inspected clean development HEAD/origind0fc8a2 and protectedrefs. R8 docs/studio guide/IDs/supersession/private demo README/report remain consistent. Preservation diff b610adf..HEAD exits0 for Studio/public source/tests/ingestion/R8 evidence record; b610adf is an ancestor,so no concrete migration-induced application uncertainty. Existing83/83tests/real untaged demo/169sourcepreservation/strictBLOCKED_CONTENT evidence reused,not claimed freshly rerun. Node22.23.3/npm10.9.9 `npm run state:check` exits0 before handoff; final synchronized headers ACTIVE/HUMAN_VERIFICATION/M09-R8. Only STATUS/TASKS/R8 checkpoint evidence change under current explicit commit/push grant; no implementation/private assets/approval/launch/milestone closeout. Startup:checkout+Node22 `npm run studio`; pending owner test:untaggedimage→explicitUsesRGB→focusededitableform→Title/Medium/Alt→Save→Ctrl+C/restart/reopenpersistedvalues;alsodecline/batchscope reset checks. Older human gates preserved.
+- [H] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
   Source: USER/DERIVED. Dependencies:V02. Older human/final-content/manual checks preserved.
 
 ## M09-R9 — Experience-augmented durable-state migration
