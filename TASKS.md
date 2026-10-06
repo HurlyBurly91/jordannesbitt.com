@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R4
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R2
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -153,11 +153,12 @@ Source: USER, 2026-10-05. The disposable /tmp review state was lost before owner
   Source: USER and existing M09 policy.
 - [x] M09-R4-D01 Update pilot path policy/defaults and canonical documentation without changing presentation, metadata, publication, or release behavior.
   Source: DERIVED.
-- [~] M09-R4-V01 Run targeted/full tests proving the persistent default, allowed test scratch, and unchanged release/privacy behavior.
+- [x] M09-R4-V01 Run targeted/full tests proving the persistent default, allowed test scratch, and unchanged release/privacy behavior.
   Source: DERIVED.
-  Evidence so far: GitHub Actions run 37392445611 completed successfully under Node 22 through `npm ci` and `npm run build`. Full local `npm run verify`/strict release behavior remains to be run before V01 is marked VERIFIED.
-- [ ] M09-R4-V02 Commit/push only intended code/tests/docs/state, then return to the unresolved M09-R2 owner visual-review gate.
+  Evidence: GitHub Actions run 37392445611 passed Node 22 `npm ci` and `npm run build`. Owner-local Node 22 verification on 2026-10-05 installed the disposable Playwright Chromium cache and then `npm run verify` passed 72/72 tests with 0 failures/skips and 0 Astro diagnostics. The suite includes the persistent-root test, publication/privacy isolation, browser interaction/accessibility/reflow, and the strict real-content checker, which continued to reject the intentionally empty launch rather than weakening the release gate.
+- [x] M09-R4-V02 Commit/push only intended code/tests/docs/state, then return to the unresolved M09-R2 owner visual-review gate.
   Source: DERIVED.
+  Evidence: implementation/docs checkpoints 8278668 and 1953829 were already pushed on redesign/astro-foundation; this state-only checkpoint records successful owner-local verification and restores ACTIVE / HUMAN_VERIFICATION / M09-R2. No real artwork/private pilot assets were committed.
 
-This request does not accept M09-R2 visuals or any older M09 content/rights/manifest gate.
+Persistent replacement snapshot: owner-local run `run-2026-10-06T00-12-39-275Z-bd2ed33a` captured 169/169 supported images, 0 exclusions and 1 ignored non-image at `~/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json`, SHA256 `60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c`. The durable `id-registry.json` now exists under the persistent root. This request does not accept M09-R2 visuals or any older M09 content/rights/manifest gate.
 
