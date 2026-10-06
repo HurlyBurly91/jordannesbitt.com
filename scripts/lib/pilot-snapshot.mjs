@@ -1,6 +1,8 @@
 import { readdir, realpath, open, mkdir, readFile, writeFile, rename } from "node:fs/promises";
 import { constants } from "node:fs";
-import { resolve, relative, dirname, extname, basename } from "node:path";
+import { resolve, relative, dirname, extname, basename, sep, isAbsolute } from "node:path";
+import { homedir } from "node:os";
+import { fileURLToPath } from "node:url";
 import { createHash, randomUUID } from "node:crypto";
 import sharp from "sharp";
 
@@ -10,9 +12,25 @@ export function calendarDate(mtime, timezone) {
   const parts = Object.fromEntries(new Intl.DateTimeFormat("en-CA", { timeZone: timezone, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(mtime)).map(({ type, value }) => [type, value]));
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
-export function localPilotOutput(directory) {
+const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const inside = (path, root) => path === root || path.startsWith(`${root}${sep}`);
+
+export function persistentPilotRoot() {
+  const override = process.env.JORDANNESBITT_M09_DATA?.trim();
+  const root = override || resolve(homedir(), ".local", "share", "jordannesbitt-art", "m09");
+  if (!isAbsolute(root)) throw new Error("JORDANNESBITT_M09_DATA must be an absolute persistent path");
+  const path = resolve(root);
+  if (inside(path, "/tmp")) throw new Error("Persistent M09 pilot state cannot live under /tmp");
+  if (inside(path, repositoryRoot)) throw new Error("Persistent M09 pilot state must remain outside the public repository");
+  return path;
+}
+export function localPilotOutput(directory = persistentPilotRoot()) {
   const path = resolve(directory);
-  if (!path.startsWith("/tmp/opencode/")) throw new Error("Private pilot output must stay inside approved /tmp/opencode, outside public Git");
+  const persistent = persistentPilotRoot();
+  const testScratch = "/tmp/opencode";
+  if (!inside(path, persistent) && !inside(path, testScratch)) {
+    throw new Error(`Private pilot output must stay under persistent root ${persistent}; /tmp/opencode is reserved for disposable automated-test scratch`);
+  }
   return path;
 }
 async function readJson(path) {
@@ -27,7 +45,7 @@ async function atomicJson(path, value) {
 
 // BEGIN CANONICAL ALGORITHM: frozen local-only image pilot snapshot
 // Reference: docs/catalogue.md
-export async function snapshotImages({ source, output = "/tmp/opencode/jordannesbitt-m09", timezone = Intl.DateTimeFormat().resolvedOptions().timeZone }) {
+export async function snapshotImages({ source, output = persistentPilotRoot(), timezone = Intl.DateTimeFormat().resolvedOptions().timeZone }) {
   if (!source) throw new Error("An explicitly owner-authorized --source directory is required");
   const sourceRoot = await realpath(resolve(source));
   const base = localPilotOutput(output);

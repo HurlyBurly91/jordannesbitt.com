@@ -3,12 +3,21 @@ import { test } from "node:test";
 import { mkdtemp, mkdir, writeFile, readFile, rm, utimes, lstat, symlink } from "node:fs/promises";
 import { resolve } from "node:path";
 import sharp from "sharp";
-import { snapshotImages, calendarDate, hashBytes } from "../scripts/lib/pilot-snapshot.mjs";
+import { snapshotImages, calendarDate, hashBytes, persistentPilotRoot, localPilotOutput } from "../scripts/lib/pilot-snapshot.mjs";
 import { loadSnapshot, expandClassifications, renderCatalogue, sourcePreservation, derivePilot, privatePilotSite, assertPrivatePilotOutput } from "../scripts/lib/real-pilot.mjs";
 import { artworkSchema, mediumLabel, publicCatalogue } from "../src/lib/catalogue.ts";
 import { chromium } from "playwright";
 import { prepareScreenshot, auditAccessibility } from "../scripts/lib/browser-quality.mjs";
 import { specimenSite } from "./helpers/specimen-site.mjs";
+
+test("private M09 state defaults to persistent user data while /tmp remains test scratch only", () => {
+  const root = persistentPilotRoot();
+  assert.ok(root.endsWith("/.local/share/jordannesbitt-art/m09") || process.env.JORDANNESBITT_M09_DATA, `unexpected persistent root: ${root}`);
+  assert.ok(!root.startsWith("/tmp/"), "durable pilot default must not live under /tmp");
+  assert.equal(localPilotOutput(resolve(root, "reviews")), resolve(root, "reviews"));
+  assert.equal(localPilotOutput("/tmp/opencode/jordannesbitt-pilot-test"), "/tmp/opencode/jordannesbitt-pilot-test");
+  assert.throws(() => localPilotOutput("/var/tmp/jordannesbitt-private"), /must stay under persistent root/);
+});
 
 test("supported-only frozen inventory preserves source mtime/bytes, dates and neutral IDs across late arrivals", async (t) => {
   const root = await mkdtemp("/tmp/opencode/jordannesbitt-pilot-test-");

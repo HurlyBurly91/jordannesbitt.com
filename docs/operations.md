@@ -71,3 +71,14 @@ The post-update audit still exits **1**, reporting **4 findings: Astro (critical
 - esbuild 0.27.x's reported issue is local arbitrary-file read on a Windows development server ([GHSA-g7r4-m6w7-qqqr](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr)); this verification is Linux/loopback, with static production output.
 
 Later milestones must revisit findings when introducing affected features and at release review. Framework migration requires an explicit change to the architecture boundary; technical baseline completion does not approve deployment or resolve these advisories. No browser/accessibility/performance, visual/colour, delivered email or indexing acceptance is claimed by these route tests.
+
+
+## Persistent M09 private data
+
+M09's durable local review state must survive `/tmp` cleanup. The default private root is:
+
+```text
+~/.local/share/jordannesbitt-art/m09
+```
+
+It is outside this public Git checkout. It contains the private neutral-ID registry, frozen snapshots, source copies, derivatives, visual plans/classifications, review packages and screenshots. Use `JORDANNESBITT_M09_DATA=/absolute/persistent/path` only when the owner deliberately chooses another persistent location. Relative configured roots, roots under `/tmp`, and roots inside the repository are rejected. Disposable npm/Playwright/test caches may remain under `/tmp/opencode`.
