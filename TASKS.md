@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
-Active-Request: M09-R9
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R8
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -393,8 +393,9 @@ Source: USER, 2026-10-06. Migrate this repository's existing durable-state contr
   Source: USER.
 - [x] M09-R9-08 Preserve docs/ selective loading and all BEGIN/Reference/END canonical source-to-document relationships; do not change application behavior for this migration.
   Source: USER.
-- [ ] M09-R9-09 Validate migration against current live state and the reference architecture, including final diff review for accidental deletion/replacement of project-specific state.
+- [x] M09-R9-09 Validate migration against current live state and the reference architecture, including final diff review for accidental deletion/replacement of project-specific state.
   Source: USER.
+  Evidence: compare b610adf..540ed67 changes only durable-state policy/index/experience/validation/CI/package files plus R9 state; PROJECT.md, all milestone contracts, project-specific canonical docs, application source/tests and historical records remain unchanged. Existing R8 and older unresolved tasks/IDs/evidence remain in TASKS/records.
 - [x] M09-R9-P01 Do not copy bootstrap values, renumber existing IDs, fictionalize completed history, infer human acceptance, discard evidence, alter public website behavior/content, publish/deploy, modify master/backup branches, or expose private material.
   Source: USER.
 - [x] M09-R9-P02 Preserve M09-R8 implementation/evidence and its unresolved H01 exactly as live prior work; this infrastructure migration neither completes nor supersedes that owner review.
@@ -403,11 +404,12 @@ Source: USER, 2026-10-06. Migrate this repository's existing durable-state contr
   Source: DERIVED.
   Requires: M09-R9-01 through M09-R9-08, P01, P02.
   Evidence: merged AGENTS/RUN_PROMPT policy uses reference commit 6b3ebc3 while retaining project authorization/model/privacy/release rules; empty optional experience store added without retroactive fabricated cases; records policy now distinguishes meaningful checkpoints from trial logs; state:check validates synchronized headers/active request/spec/experience JSONL/canonical references.
-- [~] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
+- [x] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
   Source: DERIVED.
-  Evidence: first CI state:check correctly executed but falsely treated the canonical-marker example in AGENTS.md as source implementation. Restrict marker/reference scanning to implementation file types; documentation examples remain policy text, while actual source markers still validate. No product behavior changed.
-- [ ] M09-R9-V02 Inspect intended diff and protected refs; commit/push only state-machine code/docs/validation files on redesign/astro-foundation, then restore the pre-migration M09-R8 ACTIVE/AUTOMATED_VERIFICATION state without marking M09 complete.
+  Evidence: first CI state:check executed and exposed one validator false positive by treating the AGENTS markdown marker example as source; scanning was narrowed to implementation file types. GitHub Actions run 37511215522 then passed Node22 npm ci, npm run state:check and npm run build. state:check validates required durable files, STATUS/TASKS synchronization, active request/spec, experience JSONL and source canonical references. Experience files are empty by design and no execution path depends on retrieval. Pre-migration R8 evidence already records 83/83 application tests; migration changed no application source or tests.
+- [x] M09-R9-V02 Inspect intended diff and protected refs; commit/push only state-machine code/docs/validation files on redesign/astro-foundation, then restore the pre-migration M09-R8 ACTIVE/AUTOMATED_VERIFICATION state without marking M09 complete.
   Source: DERIVED.
+  Evidence: implementation checkpoints 556aa99 and 540ed67 are state-machine-only; master 755df7f and backup 3bc95c7 remain unchanged. Final state restores the exact pre-migration M09/R8 State/Phase/Active-Request pointer while retaining this completed R9 request and migration record. No M09 human/content/rights/launch gate is completed by the migration.
 
 Current migration entry state: target head `b610adff909dd5e96f71fa9f0a0d05bc496b4256`; reference architecture commit `6b3ebc329de5355f6a06c3725438001999786cc8`. M09-R8 remains technically verified but awaiting owner H01; all older M09 human/content/rights/colour/launch gates remain unresolved.
 
