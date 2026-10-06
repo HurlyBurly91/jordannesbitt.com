@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: FOLLOW_UP
+Phase: IMPLEMENTATION
 Active-Request: M09-R9
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R9 captures the owner-authorized migration of the existing durable-state control plane to the experimental experience-augmented architecture. Preserve all live project truth and unresolved M09-R8/older human gates; this migration changes recovery/precedent/checkpoint policy only, not website behavior or publication authority. Reference: durable-state-machine commit 6b3ebc329de5355f6a06c3725438001999786cc8.
+M09-R9 implementation is migrating only the durable-state control plane to the optional experience-augmented architecture from durable-state-machine commit 6b3ebc3. Live M09-R8/older requirements, evidence, records, docs, canonical references and release/privacy gates are preserved; no website behavior/content/publication change is authorized.

@@ -10,3 +10,5 @@ Load these documents selectively; this index is not a second execution ledger.
 - research.md: dated evidence, earlier-brief reconstruction and derived design decisions.
 
 These describe required target behavior unless explicitly labelled as inspected existing behavior. Implementation status belongs only in STATUS.md/TASKS.md. Changes to these contracts require a recorded requirement and corresponding verification.
+
+The optional precedent layer is separate from canonical domain truth. See `experiences/` for evaluated advisory cases and retrieval telemetry; experiences never override these docs or live requirements and are not required for reconstruction.

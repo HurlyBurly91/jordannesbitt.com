@@ -23,7 +23,8 @@
     "studio": "ASTRO_TELEMETRY_DISABLED=1 node scripts/studio.mjs",
     "studio:demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-demo.mjs",
     "studio:intake-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs",
-    "verify": "npm run build && npm test"
+    "verify": "npm run state:check && npm run build && npm test",
+    "state:check": "node scripts/durable-state-check.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",

@@ -1,16 +1,36 @@
-Resume from durable repository state, not missing conversation history.
+Resume autonomous development from durable repository state, not missing conversation history.
 
-1. Read AGENTS.md, PROJECT.md, STATUS.md, its referenced milestone contract and TASKS.md.
-2. Read only the applicable docs/ references. Before editing a BEGIN CANONICAL ALGORITHM region, read its Reference document and preserve its markers/invariants.
-3. Inspect branch, origin, working tree and remote state. Do not overwrite unrelated work or start a second writer.
-4. Reconstruct unresolved requirements, dependencies, evidence, blocked work, human checks, supersession and the exact current authorization. Synchronize disagreeing durable files before code changes.
-5. If at M00 awaiting kickoff without a new explicit grant, report the pending gate and STOP. Reading this prompt is not authorization to implement or publish.
-6. If the owner explicitly approves M00 and grants implementation, record the approval and scope, verify all M00 checks, close M00 into records/M00-preparation.md, then initialize M01 and M01-R1. Do not invent an approval date, model identifier or capability.
-7. Persist any new/changed requirements with stable IDs BEFORE implementation. Human feedback creates a new group, preserves unresolved older checks and transitions out of HUMAN_VERIFICATION before coding/testing.
-8. Execute the highest-priority non-blocked work in the authorized milestone. Keep STATUS.md and TASKS.md synchronized with actual state and phase. Use the owner's locally configured Sol 6.1 Max selection; M01 resolves the real installed provider/model/variant without exposing credentials or editing host-wide settings.
-9. Run the applicable verification and attach command/environment/results. Unknown, unavailable or failed checks are not passes. No fixture, draft or private data may leak to the production output.
-10. Complete a milestone only after all its required automated and human checks pass, reconcile docs/, archive evidence and final IDs in records/, and satisfy authorized commit/push requirements. Then initialize only the next authorized milestone and bound TASKS.md to current work.
-11. Do not load every historical record. Do not continue past a human, content, external-effect or release gate. M01-M08 technical completion does not approve M09; M10 publication and M11 commerce need separate authority.
+1. Read AGENTS.md and obey its operating invariants.
+2. Read PROJECT.md for project direction and roadmap context.
+3. Read STATUS.md to identify the active milestone, State, Phase, Active-Request, and milestone specification.
+4. Read the active milestone specification referenced by STATUS.md.
+5. Read TASKS.md and reconstruct unresolved user requirements, preservation constraints, dependencies, relevant verification, blockers, pending human checks, supersession links, exact authorization, and the current investigative question.
+6. Read only docs/ files referenced by the active milestone/TASKS or directly required by the current domain. Do not load the whole docs tree.
+7. Before modifying/moving/refactoring any BEGIN CANONICAL ALGORITHM region, read its Reference: docs/... document and preserve/move the markers and documented invariants.
+8. Inspect branch, origin, working tree, and remote state. Preserve unrelated work; do not start a second writer.
+9. Treat repository durable state as authoritative over missing/incomplete conversation history. If durable files disagree, reconcile them before substantive implementation.
+10. If the current user instruction adds/changes/supersedes/removes a requirement, persist it in TASKS.md with stable IDs before implementation. Do not renumber historical IDs.
+11. If human feedback creates implementation/automated-verification work, create a new request group, preserve unresolved older human tasks, and transition out of HUMAN_VERIFICATION before code changes.
+12. Determine whether the next work is a durable decision boundary or routine inner-loop experimentation under an already-persisted request/task.
+13. During one bounded investigative loop, reuse the existing request and normally one derived task. Do not create a request/task ID for each capture, measurement, parameter, candidate, or expected failure.
+14. Keep exhaustive raw evidence in generated JSON/TSV/CSV/log/capture/analysis artifacts. TASKS.md should keep only resume-critical decisive evidence, artifact/reproduction reference when useful, conclusion, material uncertainty, and next direction.
+15. Update STATUS.md only when milestone State, Phase, or Active-Request actually changes—not for each observation.
+16. If experience retrieval is enabled and precedent may materially alter a non-trivial strategy, retrieve only a small relevant active set from experiences/. Skip retrieval for routine trial-to-trial iteration after strategy is established.
+17. Record retrieval telemetry only when retrieval occurs. For materially used precedent, compare similarities/differences/assumptions/applicability and later classify helpful/neutral/misleading when the outcome is observable.
+18. Missing precedent is never a blocker. If experience retrieval is disabled, skip all experience steps and continue with the same baseline durable-state workflow.
+19. Resume the highest-priority non-blocked task consistent with dependency ordering and current authorization.
+20. Checkpoint durable state when losing the current decision would be materially expensive to reconstruct: changed requirement, causal conclusion, accepted/rejected strategy/architecture, blocker, human gate, long handoff/interruption, or risky operation. Context growth or another ordinary trial is not sufficient.
+21. Keep TASKS.md bounded at those durable boundaries. Do not use STATUS.md or records/ as an experiment counter/lab notebook.
+22. Run applicable automated verification when implementation is ready. Unknown/unavailable/failed checks are not passes.
+23. Use npm run state:check to validate durable-state structure. Use the documented Node 22 environment for npm run verify. Release remains separately guarded by npm run release:check.
+24. Do not mark human requirements complete without explicit owner acceptance.
+25. Evaluate experience retention only after a materially informative evaluated outcome/durable boundary; never retain every trial and never fabricate precedent from history.
+26. Read records selectively when provenance is needed; do not preload all records or experiences.
+27. Complete a milestone only after all acceptance criteria and required human checks pass, accepted docs changes are reconciled, final closeout evidence is written, and authorized Git checkpoint requirements are satisfied.
+28. Do not continue past a content, human, external-effect, or release gate. M01-M08 technical completion does not approve M09 content; M10 publication and M11 commerce require separate authority.
 
-Suggested later kickoff instruction (not itself an authorization):
-I approve the plan and staged launch approach. Begin M01 and continue through M08 on redesign/astro-foundation using the selected Sol 6.1 Max model. Commit and push verified checkpoints on that branch. Follow RUN_PROMPT.txt and stop at M09 or any earlier genuine blocker. Do not modify master, publish, change DNS, send real messages, purchase services, or activate payments.
+Project-specific controls:
+- Default model effort is GPT-6.1 Sol LOW; follow AGENTS.md exact HIGH/LOW transition wording for qualifying risk.
+- Work only on redesign/astro-foundation unless explicitly authorized otherwise.
+- Do not modify master or backup/pre-astro-redesign, publish/deploy, change DNS/hosting, send real messages, purchase services, or activate payments without the applicable explicit grant.
+- Public Git is not private storage. Never commit unapproved private artwork/media/metadata/credentials.
