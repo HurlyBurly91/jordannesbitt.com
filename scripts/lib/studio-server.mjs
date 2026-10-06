@@ -60,10 +60,13 @@ export async function startStudio(options = {}) {
       }
       if (request.method === "GET" && path === "/api/snapshot") { json(200, await studio.snapshotChoices()); return; }
       if (request.method !== "POST") { json(404, { error: "Studio route not found" }); return; }
-      if (path === "/api/intake") {
+      if (path === "/api/intake" || path === "/api/intake/inspect") {
         let settings;
         try { settings = JSON.parse(decodeURIComponent(request.headers["x-studio-options"] ?? "")); } catch { throw new Error("Invalid selected-file metadata"); }
-        json(202, { jobId: await studio.intake(await body(request, 30 * 1024 * 1024), settings) }); return;
+        const bytes = await body(request, 30 * 1024 * 1024);
+        if (path === "/api/intake/inspect") json(200, await studio.inspectImage(bytes, settings));
+        else json(202, { jobId: await studio.intake(bytes, settings) });
+        return;
       }
       let data;
       try { data = JSON.parse((await body(request, 1024 * 1024)).toString("utf8")); } catch { throw new Error("Invalid metadata JSON or oversized request"); }

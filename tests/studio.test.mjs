@@ -189,9 +189,9 @@ test("local browser add/edit/project/curation/preview/review/approval/dry-run wo
   await page.getByRole("button", { name: "Add images", exact: true }).click();
   await page.locator("#files").setInputFiles(original);
   await page.getByRole("radio", { name: /^New artwork/ }).check();
-  await page.locator("#assume-srgb").check();
   await page.getByRole("button", { name: "Create draft", exact: true }).click();
-  await page.locator("#jobs").getByText(/Photo ready/).waitFor();
+  await page.getByRole("button", { name: "Use sRGB for this image", exact: true }).click();
+  await page.locator("#jobs").getByText(/Ready/).waitFor();
   await page.getByLabel("Title", { exact: true }).waitFor();
   await page.getByLabel("Title", { exact: true }).fill("Synthetic browser-authored artwork");
   await page.getByLabel("Medium", { exact: true }).selectOption("drawing");
@@ -282,13 +282,12 @@ test("image-first Studio attaches photos visually, keeps references separate, pe
   async function upload(path,kind,target,role="Alternate view") {
     await page.getByRole("button",{name:"Artworks",exact:true}).click();
     await page.getByRole("button",{name:"Add images",exact:true}).click();await page.locator("#files").setInputFiles(path);
-    await page.getByRole("radio",{name:kind}).check();await page.locator("#assume-srgb").check();
+    await page.getByRole("radio",{name:kind}).check();
     if(target){await page.locator("#intake-targets").getByRole("button",{name:`Choose artwork ${target}`,exact:true}).click();await page.locator("#intake-panel").getByLabel("How should this image be used?",{exact:true}).selectOption({label:role});}
-    const before=service.studio.state().jobs.length;
     await page.getByRole("button",{name:target?"Add photo to artwork":kind.source.includes("Process")?"Keep as process / reference":"Create draft",exact:true}).click();
-    await page.waitForFunction(()=>!document.querySelector("#pending-draft")||document.querySelector("#pending-draft").hidden);
+    await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();
     await service.studio.waitForJobs();await page.getByRole("button",{name:"Refresh",exact:true}).click();
-    await page.waitForFunction((count)=>document.querySelectorAll("#jobs p").length>=count,before+1);
+    await page.locator("#jobs").getByText(/Ready/).waitFor();
   }
   async function titleDraft(value) {
     await page.getByLabel("Title",{exact:true}).fill(value);await page.getByLabel("Medium",{exact:true}).selectOption("drawing");await page.getByLabel("Alt text",{exact:true}).fill("Synthetic image for visual workflow testing");await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
@@ -323,4 +322,89 @@ test("image-first Studio attaches photos visually, keeps references separate, pe
   const popupPromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview homepage",exact:true}).click();const popup=await popupPromise;await popup.waitForURL("http://127.0.0.1:*/");await popup.waitForLoadState();
   assert.equal(await popup.locator(".home-lead img").getAttribute("alt"),"Synthetic image for visual workflow testing");
   assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);assert.deepEqual(errors,[]);await context.close();
+});
+
+test("readonly colour inspection asks explicitly without allocating drafts, jobs or IDs", async (t) => {
+  const { dataRoot, options } = await setup(t);
+  const studio = await openStudio(options); t.after(() => studio.close());
+  const untagged = await sharp({create:{width:32,height:40,channels:3,background:"#507080"}}).png().toBuffer();
+  const tagged = await sharp(untagged).withIccProfile("srgb").png().toBuffer();
+  const registry = await readFile(resolve(dataRoot,"id-registry.json"));
+  const before = studio.state();
+  assert.equal((await studio.inspectImage(untagged,{sha256:checksum(untagged)})).needsColourDecision,true);
+  assert.equal((await studio.inspectImage(tagged,{sha256:checksum(tagged)})).needsColourDecision,false);
+  await assert.rejects(studio.inspectImage(Buffer.from("invalid selected image")),/unsupported|Input buffer/i);
+  assert.deepEqual(studio.state(),before,"inspection is not intake, a failed job or implicit approval");
+  assert.deepEqual(await readFile(resolve(dataRoot,"id-registry.json")),registry);
+});
+
+test("untagged colour choice leads to focused ready editor, optional draft save and persisted edits after real restart", async (t) => {
+  const { dataRoot, options } = await setup(t,{allowPublicExport:false});
+  const original=resolve(dataRoot,"untagged.png");await writeFile(original,await sharp({create:{width:64,height:80,channels:3,background:"#507080"}}).png().toBuffer());
+  const originalBytes=await readFile(original), originalMtime=(await lstat(original,{bigint:true})).mtimeNs;
+  const service=await startStudio(options);t.after(()=>service.stop());
+  const browser=await chromium.launch();t.after(()=>browser.close());
+  const page=await browser.newPage({viewport:{width:1440,height:900}});
+  await page.goto(service.origin);await page.getByText(/Studio ready\./).waitFor();
+  await page.getByRole("button",{name:"Add images",exact:true}).click();await page.locator("#files").setInputFiles(original);
+  await page.getByRole("button",{name:"Create draft",exact:true}).click();
+  await page.getByText("This image has no embedded colour profile.",{exact:true}).waitFor();
+  assert.equal(service.studio.state().catalogue.artworks.length,0);
+  assert.equal(service.studio.state().jobs.length,0);
+  assert.equal(await page.locator("#artwork-form").isVisible(),false,"no half-failed pending editor");
+  assert.doesNotMatch(await page.locator("body").innerText(),/--assume-srgb|Missing ICC profile/);
+  await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();
+  await page.waitForFunction(()=>document.activeElement?.getAttribute("name")==="title"&&document.querySelector("#artwork-form").getBoundingClientRect().top>=-2&&document.querySelector("#artwork-form").getBoundingClientRect().top<50);
+  assert.equal(await page.getByRole("button",{name:"Save draft",exact:true}).first().isEnabled(),true);
+  assert.equal(await page.getByRole("button",{name:"Preview artwork",exact:true}).first().isEnabled(),true);
+  const job=service.studio.state().jobs.at(-1);assert.equal(job.status,"complete");
+  const manifest=JSON.parse(await readFile(resolve(service.studio.root,"derivatives",job.result.mediaId,"manifest.json")));
+  assert.equal(manifest.settings.profile,"explicit-srgb-assumption");
+  await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
+  assert.equal(service.studio.state().catalogue.artworks[0].date.certainty,"unknown");
+  await page.getByLabel("Date",{exact:true}).selectOption("exact");
+  assert.equal(await page.getByRole("button",{name:"Save draft",exact:true}).first().isDisabled(),true);
+  assert.match(await page.locator("#editor-action-note").innerText(),/Enter a year.*Unknown/);
+  await page.getByLabel("Date",{exact:true}).selectOption("unknown");
+  await page.getByLabel("Title",{exact:true}).fill("Synthetic persisted colour-choice draft");await page.getByLabel("Medium",{exact:true}).selectOption("drawing");await page.getByLabel("Alt text",{exact:true}).fill("Synthetic untagged rectangle used for explicit choice testing");
+  await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
+  await page.close();await service.stop();
+  const restarted=await startStudio(options);t.after(()=>restarted.stop());const reopened=await browser.newPage();await reopened.goto(restarted.origin);await reopened.getByText(/Studio ready\./).waitFor();
+  await reopened.getByRole("button",{name:"Open Synthetic persisted colour-choice draft",exact:true}).click();
+  assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic persisted colour-choice draft");
+  assert.equal(await reopened.getByLabel("Medium",{exact:true}).inputValue(),"drawing");
+  assert.match(await reopened.getByLabel("Alt text",{exact:true}).inputValue(),/Synthetic untagged rectangle/);
+  assert.deepEqual(await readFile(original),originalBytes);assert.equal((await lstat(original,{bigint:true})).mtimeNs,originalMtime);
+  assert.deepEqual(readCatalogue(restarted.studio.repository).artworks,[]);
+  await reopened.close();
+});
+
+test("decline creates nothing, tagged photos skip colour question, batch approval never applies to future selections or repeated errors", async (t) => {
+  const { dataRoot, options }=await setup(t,{allowPublicExport:false});
+  const files=[];
+  for(const [name,tagged]of [["decline.png",false],["tagged.png",true],["batch-one.png",false],["batch-two.png",false],["future.png",false]]){
+    const path=resolve(dataRoot,name);let image=sharp({create:{width:32,height:40,channels:3,background:"#507080"}});if(tagged)image=image.withIccProfile("srgb");await writeFile(path,await image.png().toBuffer());files.push(path);
+  }
+  const service=await startStudio(options);t.after(()=>service.stop());
+  await service.studio.transact((state)=>{for(let index=0;index<3;index++)state.jobs.push({id:`old-failure-${index}`,status:"error",error:"Missing ICC profile: choose --assume-srgb"});});
+  const browser=await chromium.launch();t.after(()=>browser.close());const page=await browser.newPage();await page.goto(service.origin);await page.getByText(/Studio ready\./).waitFor();
+  assert.doesNotMatch(await page.locator("body").innerText(),/Missing ICC|--assume-srgb|Photo could not be prepared/);
+  async function select(paths){await page.getByRole("button",{name:"Add images",exact:true}).click();await page.locator("#files").setInputFiles(paths);await page.getByRole("button",{name:"Create draft",exact:true}).click();}
+  await select(files[0]);await page.getByRole("button",{name:"Choose another image",exact:true}).click();
+  assert.equal(service.studio.state().catalogue.artworks.length,0);assert.equal(service.studio.state().jobs.length,3);
+  await select(files[1]);await page.waitForFunction(()=>document.activeElement?.getAttribute("name")==="title");
+  assert.equal(await page.locator("#colour-decision").isVisible(),false);assert.equal(service.studio.state().catalogue.artworks.length,1);
+  const taggedJob=service.studio.state().jobs.at(-1);const taggedManifest=JSON.parse(await readFile(resolve(service.studio.root,"derivatives",taggedJob.result.mediaId,"manifest.json")));assert.equal(taggedManifest.settings.profile,"embedded-to-srgb");
+  await select([files[2],files[3]]);await page.getByText("This image has no embedded colour profile.",{exact:true}).waitFor();
+  await page.getByLabel("Use sRGB for all 2 currently selected untagged images only",{exact:true}).check();
+  await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();
+  while(service.studio.state().jobs.length<6)await new Promise((done)=>setTimeout(done,25));await service.studio.waitForJobs();
+  await page.getByRole("button",{name:"Refresh",exact:true}).click();
+  assert.equal(service.studio.state().catalogue.artworks.length,3);assert.equal(await page.locator("#colour-decision").isVisible(),false);
+  assert.equal(await page.locator("#jobs p").count(),1,"equal Ready messages are concise/count-scoped, not duplicate history rows");
+  await select(files[4]);await page.getByText("This image has no embedded colour profile.",{exact:true}).waitFor();
+  assert.equal(service.studio.state().catalogue.artworks.length,3,"earlier explicit batch decision is not remembered for unrelated imports");
+  assert.equal(await page.locator("#colour-apply-batch").isChecked(),false);assert.equal(await page.locator("#artwork-form").isVisible(),false);
+  await page.getByRole("button",{name:"Choose another image",exact:true}).click();
+  assert.doesNotMatch(await page.locator("body").innerText(),/--assume-srgb|Missing ICC profile/);await page.close();
 });

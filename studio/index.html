@@ -17,7 +17,12 @@
         <label><input type="radio" name="purpose" value="media"><strong>Process/reference image</strong><span>Not a standalone public artwork.</span></label>
       </div></fieldset>
       <section id="intake-target-panel" hidden><h3>Which artwork does it belong to?</h3><div id="intake-targets" class="thumbnail-grid"></div><p id="intake-target-summary"></p><label>How should this image be used?<select id="intake-role" aria-label="How should this image be used?"></select></label></section>
-      <label class="check"><input id="assume-srgb" type="checkbox">Use standard web colour for an image without a colour profile</label><p class="hint">Original files stay unchanged.</p>
+      <section id="colour-decision" class="colour-question" role="region" aria-labelledby="colour-question-title" hidden>
+        <h3 id="colour-question-title">This image has no embedded colour profile.</h3><p>Most web exports use sRGB.</p><p id="colour-image-scope"></p>
+        <label id="colour-batch-option" class="check" hidden><input id="colour-apply-batch" type="checkbox"><span id="colour-batch-scope"></span></label>
+        <div class="form-actions"><button type="button" id="use-srgb" class="primary-action">Use sRGB for this image</button><button type="button" id="choose-another-image">Choose another image</button></div>
+        <details><summary>About this choice</summary><p>sRGB is a common colour space for web images. Choosing it tells the existing image pipeline how to interpret this untagged export. It does not correct lighting or approve artwork colour. The choice applies only to the image(s) identified here.</p></details>
+      </section><p class="hint">Original files stay unchanged.</p>
       <button type="submit" id="intake-submit" class="primary-action">Create draft</button>
       <details><summary>Technical details</summary><p>Untagged images require an explicit sRGB assumption. Intake uses the existing non-destructive JPEG/WebP/AVIF pipeline; progress and errors appear below.</p><p>When adding a new primary image, the previous primary is kept as an alternate view.</p></details>
     </form>
@@ -26,7 +31,7 @@
   <section id="jobs-panel" hidden><h3>Photo progress</h3><div id="jobs"></div></section>
   <form id="artwork-form" hidden>
     <div class="section-heading"><div><p id="artwork-phase" class="phase"></p><h2 id="editor-title">Artwork</h2></div><div><button type="button" id="preview-artwork">Preview artwork</button><button type="submit" class="primary-action">Save draft</button></div></div>
-    <p id="pending-draft" hidden>Preparing your photo. This is a draft; it will be ready to save when the photo finishes.</p>
+    <p id="editor-action-note" class="hint" aria-live="polite"></p>
     <div class="editor-layout"><div><div id="editor-image" class="editor-image"></div><fieldset><legend>Photos of this artwork</legend><div id="reproduction-fields" class="photo-sequence"></div><button type="button" id="add-artwork-view">Add another photo</button></fieldset></div>
     <div class="normal-fields">
       <label>Title<input name="title" maxlength="300" placeholder="Untitled artwork"></label>
@@ -43,7 +48,7 @@
       <details><summary>Image, paper and framed dimensions</summary><div id="dimension-fields" class="fields"></div><label>Object depth (optional)<input name="object-depth" type="number" min="0" step="any"></label></details>
       <details><summary>Framing and condition</summary><label>Framing<select name="framing" aria-label="Framing"><option value="">Not supplied</option><option value="framed">Framed</option><option value="unframed">Unframed</option><option value="not-applicable">Not applicable</option></select></label><label>Condition / status facts<textarea name="condition" rows="2"></textarea></label></details>
       <details><summary>Advanced</summary><output id="artwork-id"></output><div class="fields"><label>Web address<input name="slug" required pattern="[a-z][a-z0-9-]*"></label><label>Artwork type<select name="kind" aria-label="Artwork type"><option value="unclassified">Not confirmed yet</option><option value="original">Original</option><option value="original-print">Original print</option><option value="reproduction">Reproduction</option><option value="moving-image">Moving image</option><option value="computational">Computational</option></select></label><label>End year<input name="endYear" type="number" min="1" max="9999"></label><label>Date display label<input name="dateLabel"></label></div><label>Former web addresses<textarea name="aliases" rows="2"></textarea></label><label class="check"><input name="published" type="checkbox">On public site after approved preparation</label><label class="check"><input name="featured" type="checkbox">Include in Selected Work</label><label>Selected position<input name="selectedOrder" type="number" min="0"></label><div id="artwork-technical"></div><label>Private notes / rights working information<textarea name="privateNote" rows="3"></textarea></label></details>
-    </div></div><div class="form-actions"><button type="submit" class="primary-action">Save draft</button><button type="button" id="preview-artwork-bottom">Preview artwork</button></div>
+    </div></div><div class="form-actions"><button type="submit" class="primary-action">Save draft</button><button type="button" id="preview-artwork-bottom">Preview artwork</button></div><p id="editor-action-note-bottom" class="hint"></p>
   </form>
 </section>
 <section id="media" class="tab-panel" hidden><div class="section-heading"><div><h2>Photos &amp; references</h2><p class="hint">Choose photos, then choose what to do with them.</p></div><button id="media-add-images" class="primary-action">Add images</button></div><div id="media-library" class="thumbnail-grid"></div>

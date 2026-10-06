@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R7
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R8
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -280,8 +280,9 @@ Source: USER, latest owner review. Studio is functionally promising but confusin
 
 Reconstruction: origin/checkout73a8aca match; master755df7f/backup3bc95c7 unchanged;only unfamiliar empty untracked file preserved. Read PROJECT/STATUS/TASKS/active contract/studio boundary and guide/design rules/current UI/store capabilities/tests/demo. Existing backend can attach alternate views then update a primary through validated canonical save; no new role model or weakened gate needed. R6-H01 and older unresolved human checks remain; owner feedback does not imply final acceptance. LOW is appropriate for this UI-only section; do not alter security/export design.
 
-- [x] M09-R7-01 After explicit one/multiple image selection make primary choice obvious: New artwork; Another view/detail of existing artwork; Process/reference image (not standalone public artwork). Hide conceptual IDs/enums/predicates/derivative internals initially; safe private defaults, prominent image and immediately open pending/new draft editor without falsely complete intake/publication.
+- [-] M09-R7-01 After explicit one/multiple image selection make primary choice obvious: New artwork; Another view/detail of existing artwork; Process/reference image (not standalone public artwork). Hide conceptual IDs/enums/predicates/derivative internals initially; safe private defaults, prominent image and immediately open pending/new draft editor without falsely complete intake/publication.
   Source: USER.
+  SUPERSEDED pending-editor timing only by M09-R8-04; original implemented requirement/evidence preserved. R8-04 requires resolving preparation questions and complete image before opening editor; R7 image-first identity choices remain preserved constraints,not final owner acceptance.
 - [x] M09-R7-02 Another view/detail chooses target by clicking artwork thumbnails/title/date, then human-readable primary/detail/alternate/framed-installation/process-documentation use. Preserve internal roles and expert reverse/specific role distinctions; no silent identity merges.
   Source: USER. Dependencies:01.
 - [x] M09-R7-03 Simple image-led editor with Title/date exact-circa-unknown/medium/process/materials/optional dimensions/alt/project-series/availability/conditional price-currency. Visual ordered image management and obvious actual-component Preview. Edition/separate typed sizes/framing-condition/detailed acquisition/technical-provenance under expandable sections; optional fields not required.
@@ -324,3 +325,48 @@ Reconstruction: origin/checkout73a8aca match; master755df7f/backup3bc95c7 unchan
   Source: USER/DERIVED human gate. Dependencies:V02. R6/R1/R5 factual/rights/final-content gates persist.
 - [H] M09-R7-H02 Manually resolve one current360pxStudioartworks color-contrast INCONCLUSIVE automated rule; preserve older R5 manual/source-colour gates and do not count incomplete as a passing rule.
   Source: DERIVED from final demo report. Dependencies:V01. Details in persistent report; no confirmed violation or public-presentation change.
+
+## M09-R8 — Explicit colour decision and ready-editor intake flow
+
+Source: USER,latest blocking owner intake review. Ordinary untagged images repeatedly show missingICC/CLIflag errors; a half-failed or buried editor appears unavailable. This is workflow/UX correction only. Preserve canonical schemas/ingestion/colour conversion/private persistence/publication/export/R2 presentation. LOW section; no architecture/security/colour invariant redesign or new global colour assumption. Existing code/docs checkpoint grant on development branch and all genuine source/content/rights/launch boundaries remain.
+
+Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. Read active state/contract/current UI/store/server and studio/catalogue/ingestion rules. Existing canonical ingest must keep missingICC explicit decision. Current UI launches jobs before resolving colour and opens a disabled pending form; job-history renderer repeats developer error. Plan a bounded authenticated readonly metadata inspection (existing sharp limits/guarded body) with no files/jobs/drafts,then pass only owner-approved per-selection assumeSrgb into unchanged ingest. No arbitrary filesystem access/colour defaults or modified export authority.
+
+- [x] M09-R8-01 Normal UI says “This image has no embedded colour profile. Most web exports use sRGB.” with explicit Use sRGB for this image / Choose another image and optional concise explanation. Never show --assume-srgb in ordinary Studio/error progress.
+  Source: USER.
+- [x] M09-R8-02 Explicit owner decision stays required; no silent arbitrary-image sRGB assumption. Accepted choice passes existing assumeSrgb flag into existing authoritative ingestion/colour conversion,not a replacement decoder/pipeline/model.
+  Source: USER. Dependencies:01.
+- [x] M09-R8-03 Multiple selections can explicitly apply to all currently selected untagged images,clear scope/count; no global/session-future unrelated import memory. Reset decisions on new file selection,cancel,or batch completion; tagged files need no unnecessary question.
+  Source: USER. Dependencies:01,02.
+- [x] M09-R8-04 Resolve preparation questions→prepare successfully→open complete private editor immediately. No half-failed/disabled pending editor or falsely complete item. Decline creates no draft.
+  Source: USER. Supersedes pending timing in M09-R7-01,whose other image-first behavior remains preserved.
+- [x] M09-R8-05 Ready editor is first/current viewport,receives focus/scroll and needs no traversal of old photo-error history.
+  Source: USER. Dependencies:04.
+- [x] M09-R8-06 Concise Preparing… / Ready / Failed — human reason; no accumulating identical repeated errors. Retain private technical evidence/history without exposing CLI terms as ordinary actionable guidance.
+  Source: USER.
+- [x] M09-R8-07 Common Title/date/medium/process/materials/optional dimensions/alt/project/availability fields immediately visible/editable without Advanced.
+  Source: USER. Dependencies:04,05.
+- [x] M09-R8-08 Save draft/Preview clearly enabled/disabled; exact missing requirement adjacent when disabled; optional metadata never needed just to save a private draft. Existing schema required-value semantics and safe private UI placeholders remain,not public approval.
+  Source: USER.
+- [x] M09-R8-09 Interaction tests: untagged→explicit sRGB→readyeditor;decline→nodraft;tagged→noquestion;multipleuntagged→scopedchoice;no duplicateerrorlog;focus/scroll;commonfieldedits/persistence afterSave/restart;full existing verification green.
+  Source: USER. Dependencies:01–08.
+- [~] M09-R8-10 Actual authorized private untagged corpus image demo/screenshot orshortscreencast sequence: Select→UsesRGB→editor→editTitle/Medium/Alt→Save→restart/reopen persisted. No real source data/assets/metadata in Git;return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE.
+  Source: USER. Dependencies:09.
+- [x] M09-R8-P01 Preserve src/public design/catalogue,canonical ingestion/colour handling/EXIF/aspect/sourcebytes,private root/IDs/current owner drafts,validation/security/export/release/protectedrefs/unknownuntrackedfile. Bounded readonly profile adapter inherits existing request guards and limits; no arbitrary path endpoint/new write authority.
+  Source: USER and DERIVED.
+- [x] M09-R8-P02 No global sRGB memory,no rights/source/launch/artistry approval inferred,no public data/Git private assets/deployment/master/services/checkout/M09complete. R7/older human checks remain unaccepted except explicit timing supersession above.
+  Source: USER and existing policy.
+- [x] M09-R8-D01 Implement readonly profile inspection and explicit per-file/scoped batch colour-question UI over existing ingestion,then ready-only editor/focus/progress/control UX.
+  Source: DERIVED. Dependencies:captured requirements/current canonical rules.
+  Evidence: authenticated bounded readonly selected-byte inspection + profile flag on advancedsnapshot choices; no writes/jobs/defaults during inspection. Existing assumeSrgb option only explicit accepted batchitems;no pipeline/schema/export changes. Pending editor removed,preparedform first/focused,concisecurrent progress groups,old CLIhumanreasons hidden,Save/Preview readiness explained besideboth controls. Tagged and untagged colour semantics unchanged.
+- [x] M09-R8-D02 Preserve/update prior interactions,add actual tagged/untagged/decline/scoped-future-selection/duplicates/focus/control/readiness/restart tests and isolated persistent real-image sequence.
+  Source: DERIVED. Dependencies:D01.
+  Evidence: prior8Studio cases retained/updated for explicitbutton and conciseprogress;3newcases verify readonlyprofile/noallocation,untaggedapproval→focusedcompleteeditor/optionalSave/date-disabledreason/realrestartpersisted,decline/tagged/multiple-scoped/future-no-memory/duplicates. Node22 targeted `node --test tests/studio.test.mjs` exits0,11/11pass. New persistent real intake-sequence driver and old UXdriver updated; full/demo verification pending.
+- [x] M09-R8-V01 Run relevant/full tests,strictrelease and exact public/ingestion/colour/export preservation checks;inspect actual sequence/private data/restart/registry/source hashes and record limits.
+  Source: DERIVED. Dependencies:D01,D02.
+  Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,83/83tests/0fail-skip-diagnostics. Previous80checks retained with3newcolour-readiness-restart cases;actual13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/canonicalingest/colour/export/path/preview/release preservation diff exits0;only readonlyadapter and UIworkflow added. Real untaged-corpus sequence and strictrelease check next.
+  Actual sequence: `npm run studio:intake-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270`,6steps/12viewport-fullPNGs/0axeviolations-incomplete-reflow,1440×900/DPR1/normalzoom. Actual untagedauthorisedimage has0draft/jobsbeforeexplicitchoice;private manifest explicit-sRGBprofile;readyeditor titlefocus/currentviewport/enabledcontrols;Title/Medium/Alt edit+Save/realserverstop-start/reopenvaluespersisted. Source169/169bytes+mtime/ownerState+authoritativeregistrybytes unchanged. Screenshotcolourquestion/readyform/restart inspected. No actualcontent/sourceapproval/export;strictrelease exits1/BLOCKED_CONTENT/same8issues. Full-WCAG/physicalcolour/human acceptance not inferred.
+- [~] M09-R8-V02 Reconcile docs/evidence/IDs,verify intended code/docs-only checkpoint and synchronized human state,return exact studio/demo paths and remaining real owner approvals.
+  Source: DERIVED. Dependencies:V01.
+- [ ] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
+  Source: USER/DERIVED. Dependencies:V02. Older human/final-content/manual checks preserved.

@@ -38,11 +38,12 @@ async function capture(name, width=1440) {
 async function upload(file,kind,target,role="Alternate view",name) {
   await page.getByRole("button",{name:"Artworks",exact:true}).click();
   await page.getByRole("button",{name:"Add images",exact:true}).click();
-  await page.locator("#files").setInputFiles(file);await page.getByRole("radio",{name:kind}).check();await page.locator("#assume-srgb").check();
+  await page.locator("#files").setInputFiles(file);await page.getByRole("radio",{name:kind}).check();
   if(target){await page.locator("#intake-targets").getByRole("button",{name:`Choose artwork ${target}`,exact:true}).click();await page.locator("#intake-panel").getByLabel("How should this image be used?",{exact:true}).selectOption({label:role});}
   if(name)await capture(name);
   const count=service.studio.state().jobs.length;
   await page.getByRole("button",{name:target?"Add photo to artwork":kind.source.includes("Process")?"Keep as process / reference":"Create draft",exact:true}).click();
+  await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();
   await page.waitForFunction(()=>document.querySelectorAll("#jobs p").length>0);
   while(service.studio.state().jobs.length===count)await new Promise((done)=>setTimeout(done,100));
   await service.studio.waitForJobs();await page.getByRole("button",{name:"Refresh",exact:true}).click();

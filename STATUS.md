@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R7
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R8
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R7 image-first Studio awaits owner usability review. Node22 `npm run studio`; ownerstorage/defaultgates unchanged,publicR2/backend untouched.80tests/0diagnostics,43A–I/UI/componentcaptures/0violations-reflow;one360pxcontrastINCONCLUSIVE H02. Demo /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/ux-demo-2026-10-06T05-47-31-290Z-0f3a8a89 (isolatedworkspace). Ownerstate/registry bytes+169sources preserved;code/docs checkpoint74ff674 pushed/transportverified. Older rights/content/launch gates/BLOCKED_CONTENT persist; never COMPLETE.
+M09-R8 verified83tests/0diagnostics,explicitscopedcolourdecision→readyfocusededitor→Save/restartpersisted. Actualuntagged6step/12PNGsequence/0axe-incomplete-reflow at /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270;ownerstate/registry/169sources preserved. Canonical colour/model/publicsite/export unchanged;readonlyadapter only. Docs/checkpoint then HUMAN_VERIFICATION;oldergates/BLOCKED_CONTENT persist,no COMPLETE.

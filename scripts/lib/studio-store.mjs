@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { resolve, basename } from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 import { artworkSchema, projectSchema, validateCatalogue, recordAssets } from "../../src/lib/catalogue.ts";
 import { readCatalogue, mediaSource } from "../../src/lib/catalogue-source.ts";
 import { ingest, checksum } from "./ingestion.mjs";
@@ -139,6 +140,15 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
     state: () => clone(state), transact, digest, globalDigest, assetBytes, recordFor,
     async close() { if (closed) return; closed = true; await Promise.all([...pending]); await queue; await releaseLock(); },
     async waitForJobs() { await Promise.all([...pending]); },
+    async inspectImage(bytes, options = {}) {
+      // Readonly Studio question adapter, not a replacement for authoritative ingest.
+      // No input copy, job, registry allocation, draft or persistent colour default.
+      if (!Buffer.isBuffer(bytes) || bytes.length === 0 || bytes.length > 30 * 1024 * 1024) throw new Error("Select an image up to30MiB");
+      if (options.sha256 && checksum(bytes) !== options.sha256) throw new Error("Selected-file hash does not match upload bytes");
+      const metadata = await sharp(bytes, { failOn: "error", limitInputPixels: 100_000_000 }).metadata();
+      if (!["jpeg", "png", "tiff", "webp", "heif", "avif"].includes(metadata.format) || metadata.pages > 1 || !metadata.width || !metadata.height) throw new Error("Choose a single supported photo export");
+      return { sourceSha256: checksum(bytes), hasEmbeddedProfile: Boolean(metadata.icc), needsColourDecision: !metadata.icc };
+    },
     async intake(bytes, options = {}) {
       if (!Buffer.isBuffer(bytes) || bytes.length === 0 || bytes.length > 30 * 1024 * 1024) throw new Error("Select an image up to30MiB");
       if (!options.name || basename(options.name) !== options.name || /[\\/\0]/.test(options.name)) throw new Error("Unsafe selected filename");
@@ -158,7 +168,7 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
     async snapshotChoices() {
       if (!snapshotPath) return [];
       const { snapshot } = await loadSnapshot(snapshotPath);
-      return snapshot.included.map(({ id, image }) => ({ id, orientation: image.orientation, width: image.width, height: image.height }));
+      return snapshot.included.map(({ id, image }) => ({ id, orientation: image.orientation, width: image.width, height: image.height, hasEmbeddedProfile: image.hasIcc }));
     },
     async importSnapshot(id, options = {}) {
       if (!snapshotPath || !idPattern.test(id)) throw new Error("Choose an ID from the explicitly configured frozen snapshot");
