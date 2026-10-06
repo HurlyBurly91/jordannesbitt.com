@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R2
+Phase: IMPLEMENTATION
+Active-Request: M09-R4
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -139,4 +139,24 @@ Source: USER, 2026-10-05. This is an operating-policy change, not website implem
   Source: DERIVED from existing project policy.
 - [x] M09-R3-V01 Persist the policy in AGENTS.md without changing the active M09-R2 HUMAN_VERIFICATION gate or historical M01 model-verification evidence.
   Evidence: AGENTS.md contains the project-wide model effort policy; STATUS.md remains M09 / ACTIVE / HUMAN_VERIFICATION / M09-R2.
+
+## M09-R4 — Persist private pilot state outside /tmp
+
+Source: USER, 2026-10-05. The disposable /tmp review state was lost before owner review. Change the M09 private-pilot default so snapshots, ID registry, derivatives, private classifications/plans, review sites, screenshots and reports persist outside /tmp and outside public Git.
+
+- [~] M09-R4-01 Default durable private-pilot state to a per-user persistent data directory, not /tmp.
+  Source: USER.
+  Requirement: Use the owner's persistent user data area outside the repository; preserve an explicit configuration override for a different approved persistent root.
+- [ ] M09-R4-02 Keep transient caches/test scratch disposable where appropriate, while durable M09 review state survives ordinary /tmp cleanup/reboot.
+  Source: USER.
+- [ ] M09-R4-P01 Private pilot artifacts remain outside public Git and retain existing privacy/publication boundaries; do not move real artwork data into the repository.
+  Source: USER and existing M09 policy.
+- [ ] M09-R4-D01 Update pilot path policy/defaults and canonical documentation without changing presentation, metadata, publication, or release behavior.
+  Source: DERIVED.
+- [ ] M09-R4-V01 Run targeted/full tests proving the persistent default, allowed test scratch, and unchanged release/privacy behavior.
+  Source: DERIVED.
+- [ ] M09-R4-V02 Commit/push only intended code/tests/docs/state, then return to the unresolved M09-R2 owner visual-review gate.
+  Source: DERIVED.
+
+This request does not accept M09-R2 visuals or any older M09 content/rights/manifest gate.
 
