@@ -403,8 +403,9 @@ Source: USER, 2026-10-06. Migrate this repository's existing durable-state contr
   Source: DERIVED.
   Requires: M09-R9-01 through M09-R9-08, P01, P02.
   Evidence: merged AGENTS/RUN_PROMPT policy uses reference commit 6b3ebc3 while retaining project authorization/model/privacy/release rules; empty optional experience store added without retroactive fabricated cases; records policy now distinguishes meaningful checkpoints from trial logs; state:check validates synchronized headers/active request/spec/experience JSONL/canonical references.
-- [ ] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
+- [~] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
   Source: DERIVED.
+  Evidence: first CI state:check correctly executed but falsely treated the canonical-marker example in AGENTS.md as source implementation. Restrict marker/reference scanning to implementation file types; documentation examples remain policy text, while actual source markers still validate. No product behavior changed.
 - [ ] M09-R9-V02 Inspect intended diff and protected refs; commit/push only state-machine code/docs/validation files on redesign/astro-foundation, then restore the pre-migration M09-R8 ACTIVE/AUTOMATED_VERIFICATION state without marking M09 complete.
   Source: DERIVED.
 

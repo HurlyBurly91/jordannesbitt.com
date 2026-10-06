@@ -85,7 +85,7 @@ async function walk(directory) {
 
 for (const path of await walk(".")) {
   if (path === "scripts/durable-state-check.mjs") continue;
-  if (!/\.(?:js|mjs|ts|astro|css|md|sh)$/.test(path)) continue;
+  if (!/\.(?:js|mjs|ts|astro|css|sh)$/.test(path)) continue;
   const contents = await text(path);
   const lines = contents.split("\n");
   let open = 0;
