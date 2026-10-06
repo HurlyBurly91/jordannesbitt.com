@@ -61,9 +61,10 @@ test("fixture home/project/work/status/enquiry journey and source-backed About/C
   await page.getByRole("button", { name: "Prepare email draft", exact: true }).click();
   assert.equal(await page.locator("[data-enquiry-status]").getAttribute("data-status"), "blocked");
   assert.equal(await page.locator("[data-draft-link]").isVisible(), false);
-  for (const [slug, label] of [["specimen-landscape", "Sold"], ["specimen-long", "Availability unknown"]]) {
+  for (const [slug, label] of [["specimen-landscape", "Sold"], ["specimen-long", null]]) {
     await page.goto(`${site.origin}/artwork/${slug}/`);
-    assert.match(await page.locator(".artwork-offer").innerText(), new RegExp(label));
+    if (label) assert.match(await page.locator(".artwork-offer").innerText(), new RegExp(label));
+    else assert.equal(await page.locator(".artwork-offer").count(), 0, "unsupported unknown availability has no empty public acquisition section");
     assert.equal(await page.getByRole("link", { name: "Enquire about this work" }).count(), 0);
     assert.equal(await page.locator(".approved-price").count(), 0);
   }
@@ -88,7 +89,7 @@ test("missing recipient produces no enquiry action or fabricated success", async
   const page = await browser.newPage();
   await page.goto(`${site.origin}/artwork/specimen-portrait/`);
   assert.equal(await page.getByRole("link", { name: "Enquire about this work" }).count(), 0);
-  assert.match(await page.locator(".artwork-offer").innerText(), /recipient has not been published/);
+  assert.doesNotMatch(await page.locator(".artwork-offer").innerText(), /recipient has not been published|sent|received/, "no construction recipient placeholder or fabricated delivery claim");
   await page.goto(`${site.origin}/contact/`);
   assert.equal(await page.locator("[data-enquiry-form]").count(), 0);
   assert.equal(await page.locator('[data-release-blocker="missing-recipient"]').count(), 1);

@@ -3,7 +3,7 @@ import type { Artwork } from "@/lib/catalogue";
 import CatalogueImage from "./CatalogueImage.astro";
 interface Props { image: Artwork["reproductions"][number]; lead?: boolean; sizes?: string; mode?: "object" | "additional" | "home"; }
 const { image, lead = false, sizes = "(max-width: 760px) 88vw, 62vw", mode = "object" } = Astro.props;
-const labels = { primary: "Full reproduction", detail: "Detail", installation: "Installation view", reverse: "Reverse", process: "Process view" };
+const labels = { primary: "Full reproduction", alternate: "Alternate view", detail: "Detail", framed: "Framed view", installation: "Installation view", documentation: "Documentation", reverse: "Reverse", process: "Process view" };
 ---
 <figure class:list={["reproduction", `reproduction--${mode}`]}>
   <a class="reproduction-open" href={image.src} data-inspect-image data-image-width={image.width} data-image-height={image.height} data-image-alt={image.alt}

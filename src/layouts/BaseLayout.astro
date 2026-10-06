@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 import { identity } from "@/config/identity";
-import { safeJson, selectedWorks } from "@/lib/presentation";
+import { safeJson } from "@/lib/presentation";
 import { artworks, projects, films, availableWorks, professional } from "@/data/catalogue";
 import ImageInspection from "@/components/ImageInspection.astro";
 
@@ -63,7 +63,7 @@ const artistSchema = {
         {identity.name}
       </a>
       <nav aria-label="Primary navigation">
-        {selectedWorks(artworks).length > 0 && <a href="/work" aria-current={isActive("/work") ? "page" : undefined}>Work</a>}
+        {artworks.length > 0 && <a href="/work" aria-current={isActive("/work") ? "page" : undefined}>Work</a>}
         {projects.length > 0 && <a href="/projects" aria-current={isActive("/projects") ? "page" : undefined}>Projects</a>}
         {films.length > 0 && <a href="/film" aria-current={isActive("/film") ? "page" : undefined}>Film</a>}
         <a href="/archive" aria-current={isActive("/archive") ? "page" : undefined}>Archive</a>

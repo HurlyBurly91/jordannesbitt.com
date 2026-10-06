@@ -6,6 +6,8 @@ Use validated structured content, preferably version-compatible Astro content co
 
 An artwork has a neutral immutable ID, stable slug/aliases, honest title/date or explicit uncertainty, medium, optional techniques/materials, typed physical dimensions, ordered reproductions with role/alt/pixel dimensions, publication state and editorial flags. Physical image, sheet and framed sizes are distinct. Film and computational records carry the metadata relevant to them rather than invented painting dimensions.
 
+M09-R6 local authoring uses these same canonical schemas. Reproduction roles distinguish primary, alternate, detail, framed, installation, documentation, reverse and process views; private reference-only media need not become a public artwork or attached reproduction. Source identity/relationships are owner decisions, never automatic similarity merges. Private workflow/storage/public-source approval/export invariants are in docs/studio.md; none bypass the public predicate or release gate.
+
 Keep existing medium URLs for drawing, painting, printmaking, photography, aerial and film. Model oil/watercolour/woodcut as useful techniques. Aerial may also become a photography viewpoint facet, but do not break its existing route or duplicate the underlying work. Computational projects are explicit supported records, not a mandate to expose all software repositories.
 
 Series/projects own an ordered list of member IDs; derive reverse relationships rather than manually maintaining conflicting copies. Permit cross-medium membership. Selected Work and Available are views of the same public records. Stable artwork detail URLs remain /artwork/[slug]; project and watch pages must not create conflicting canonicals for one object.

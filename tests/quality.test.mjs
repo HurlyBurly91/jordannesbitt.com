@@ -19,6 +19,9 @@ test("actual production build has valid local links/assets/metadata/sitemap and 
   assert.equal(result.htmlPages, 13);
   assert.ok(result.references > 0 && result.largestJsGzip <= 100 * 1024);
   t.diagnostic(JSON.stringify(result));
+  const emptyArchive = await readFile(resolve(repository, "dist/archive/index.html"), "utf8");
+  const archiveNodes = elements(emptyArchive);
+  assert.ok(!archiveNodes.some((node) => node.attrs["data-result-count"] !== undefined || node.attrs["data-archive-form"] !== undefined), "empty actual archive has no rendered meaningless count/filter controls");
 });
 
 test("verification fails on deliberate broken links, fixture leakage, image corruption and JS budget", async (t) => {

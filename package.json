@@ -20,6 +20,8 @@
     "pilot": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node scripts/pilot.mjs",
     "test:smoke": "node --test tests/smoke.test.mjs",
     "ingest": "node scripts/ingest.mjs",
+    "studio": "ASTRO_TELEMETRY_DISABLED=1 node scripts/studio.mjs",
+    "studio:demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-demo.mjs",
     "verify": "npm run build && npm test"
   },
   "dependencies": {

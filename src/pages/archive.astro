@@ -14,7 +14,7 @@ const availability = [...new Set(entries.map((entry) => entry.availability))];
 ---
 <BaseLayout title="Archive" description={`Published artwork archive of ${identity.name}.`}>
   <header class="page-intro archive-intro"><p class="eyebrow">Archive</p><h1>Published work.</h1><p>A comprehensive index, distinct from the authored selection.</p></header>
-  <details class="archive-filter-panel"><summary>Search and filters</summary>
+  {entries.length > 0 && <><details class="archive-filter-panel"><summary>Search and filters</summary>
   <form class="archive-filters" data-archive-form>
     <fieldset disabled><legend>Filter the published archive</legend>
       <div class="filter-fields">
@@ -44,5 +44,7 @@ const availability = [...new Set(entries.map((entry) => entry.availability))];
     </li>)}
   </ol>
   <script is:inline id="archive-data" type="application/json" set:html={safeJson(entries)} />
+  </>}
+  {entries.length === 0 && <p class="empty-state">No works are currently published.</p>}
   <script>import "@/client/archive";</script>
 </BaseLayout>

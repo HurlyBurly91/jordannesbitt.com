@@ -6,11 +6,11 @@ import { availabilityLabels } from "@/lib/search";
 interface Props { artwork: Artwork; recipient?: EnquiryRecipient; }
 const { artwork, recipient } = Astro.props;
 ---
-<section class="artwork-offer" aria-label="Availability and enquiry">
-  <h2>Availability</h2><p>{availabilityLabels[artwork.availability.state]}</p>
+{(artwork.availability.state !== "unknown" || artwork.framing || artwork.condition) && <section class="artwork-offer" aria-label="Availability and enquiry">
+  <h2>{artwork.availability.state !== "unknown" ? "Availability" : "Details"}</h2>{artwork.availability.state !== "unknown" && <p>{availabilityLabels[artwork.availability.state]}</p>}
   {artwork.availability.price && <p class="approved-price">{priceLabel(artwork.availability.price)}</p>}
   {artwork.availability.mode === "enquiry-only" && <p>Price by enquiry.</p>}
   {artwork.framing && <p>Framing: {artwork.framing === "not-applicable" ? "Not applicable" : artwork.framing === "framed" ? "Framed" : "Unframed"}</p>}
   {artwork.condition && <p>Condition: {artwork.condition}</p>}
-  {isAvailable(artwork) && (recipient ? <a class="text-link" href={`/contact/?work=${encodeURIComponent(artwork.id)}`}>Enquire about this work</a> : <p>A public enquiry recipient has not been published.</p>)}
-</section>
+  {isAvailable(artwork) && recipient && <a class="text-link" href={`/contact/?work=${encodeURIComponent(artwork.id)}`}>Enquire about this work</a>}
+</section>}

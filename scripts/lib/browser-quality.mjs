@@ -3,8 +3,10 @@ import axe from "axe-core";
 import sharp from "sharp";
 import { assertBudget } from "./output-quality.mjs";
 
-export async function auditAccessibility(page) {
-  await page.addScriptTag({ content: axe.source });
+export async function auditAccessibility(page, { developerInjection = false } = {}) {
+  // DevTools evaluation is capture/test tooling only; a private Studio CSP stays intact.
+  if (developerInjection) await page.evaluate(axe.source);
+  else await page.addScriptTag({ content: axe.source });
   return page.evaluate(async () => {
     const results = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"] } });
     return { violations: results.violations.map(({ id, impact, help, nodes }) => ({ id, impact, help, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) })), incomplete: results.incomplete.map(({ id, help }) => ({ id, help })), passes: results.passes.length };

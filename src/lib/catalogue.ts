@@ -31,7 +31,7 @@ const dimension = z.object({
 }).strict();
 export const reproductionSchema = z.object({
   src: imageAsset, alt: text, width: z.number().int().positive(), height: z.number().int().positive(),
-  role: z.enum(["primary", "detail", "installation", "reverse", "process"]), caption: text.optional(),
+  role: z.enum(["primary", "alternate", "detail", "framed", "installation", "documentation", "reverse", "process"]), caption: text.optional(),
   variants: z.array(z.object({
     src: imageAsset, width: z.number().int().positive(), height: z.number().int().positive(),
     format: z.enum(["jpeg", "png", "webp", "avif"]),
