@@ -4,7 +4,7 @@ Intermediate evidence only; **M09 is not complete**. Owner/content/visual/rights
 
 ## Scope and final IDs
 
-- M09-R5-01–04/P01/P02/D01/D02/V01: technically verified regeneration/persistent-storage checks. V02 records final state/transport; H01/H02 remain owner/manual gates.
+- M09-R5-01–04/P01/P02/D01/D02/V01/V02: technically verified regeneration/persistent-storage/state/transport checks. H01/H02 are AWAITING_HUMAN; INCONCLUSIVE contrast rules are not passing checks.
 - Registry, frozen source copies, plan, derivatives, real build workspace, reports, screenshots and site all remain under `/home/jordan/.local/share/jordannesbitt-art/m09`, outside public Git. Temporary synthetic/npm/Playwright caches alone use /tmp.
 - Current M09-R2 presentation preserved: `git diff --exit-code -- src` exits0. Only generic private-build parent plumbing/tests/storage documentation/durable evidence changed.
 - Neutral IDs/Toronto filesystem-mtime date proxies/unknown physical/permanent facts preserved. Provisional classifications/groups/selection are fresh inspection/layout hypotheses, never public-source/rights/curation approval. No superseded IDs or older human gates silently completed.
@@ -40,3 +40,7 @@ Strict release exits1/**BLOCKED_CONTENT**,same8missing-owner-content issues; pub
 Four mobile opened-inspection `color-contrast` axe findings are **INCONCLUSIVE/manual**, not passing rules: Chromium portrait/square and Firefox landscape/square360px cases. Exact routes/details are private in regeneration-verification.json. M09-R5-H02 explicitly retains this gate. H01 requires regenerated classification/group/pilot/colour review; M09-R2-H01 and M09-R1-H01/H02 also persist. No full-WCAG/physical-device/assistive/physical-art-colour/artistic/content acceptance inferred. Existing nonpassing dependency audit remains in docs/operations.md.
 
 Generic code/docs checkpoint only; no real assets/private source metadata in Git. Protected refs and unfamiliar empty untracked file preserved. Final state returns ACTIVE/HUMAN_VERIFICATION after transport/evidence verification, not an M09 closeout.
+
+## Verified checkpoint transport
+
+Intended diff/new record, source-empty presentation diff, status/log, staged9code/docs-only path inventory and git diff--check/cached--check inspected. Commit/push exits0 for **c4157d48d48cf691ace543e7f980991bda99379e**, `Regenerate M09 persistent review and isolate real build storage`, on redesign/astro-foundation. Post-push rev-parse/status/ls-remote exits0: matching origin, master755df7f/backup3bc95c7 unchanged, only preserved empty untracked file remains. Canonical state records ACTIVE/HUMAN_VERIFICATION and awaits H01/H02 plus older gates. No real assets, private records/plans, screenshots or approval facts were staged. Final documentation transport preserves this human gate, never an M09 completion.

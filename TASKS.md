@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R5
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -191,9 +191,10 @@ Reconstruction: inspected remote6f42507 contains only owner-local R4 verificatio
   Source: DERIVED. Dependencies:D01,D02.
   Evidence so far: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run verify'` exits0,72tests/0fail/skip/diagnostics; actual13pages/0artworkimages/2049bytesmaxJSgzip. Independent persistent preflight/derive command exits0,169newverifiedderivative sets created,allsourcebytes/mtime/registry/manifest preserved and planSHA unchanged. Synthetic lab ran concurrently with encoding, not accepted real-performance evidence; dedicated actual-image review next. Firefox155.0 downloaded only into allowed disposable Playwright cache.
   Final evidence: explicit persistent-root `npm run pilot -- review --snapshot <exact01path>` exits0, current package `/home/jordan/.local/share/jordannesbitt-art/m09/reviews/review-2026-10-06T00-55-36-730Z-0f6e9c43`.169inputs/10pilotitems/5groups/312PNGs/138pagechecks/18openedinspections;Chromium153.0.8010.12+Firefox155.0,360/768/1440×900,DPR1/scale1,0violations/0reflow.4mobile color-contrast incomplete findings remain INCONCLUSIVE/manual, tracked in H02 and private audit, never counted passing. All5groupsequences/home/drawing/selection/object/inspection screenshots inspected. Independent persistent verify-package exits0: allPNGmetadata/private188HTML/assertion omission/frozen169copies/registry/manifest/plan/date/unknownfacts/persistentpaths verified;own realbuild workspace cleaned aftercopy. Actual serve CLI/loopback HTML and exactmedia bytes pass;server stopped. Actual source169/169bytes+mtime unchanged;source presentation diff empty.3-run dedicated realmobile mediansLCP508–1000ms/CLS0/maxinitialtransfer17891–90956bytes;not field/fullWCAG/physicalcolour approval. Strict release exits1/BLOCKED_CONTENT/same8issues. Private audit first failed on stale sharp internal import path before checking; switched to package API resolution and successful rerun, no site/source changes.
-- [~] M09-R5-V02 Record concise evidence, synchronize ACTIVE/HUMAN_VERIFICATION with exact persistent artifact/serve paths, retain old human gates and stop for owner review.
+- [x] M09-R5-V02 Record concise evidence, synchronize ACTIVE/HUMAN_VERIFICATION with exact persistent artifact/serve paths, retain old human gates and stop for owner review.
   Source: DERIVED. Dependencies:V01,P01,P02.
-- [ ] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current R2 layout; automation does not approve content/artistry or close M09.
+  Evidence: storage/domain docs and M00 scope reconciled; records/M09-R5-persistent-regeneration-checkpoint.md is intermediate evidence, not final closeout. Gitdiff/source preservation/staged9pathinventory/diff--check/log/protectedrefs inspected; generic code/docs checkpointc4157d48d48cf691ace543e7f980991bda99379e committed/pushed with matching origin. No assets/private source metadata/productioncontent/presentation changes; master755df7f/backup3bc95c7/emptyuntrackedfile preserved. Current package/owner summary/private audits/SERVE.txt persist at04path; serve command tested,root127.0.0.1 only. Headers synchronized ACTIVE/HUMAN_VERIFICATION; H01/H02 and older R1/R2 gates unresolved. No further implementation or M09 completion inferred; owner feedback creates next request group.
+- [H] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current R2 layout; automation does not approve content/artistry or close M09.
   Source: DERIVED from USER review boundary. Dependencies:verified regenerated package.
-- [ ] M09-R5-H02 Manually resolve four mobile opened-inspection colour-contrast INCONCLUSIVE axe cases; no automated pass inferred from absence of violations.
+- [H] M09-R5-H02 Manually resolve four mobile opened-inspection colour-contrast INCONCLUSIVE axe cases; no automated pass inferred from absence of violations.
   Source: DERIVED from observed current review. Dependencies:V01. Private audit records exact Chromium portrait/square and Firefox landscape/square360px cases; presentation preserved per USER.
