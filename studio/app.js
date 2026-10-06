@@ -4,6 +4,8 @@ const lines = (value) => value.split(/\n/).map((value) => value.trim()).filter(B
 let token, state, editingArtwork, editingProject, editingImages = [], projectMembers = [], selected = [], leadId = "", exportPlan, currentPreview;
 let editorDirty = false, selectedDirty = false, intakeTarget = "", mediaTarget = "", pendingEditorJob;
 let colourBatch = null, selectionRevision = 0, inspecting = false, savingDraft = false;
+let previewing = false, validationAttempted = false, validationIssues = [];
+const errorNodes = new Map();
 const currentJobs = new Set();
 const mediaSelection = new Set(), incomingJobs = new Map();
 const roles = [
@@ -156,31 +158,88 @@ function updateSimpleFields() {
   const form = $("artwork-form"); $("year-field").hidden = field(form, "certainty").value === "unknown";
   $("simple-offer").hidden = !["available", "edition-available"].includes(field(form, "availability").value);
   $("price-fields").hidden = field(form, "offerMode").value !== "price";
+  $("date-year-guidance").textContent = field(form,"certainty").value === "unknown" ? "Unknown date: a year is not required. Exact and Circa require a valid year from 1 to 9999." : `${field(form,"certainty").value === "exact" ? "Exact" : "Circa"} date: Year is required (1–9999). Choose Unknown if the year is not known.`;
+  if (validationAttempted) renderValidation(artworkIssues(), { focus: false });
   updateEditorActions();
 }
 function prominentImage(media) { $("editor-image").replaceChildren(); if (media) { const image = document.createElement("img"); image.src = `/media/${media.id}/primary`; image.alt = media.reproduction.alt; $("editor-image").append(image); } }
-function editorRequirement() {
-  if (!editingArtwork) return "Prepare a photo before saving this draft.";
-  if (savingDraft) return "Saving draft…";
-  const form = $("artwork-form"), certainty = field(form, "certainty").value, year = number(form, "year");
-  if (certainty !== "unknown" && (!Number.isInteger(year) || year < 1 || year > 9999)) return "Enter a year for this date, or choose Unknown.";
+function artworkIssues({ preview = false } = {}) {
+  const form = $("artwork-form"), certainty = field(form,"certainty").value, issues = [];
+  const add = (name, text) => { const control = typeof name === "string" ? field(form,name) : name; if (control && !issues.some((issue) => issue.control === control)) issues.push({control,text}); };
+  const supportedYear = (value) => /^\d{1,4}$/.test(value || "") && Number(value) >= 1 && Number(value) <= 9999;
+  if (certainty !== "unknown") {
+    const year = optional(form,"year"), end = optional(form,"endYear");
+    if (!supportedYear(year)) add("year",`${certainty === "exact" ? "Exact" : "Circa"} dates require a valid year from 1 to 9999. Enter a year, or choose Unknown.`);
+    if (end !== undefined && (!supportedYear(end) || (supportedYear(year) && Number(end) < Number(year)))) add("endYear","Enter a supported end year at or after the start year, or leave the optional end year blank.");
+  }
   for (const kind of dimensions) {
     const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`);
-    if ([width,height,depth].some((value) => value !== undefined) && (!(width > 0) || !(height > 0))) return `Enter both positive width and height for the ${kind} size, or leave this optional size blank.`;
+    if ([width,height,depth].some((value) => value !== undefined)) {
+      if (!(width > 0)) add(`${kind}-width`,`Enter a positive width and height for the ${kind} size, or leave this optional size blank.`);
+      if (!(height > 0)) add(`${kind}-height`,`Enter a positive width and height for the ${kind} size, or leave this optional size blank.`);
+      if (depth !== undefined && !(depth > 0)) add(`${kind}-depth`,`Enter a positive ${kind} depth, or leave the optional depth blank.`);
+    }
   }
   const edition = ["editionSize","editionNumber","artistProofs","signed","numbered"].some((name) => optional(form,name) !== undefined);
-  if (edition && !(number(form,"editionSize") > 0)) return "Enter an edition size, or clear the optional edition information.";
-  if (editingImages.length && editingImages.filter((image) => image.role === "primary").length !== 1) return "Choose exactly one primary photo for this artwork.";
-  return "";
+  if (edition && !(number(form,"editionSize") > 0)) add("editionSize","Enter an edition size, or clear the optional edition information.");
+  const availability = field(form,"availability").value, offered = ["available","edition-available"].includes(availability);
+  if (availability !== "unknown" && !field(form,"offerReviewed").checked) add("offerReviewed","Check the availability information, or choose Not confirmed yet.");
+  if (offered && !optional(form,"offerMode")) add("offerMode","Choose price by enquiry or a supplied price for an available work.");
+  if (offered && field(form,"offerMode").value === "price") {
+    const price = optional(form,"price"), currency = optional(form,"currency")?.toUpperCase();
+    if (!price) add("price","Enter a price, or choose Price by enquiry.");
+    if (!currency || !/^[A-Z]{3}$/.test(currency)) add("currency","Enter the three-letter currency for this price.");
+    if (price && currency && /^[A-Z]{3}$/.test(currency)) try { priceMinor(price,currency); } catch (error) { add("price",error.message); }
+  }
+  if ((editingImages.length || preview) && editingImages.filter((image) => image.role === "primary").length !== 1) add($("add-artwork-view"),"Choose one primary photo before previewing this artwork.");
+  for (const control of [...form.elements]) {
+    if (!control.validity || control.disabled || (certainty === "unknown" && ["year","endYear"].includes(control.name))) continue;
+    if (!control.validity.valid) add(control,`${control.closest("label")?.firstChild?.textContent.trim() || "This field"}: ${control.validationMessage}`);
+  }
+  return issues;
+}
+function clearValidation() {
+  for (const [control, error] of errorNodes) {
+    control.removeAttribute("aria-invalid");
+    const remaining = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter((id) => id && id !== error.id);
+    if (remaining.length) control.setAttribute("aria-describedby",remaining.join(" ")); else control.removeAttribute("aria-describedby");
+    error.remove();
+  }
+  errorNodes.clear(); validationIssues = [];
+  for (const id of ["editor-validation-summary","editor-validation-summary-bottom"]) { $(id).hidden = true; $(id).textContent = ""; }
+}
+function renderValidation(issues, { focus = true, actionName = "Save" } = {}) {
+  clearValidation(); validationIssues = issues;
+  for (const [index, issue] of issues.entries()) {
+    const error = node("p",issue.text,"field-error"); error.id = `artwork-field-error-${issue.control.name || "photo"}-${index}`;
+    issue.control.setAttribute("aria-invalid","true");
+    issue.control.setAttribute("aria-describedby",[issue.control.getAttribute("aria-describedby"),error.id].filter(Boolean).join(" "));
+    (issue.control.closest("label") || issue.control).after(error); errorNodes.set(issue.control,error);
+  }
+  const summary = issues.length ? `${actionName === "Preview" ? "Preview blocked" : "Draft not saved"} — ${issues[0].text}` : "";
+  for (const id of ["editor-validation-summary","editor-validation-summary-bottom"]) { $(id).textContent = summary; $(id).hidden = !summary; }
+  if (focus && issues.length) {
+    showTab("collection"); $("artwork-form").hidden = false;
+    for (let parent = issues[0].control.parentElement; parent; parent = parent.parentElement) if (parent.tagName === "DETAILS") parent.open = true;
+    issues[0].control.scrollIntoView({block:"center",behavior:"instant"}); issues[0].control.focus({preventScroll:true});
+    message(summary,true);
+  }
+  updateEditorActions();
+}
+function validateEditedArtwork(actionName = "Save") {
+  validationAttempted = true;
+  const issues = artworkIssues({preview:actionName === "Preview"}); renderValidation(issues,{actionName});
+  return issues.length === 0;
 }
 function updateEditorActions() {
-  const requirement = editorRequirement(), primary = editingImages.some((image) => image.role === "primary");
-  for (const control of $("artwork-form").querySelectorAll('button[type="submit"]')) { control.disabled = Boolean(requirement); control.setAttribute("aria-describedby",control.closest(".form-actions") ? "editor-action-note-bottom" : "editor-action-note"); }
-  for (const id of ["preview-artwork","preview-artwork-bottom"]) { $(id).disabled = Boolean(requirement) || !primary; $(id).setAttribute("aria-describedby",id.endsWith("bottom") ? "editor-action-note-bottom" : "editor-action-note"); }
-  $("editor-action-note").textContent = requirement || (!primary ? "Save draft is available. Add a primary photo to preview this artwork." : "Save draft and Preview artwork are ready. Optional information can stay blank.");
+  const busy = savingDraft || previewing;
+  for (const control of $("artwork-form").querySelectorAll('button[type="submit"]')) { control.disabled = busy || !editingArtwork; control.setAttribute("aria-describedby",control.closest(".form-actions") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  for (const id of ["preview-artwork","preview-artwork-bottom"]) { $(id).disabled = busy || !editingArtwork; $(id).setAttribute("aria-describedby",id.endsWith("bottom") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  $("editor-action-note").textContent = savingDraft ? "Saving draft…" : previewing ? "Preparing the current edited draft preview…" : !editingArtwork ? "Prepare a photo before editing this draft." : validationIssues.length ? "Correct the marked field, then click Save draft or Preview artwork again. Both actions remain available." : "Save draft checks your entries. Preview artwork validates and privately saves current edits before previewing. Optional facts may stay unknown.";
   $("editor-action-note-bottom").textContent = $("editor-action-note").textContent;
 }
 function openArtwork(id, { focus = true } = {}) {
+  clearValidation(); validationAttempted = false;
   editingArtwork = id; pendingEditorJob = null; editorDirty = false; const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
   showTab("collection"); const form = $("artwork-form"); form.hidden = false; form.reset();
   for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = false;
@@ -234,8 +293,9 @@ function renderReproductions() {
   updateEditorActions();
 }
 function moveView(index, direction) { syncPrimaryAlt(); const other = index + direction; if (other < 0 || other >= editingImages.length) return; [editingImages[index], editingImages[other]] = [editingImages[other], editingImages[index]]; editorDirty = true; renderReproductions(); }
-async function saveArtwork() {
+async function saveArtwork({ actionName = "Save" } = {}) {
   if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
+  if (!validateEditedArtwork(actionName)) return null;
   const form = $("artwork-form"), previous = state.catalogue.artworks.find((work) => work.id === editingArtwork), sizes = [];
   for (const kind of dimensions) { const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`); if (width !== undefined || height !== undefined || depth !== undefined) { if (width === undefined || height === undefined) throw new Error(`${kind} size needs width and height, or leave its fields blank`); sizes.push({ kind, width, height, depth, unit: field(form, `${kind}-unit`).value }); } }
   const availability = { state: field(form, "availability").value, reviewed: field(form, "offerReviewed").checked };
@@ -248,10 +308,14 @@ async function saveArtwork() {
   const record = { ...previous, title: field(form, "title").value.trim() || `Private draft ${previous.id} (title not supplied)`, slug: field(form, "slug").value.trim(), aliases: lines(field(form, "aliases").value), medium: field(form, "medium").value, kind: field(form, "kind").value, date: date(form), techniques: lines(field(form, "techniques").value), materials: optional(form, "materials"), description: optional(form, "description"), dimensions: sizes, reproductions: editingImages, published: field(form, "published").checked, featured: field(form, "featured").checked, selectedOrder: field(form, "featured").checked ? number(form, "selectedOrder") : undefined, availability, edition, framing: optional(form, "framing"), condition: optional(form, "condition") };
   savingDraft = true; updateEditorActions();
   try { await api("/api/artwork/save", { id: editingArtwork, record, note: field(form, "privateNote").value }); await refresh({ editor: true }); message("Draft saved. Nothing has been made public."); return editingArtwork; }
+  catch (error) {
+    const name = /date|year/i.test(error.message) ? "year" : /slug|alias|address/i.test(error.message) ? "slug" : /price|currency/i.test(error.message) ? "price" : /availability|reviewed/i.test(error.message) ? "availability" : /edition/i.test(error.message) ? "editionSize" : "title";
+    renderValidation([{control:field(form,name),text:humanReason(error.message)}],{actionName}); return null;
+  }
   finally { savingDraft = false; updateEditorActions(); }
 }
 $("artwork-form").addEventListener("input", () => { editorDirty = true; updateSimpleFields(); });
-$("artwork-form").addEventListener("submit", action(saveArtwork));
+$("artwork-form").addEventListener("submit", action(() => saveArtwork()));
 for (const input of document.querySelectorAll('[name="purpose"]')) input.addEventListener("change", updateIntake);
 $("show-intake").addEventListener("click", () => showIntake()); $("media-add-images").addEventListener("click", () => showIntake("media")); $("close-intake").addEventListener("click", () => { resetColourSelection({clearFiles:true}); $("intake-panel").hidden = true; $("artwork-form").hidden = !editingArtwork; });
 $("add-artwork-view").addEventListener("click", () => showIntake("attach", editingArtwork));
@@ -382,14 +446,19 @@ function renderHomepage() {
 async function saveCuration() { await api("/api/curation", { selectedIds: selected, homepageLeadId: leadId }); selectedDirty = false; await refresh(); openCuration(); message("Selected Work saved. Nothing is public."); }
 $("save-curation").addEventListener("click", action(saveCuration));
 async function buildPreview() {
-  if (editorDirty) await saveArtwork(); message("Preparing your preview…"); currentPreview = await api("/api/preview/build", {}); await refresh();
+  if (editingArtwork && !validateEditedArtwork("Preview")) return null;
+  if (editorDirty && !await saveArtwork({actionName:"Preview"})) return null;
+  previewing = true; updateEditorActions();
+  try { message("Preparing your preview…"); currentPreview = await api("/api/preview/build", {}); await refresh(); }
+  finally { previewing = false; updateEditorActions(); }
   $("preview-links").replaceChildren(); const record = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0];
   for (const [label, path] of [["Homepage", "/"], ["Selected Work", "/work/"], ["Archive", "/archive/"], ["Projects", "/projects/"], ["Artwork", `/artwork/${record.slug}/`], ["Medium", `/work/${record.medium}/`], ...state.catalogue.projects.map((project) => [project.title, `/projects/${project.slug}/`])]) { const link = node("a", `Preview ${label}`); link.href = currentPreview.origin + path; link.target = "_blank"; link.rel = "noopener noreferrer"; $("preview-links").append(link); }
   message("Preview ready. Your work is still private."); return currentPreview;
 }
 async function previewPage(kind) {
+  if (editingArtwork && !validateEditedArtwork("Preview")) return;
   const popup = window.open("about:blank", "_blank"); if (popup) popup.opener = null;
-  try { if (kind === "project") await saveProject(); if (kind === "selected" && selectedDirty) await saveCuration(); const preview = await buildPreview(); const work = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0], project = state.catalogue.projects.find((entry) => entry.id === editingProject); const path = kind === "project" ? `/projects/${project.slug}/` : kind === "selected" ? "/work/" : kind === "home" ? "/" : `/artwork/${work.slug}/`; if (popup) popup.location.href = preview.origin + path; else { showTab("review"); message("Open the preview link below."); } } catch (error) { popup?.close(); throw error; }
+  try { if (kind === "project") await saveProject(); if (kind === "selected" && selectedDirty) await saveCuration(); const preview = await buildPreview(); if (!preview) { popup?.close(); return; } const work = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0], project = state.catalogue.projects.find((entry) => entry.id === editingProject); const path = kind === "project" ? `/projects/${project.slug}/` : kind === "selected" ? "/work/" : kind === "home" ? "/" : `/artwork/${work.slug}/`; if (popup) popup.location.href = preview.origin + path; else { showTab("review"); message("Open the preview link below."); } } catch (error) { popup?.close(); throw error; }
 }
 for (const id of ["preview-artwork", "preview-artwork-bottom"]) $(id).addEventListener("click", action(() => previewPage("artwork")));
 $("preview-project").addEventListener("click", action(() => previewPage("project"))); $("preview-selected").addEventListener("click", action(() => previewPage("selected"))); $("preview-homepage").addEventListener("click", action(() => previewPage("home")));

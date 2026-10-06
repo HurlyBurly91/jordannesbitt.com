@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R8
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R10
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -346,8 +346,9 @@ Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownempt
   Source: USER.
 - [x] M09-R8-07 Common Title/date/medium/process/materials/optional dimensions/alt/project/availability fields immediately visible/editable without Advanced.
   Source: USER. Dependencies:04,05.
-- [x] M09-R8-08 Save draft/Preview clearly enabled/disabled; exact missing requirement adjacent when disabled; optional metadata never needed just to save a private draft. Existing schema required-value semantics and safe private UI placeholders remain,not public approval.
+- [-] M09-R8-08 Save draft/Preview clearly enabled/disabled; exact missing requirement adjacent when disabled; optional metadata never needed just to save a private draft. Existing schema required-value semantics and safe private UI placeholders remain,not public approval.
   Source: USER.
+  SUPERSEDED primary-action invalid-field UX by M09-R10-01/04/05. Historical implementation/evidence retained; factual validation/private optional-unknown support remain preservation constraints. Owner explicitly rejects grey/inert validation communication,not catalogue semantics.
 - [x] M09-R8-09 Interaction tests: untagged→explicit sRGB→readyeditor;decline→nodraft;tagged→noquestion;multipleuntagged→scopedchoice;no duplicateerrorlog;focus/scroll;commonfieldedits/persistence afterSave/restart;full existing verification green.
   Source: USER. Dependencies:01–08.
 - [x] M09-R8-10 Actual authorized private untagged corpus image demo/screenshot orshortscreencast sequence: Select→UsesRGB→editor→editTitle/Medium/Alt→Save→restart/reopen persisted. No real source data/assets/metadata in Git;return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE.
@@ -372,6 +373,7 @@ Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownempt
   Latest USER resume scope: finish only this handoff and supported R8-10; no new request group or reopening completed R9. Reconstructed AGENTS/RUN_PROMPT/PROJECT/STATUS/contract/TASKS; inspected clean development HEAD/origind0fc8a2 and protectedrefs. R8 docs/studio guide/IDs/supersession/private demo README/report remain consistent. Preservation diff b610adf..HEAD exits0 for Studio/public source/tests/ingestion/R8 evidence record; b610adf is an ancestor,so no concrete migration-induced application uncertainty. Existing83/83tests/real untaged demo/169sourcepreservation/strictBLOCKED_CONTENT evidence reused,not claimed freshly rerun. Node22.23.3/npm10.9.9 `npm run state:check` exits0 before handoff; final synchronized headers ACTIVE/HUMAN_VERIFICATION/M09-R8. Only STATUS/TASKS/R8 checkpoint evidence change under current explicit commit/push grant; no implementation/private assets/approval/launch/milestone closeout. Startup:checkout+Node22 `npm run studio`; pending owner test:untaggedimage→explicitUsesRGB→focusededitableform→Title/Medium/Alt→Save→Ctrl+C/restart/reopenpersistedvalues;alsodecline/batchscope reset checks. Older human gates preserved.
 - [H] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
   Source: USER/DERIVED. Dependencies:V02. Older human/final-content/manual checks preserved.
+  FAILED owner usability review,NOT ACCEPTED: owner screencast shows Date Exact with invalid/missing valid Year;existing “Enter a year for this date, or choose Unknown.” detection disables/greys both Save/Preview and reads as broken controls. Remediation: M09-R10; retain this unresolved owner result and prior R8 implementation/colour/intake evidence,never reinterpret as approval.
 
 ## M09-R9 — Experience-augmented durable-state migration
 
@@ -415,3 +417,43 @@ Source: USER, 2026-10-06. Migrate this repository's existing durable-state contr
 
 Current migration entry state: target head `b610adff909dd5e96f71fa9f0a0d05bc496b4256`; reference architecture commit `6b3ebc329de5355f6a06c3725438001999786cc8`. M09-R8 remains technically verified but awaiting owner H01; all older M09 human/content/rights/colour/launch gates remain unresolved.
 
+## M09-R10 — Actionable Save/Preview validation after failed owner review
+
+Source: USER,latest owner screencast/usability failure. This is a UI-validation communication correction,not permission to weaken factual truth or redesign public pages. Preserve R8 explicit colour/intake/persistence,experience-augmented durable state,canonical schemas/backend/ingestion/private storage/security/publication-repository gates/public M09-R2 presentation. Existing bounded implementation/tests/private-demo/code-docs checkpoint grant on development branch; no real source/rights/launch/publication or milestone completion approval. LOW UI section,no new security/data architecture.
+
+Reconstruction: clean HEAD/origin476a5ff match;master755df7f/backup3bc95c7 preserved. Current dateSchema exact/circa year integer1–9999,unknown no inferred year;unchanged server authoritative. Current client calculates requirement then disables actions,so owner cannot trigger focus/local-error feedback. Read studio/catalogue rules/UI/date schema/existing tests. Choose preferred Preview model: validate current edited draft; on success privately save current edits and build actual-component preview; on invalid current data focus/describe blocker and preserve all unsaved fields,no stale saved-state preview or silent certainty conversion. Completed R9 stays complete;older human/colour/content/rights/launch gates remain.
+
+- [x] M09-R10-01 Save draft remains visibly actionable for field-invalid input. Click validates;blocked attempt scrolls/focuses first invalid field with concise field-local accessible error and summary beside primary action,not silently grey/inert.
+  Source: USER.
+- [x] M09-R10-02 Date/Year relationship explicit adjacent: Exact and Circa require valid supported year;Unknown does not. Preserve integer1–9999/year-range/date-certainty truth;no contradictory Exact→Unknown conversion.
+  Source: USER and existing canonical semantics.
+- [x] M09-R10-03 Unknown optional dimensions/price/availability/edition/materials/process/project/rights/source approval do not prevent private draft save. Partially entered contradictions still validate honestly;unsaved values preserved after failed attempt.
+  Source: USER.
+- [x] M09-R10-04 Preview is coherently current-edits mode: invalid edited representation clearly blocks with relevant field/error/focus;valid edits privately save then actual-component preview. No inert grey action,no implicit stale-state preview.
+  Source: USER preferred model selected. Dependencies:01,02.
+- [x] M09-R10-05 On Save/Preview attempt mark first invalid field,scroll/focus,associate error text accessibly,preserve other unsaved edits. Correcting relevant error immediately permits action without unrelated edit/refresh. Genuine in-flight readiness may still be clear;disabled state alone never validation communication.
+  Source: USER.
+- [x] M09-R10-06 Interactions a–j: Exact blank/malformed/out-of-range click→Yearerror/focus;Unknownblank andoptionalblank Save;unsavededitpreservation;correctYearimmediateSave;documentedinvalidPreview;validsavedPreview;realrestartpersist;unchangedsource/publication/rights gates. Preserve prior tests/meaningful update of old disabled expectations.
+  Source: USER. Dependencies:01–05.
+- [x] M09-R10-07 Normaldesktop owner-flow reproduction: Exact invalidyear→Save→explicitlocalvalidation/focus→chooseUnknownORvalidYear→Save succeeds→Preview succeeds. Persistent private screenshots/sequence,not fabricated owner/factual source approval.
+  Source: USER. Dependencies:06.
+- [x] M09-R10-08 Run targeted/full verification asappropriate,statecheck/strictBLOCKED_CONTENT and exact backend/public/model preservation;return ACTIVE/HUMAN_VERIFICATION,noM09complete.
+  Source: USER. Dependencies:06,07.
+- [x] M09-R10-P01 Preserve src/public design/schema/catalogue truth and Studio backend/intake/colour/validation/safety/storage/IDs/gates/state-machine architecture,owner drafts/private assets/protected refs. Only Studio client feedback/orchestration/tests/private demonstration/docs/durable evidence change.
+  Source: USER and DERIVED.
+- [x] M09-R10-P02 R8-H01 FAILED remains unresolved/not accepted;keep R8 technical evidence and older unresolved human/content/rights/colour/launch gates. No M09closeout/sourceapproval/deploy/master/services/payment/manifest or optional-fact invention.
+  Source: USER.
+- [x] M09-R10-D01 Implement actionable current-form validation/errors/focus/date guidance and coherent current-edits preview over unchanged canonical save/build APIs;preserve unsaved state and cleared-error feedback.
+  Source: DERIVED. Dependencies:recorded failure/current domain rules.
+  Evidence: Studio-only attempt validation with labelled field-errors/aria-invalid/description,firstfieldfocus-scroll,action summaries,Date relation hint and actionable buttons;native suppression replaced by visible feedback while canonical endpoint untouched. Preferred current-edits Preview validates before popup/build and privately saves valid changes. In-flight operations alone disable actions with explanation;optionalUnknown facts preserved.
+- [x] M09-R10-D02 Preserve/update existing tests and add blank/malformed/bounds/Unknown/optional/unsaved/immediatecorrection/Preview/restart/gate interactions;capture isolated persistent real-image owner-flow proof.
+  Source: DERIVED. Dependencies:D01.
+  Targeted evidence: first12-case run10passed/2failed because unscoped Year locator also matched hidden Project Year;scoped artist-form tests,not weakened validation. RerunNode22 `node --test tests/studio.test.mjs` exits0,12/12pass,including prior11and newa–jblank/malformed/bounds/circa/Unknown/optional/unsaved/correctyear/currentpreview/restart/gate proof. New validation-flow option extends existing persistent intake driver without replacing R8 sequence;full/real checks pending.
+  Full84/84/statecheck/0diagnostics and first real22-frame ownerflow pass,0axe/reflow;exactinvalidSave/Preview→Yearfocus/error→UnknownSave→currentcomponentPreview/restart proven. Desktop screenshot inspection moves Year's associated error directly below the Year column;feedback-only CSS adjustment,refresh verification/demo required. R8-H01 FAILED remains unaccepted;no backend/source/public changes.
+- [x] M09-R10-V01 Run relevant/full/state/release checks,inspect actual error/focus/preview/restart/private/public-preservation proof;record results/limitations without human acceptance.
+  Source: DERIVED. Dependencies:D01,D02.
+  Final evidence: Node22.23.3/npm10.9.9 full `npm run verify` exits0,statecheckPASS,84/84tests/0fail-skip-diagnostics;previous83 retained plus a–j case. Actualempty13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/backend/models/intake/colour/export/policyarchitecture preservation diff exits0. Final `npm run studio:validation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/validation-demo-2026-10-06T20-16-18-903Z-76a94b0d`,11steps/22PNGs,1440×900/DPR1/normalzoom,0axeviolations/incomplete/reflow;owner ExactinvalidSave and invalidPreview actionable/localYearerror-focus/unsavedpreservation→explicitUnknown→Save→actualcomponentPreview/restart pass. Authoritativeownerstate/registry bytes and169/169sourcebytesmtime unchanged;allrealdata private,no sourceapproval/actualexport. Strictrelease remains1/BLOCKED_CONTENT/same8issues. Initial desktop error-grid placement refined below Year before final full/demo reruns. R8-H01 FAILED/notaccepted;no owner usability/colour/public-content acceptance inferred.
+- [~] M09-R10-V02 Reconcile docs/IDs/evidence,review intended code-docs-only checkpoint/transport and return exact start/demo commands plus short owner test at human gate.
+  Source: DERIVED. Dependencies:V01.
+- [ ] M09-R10-H01 Owner repeats screencast-invalidDate→Save/Preview actionableerror/focus→validYearORUnknown→Save/Preview/restart usability;review absence of unrelated mandatory optional fields. Automation is not acceptance;R8-H01/older factual/final-public gates stay unresolved.
+  Source: USER/DERIVED. Dependencies:V02.

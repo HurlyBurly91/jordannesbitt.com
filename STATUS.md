@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R8
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R10
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R8 handoff ready; H01 awaits owner usability acceptance. Node22 `npm run studio` opens loopback Studio with repository writes disabled. Existing evidence:83/83tests,explicit sRGB→ready focused editor→edit/save→restart persistence,169/169sources preserved,release BLOCKED_CONTENT. Demo /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270. Post-migration docs/IDs/evidence consistent;state:check passes. Older human/content/rights/launch gates remain;M09 ACTIVE,not COMPLETE.
+M09-R10 verified84tests/statecheck/0diagnostics;actionable Save/current-edits Preview preserves factualvalidation and unsaved edits. Exact/Circa Yearerror focus then UnknownORvalidyear correction tested;22real private sequencePNGs/0axe-incomplete-reflow/restartpass. Demo /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/validation-demo-2026-10-06T20-16-18-903Z-76a94b0d. R8-H01 FAILED/notaccepted;backend/publicdesign/intake/architecture/gates/ownerdata preserved. Docs/checkpoint then HUMAN_VERIFICATION,release BLOCKED_CONTENT,no COMPLETE.
