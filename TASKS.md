@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R2
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R5
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -162,3 +162,38 @@ Source: USER, 2026-10-05. The disposable /tmp review state was lost before owner
 
 Persistent replacement snapshot: owner-local run `run-2026-10-06T00-12-39-275Z-bd2ed33a` captured 169/169 supported images, 0 exclusions and 1 ignored non-image at `~/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json`, SHA256 `60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c`. The durable `id-registry.json` now exists under the persistent root. This request does not accept M09-R2 visuals or any older M09 content/rights/manifest gate.
 
+## M09-R5 — Regenerate the persistent private visual review
+
+Source: USER, latest exact-snapshot regeneration request. Bounded permission to inspect frozen images, recreate provisional private classifications/groups/approximately-ten-image selection/lead and generate/verify a persistent local review using the current M09-R2 presentation. Necessary generic private-output plumbing/state/docs are within this work; no presentation redesign, permanent facts, publication or private-data Git commits. Earlier tmp paths are historical evidence only. No new source inventory or restoration of lost classifications from conversation as fact.
+
+Reconstruction: inspected remote6f42507 contains only owner-local R4 verification/state evidence; fast-forwarded existing checkout from1953829, preserving unfamiliar untracked empty file. R4 verified72tests is historical owner evidence; this regeneration runs its own checks. Snapshot/registry/contact sheets present in approved persistent root. Real-pilot's isolated build still defaults to /tmp and must be redirected before real data is rendered. Preserve M09-R1-H01/H02 and M09-R2-H01; none is approved by regeneration.
+
+- [x] M09-R5-01 Use only `/home/jordan/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json`, exact SHA256 `60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c`; verify frozen copies/registry/date provenance.169supported readable,0exclusions,SQLite ignored unopened; no new source snapshot.
+  Source: USER. Dependencies: reconstruction/approved root.
+  Evidence: Node22.23.3 persistent verify-regeneration utility exits0;169copyhashes/registryIDs/Torontocalendardates/unknownownerfacts validated,169/169sourcebytes+mtimeunchanged;1SQLite ignored unopened.87portrait/4landscape/78square export ratios;169untaggedICC. Manifest/registry byte hashes saved only in persistent private preflight report. All8contact sheets freshly inspected; selected originals/plan next.
+- [x] M09-R5-02 Inspect actual frozen images and recreate a private visual-review-plan: America/Toronto filesystem-mtime provisional creation dates, absent physical measurements, provisional medium/category/technique/orientation with uncertainty, useful provisional visual groups, approximately10pilot images and local homepage candidate.
+  Source: USER. Dependencies:01. Neutral review labels only; no old-plan approval inferred.
+  Evidence: all8contact sheets/9originals freshly inspected; exact snapshot-bound persistent visual-review-plan.json validates all169classifications/5provisionalgroups/10distinctrepresentatives/lead, with confidence/ambiguities/colour/framing/source versus physical-shape warnings. PlanSHA2566f89bc8fc37d80e040686988c863715015bd1fbe376d1d4895da105cd1b4336b. No permanent metadata/owner acceptance inferred; private detail stays outside Git.
+- [x] M09-R5-03 Keep all real private registry/snapshot/plan/derivatives/screenshots/reports/review site and build staging under `/home/jordan/.local/share/jordannesbitt-art/m09`, never /tmp or public Git. Synthetic tests/npm/Playwright caches may remain temporary.
+  Source: USER. Dependencies:01; historical/test tmp allowance does not authorize new real-data staging.
+- [x] M09-R5-04 Generate a fresh persistent local review package with current M09-R2 presentation, relevant automated/image/interaction/privacy checks and release:check still BLOCKED_CONTENT; return exact package path and working loopback serve command.
+  Source: USER. Dependencies:02,03.
+- [x] M09-R5-P01 Preserve source bytes/mtime, neutral registry IDs, unknown permanent titles/series/physical sizes/prices/availability/editions/rights/biography/publication/manifest; no real Git assets/private source metadata, external messages/services/deployment or M09 COMPLETE.
+  Source: USER and existing domain rules.
+- [x] M09-R5-P02 Preserve current M09-R2 components/CSS/client presentation and canonical publication/release logic; regeneration is not redesign or older human acceptance.
+  Source: USER.
+- [x] M09-R5-D01 Verify snapshot/registry, inspect sheets/originals and save bound provisional plan with concise private evidence.
+  Source: DERIVED. Dependencies:01,02.
+- [x] M09-R5-D02 Redirect real-pilot isolated build staging to persistent root; preserve synthetic /tmp test scratch and default behavior. Reconcile relevant storage docs and verify plumbing.
+  Source: DERIVED. Dependencies:03. No real private data is copied to /tmp even transiently.
+  Evidence: privatePilotSite uses approved snapshot/builds parent; isolatedProject accepts explicit parent while synthetic defaults remain /tmp/opencode. Existing private-adapter regression now asserts supplied build-root containment; full72/72tests pass. Catalogue/quality storage rules reconciled; src/ presentation and public catalogue unchanged.
+- [x] M09-R5-V01 Run full/relevant tests, generate persistent review and inspect actual screenshots/report, verify original/registry/snapshot/plan hashes and public-output isolation; record actual browser/tool results and limitations.
+  Source: DERIVED. Dependencies:D01,D02.
+  Evidence so far: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run verify'` exits0,72tests/0fail/skip/diagnostics; actual13pages/0artworkimages/2049bytesmaxJSgzip. Independent persistent preflight/derive command exits0,169newverifiedderivative sets created,allsourcebytes/mtime/registry/manifest preserved and planSHA unchanged. Synthetic lab ran concurrently with encoding, not accepted real-performance evidence; dedicated actual-image review next. Firefox155.0 downloaded only into allowed disposable Playwright cache.
+  Final evidence: explicit persistent-root `npm run pilot -- review --snapshot <exact01path>` exits0, current package `/home/jordan/.local/share/jordannesbitt-art/m09/reviews/review-2026-10-06T00-55-36-730Z-0f6e9c43`.169inputs/10pilotitems/5groups/312PNGs/138pagechecks/18openedinspections;Chromium153.0.8010.12+Firefox155.0,360/768/1440×900,DPR1/scale1,0violations/0reflow.4mobile color-contrast incomplete findings remain INCONCLUSIVE/manual, tracked in H02 and private audit, never counted passing. All5groupsequences/home/drawing/selection/object/inspection screenshots inspected. Independent persistent verify-package exits0: allPNGmetadata/private188HTML/assertion omission/frozen169copies/registry/manifest/plan/date/unknownfacts/persistentpaths verified;own realbuild workspace cleaned aftercopy. Actual serve CLI/loopback HTML and exactmedia bytes pass;server stopped. Actual source169/169bytes+mtime unchanged;source presentation diff empty.3-run dedicated realmobile mediansLCP508–1000ms/CLS0/maxinitialtransfer17891–90956bytes;not field/fullWCAG/physicalcolour approval. Strict release exits1/BLOCKED_CONTENT/same8issues. Private audit first failed on stale sharp internal import path before checking; switched to package API resolution and successful rerun, no site/source changes.
+- [~] M09-R5-V02 Record concise evidence, synchronize ACTIVE/HUMAN_VERIFICATION with exact persistent artifact/serve paths, retain old human gates and stop for owner review.
+  Source: DERIVED. Dependencies:V01,P01,P02.
+- [ ] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current R2 layout; automation does not approve content/artistry or close M09.
+  Source: DERIVED from USER review boundary. Dependencies:verified regenerated package.
+- [ ] M09-R5-H02 Manually resolve four mobile opened-inspection colour-contrast INCONCLUSIVE axe cases; no automated pass inferred from absence of violations.
+  Source: DERIVED from observed current review. Dependencies:V01. Private audit records exact Chromium portrait/square and Firefox landscape/square360px cases; presentation preserved per USER.

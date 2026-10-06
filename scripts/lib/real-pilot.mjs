@@ -106,7 +106,11 @@ export function renderCatalogue(records, plan) {
   return { artworks, projects, professional: [] };
 }
 export async function privatePilotSite(harness, { directory, records, plan }) {
-  const project = await isolatedProject(harness);
+  // Real catalogue/media and Astro's isolated caches never stage in /tmp.
+  // Synthetic adapter tests naturally keep their explicitly temporary directory.
+  const buildParent = localPilotOutput(resolve(directory, "builds"));
+  await mkdir(buildParent, { recursive: true, mode: 0o700 });
+  const project = await isolatedProject(harness, { parent: buildParent });
   const catalogue = renderCatalogue(records, plan);
   validateCatalogue(catalogue, { assetExists: () => true });
   for (const name of ["artworks", "projects", "professional"]) await project.content(name, catalogue[name]);

@@ -101,6 +101,7 @@ test("independent real-pilot adapter omits unapproved artist/rights/offer assert
   const plan = { snapshotSha256: snapshot.snapshotSha256, classifications: [{ ids: [1], medium: "unclassified", techniques: [], ambiguities: ["Not confirmed"] }], groups: [{ id: "g-01", ids: [1], previewIds: [1], reviewLabel: "Provisional visual group G01", basis: "Local layout test" }], pilotIds: [1], homepageCandidateId: 1 };
   const { records } = await derivePilot({ snapshot, directory, classes: expandClassifications(snapshot, plan), plan });
   const site = await privatePilotSite(t, { directory, records, plan });
+  assert.ok(site.root.startsWith(`${resolve(directory, "builds")}/`), "private renderer stages assets/content/cache inside its supplied data directory, not a default tmp fixture root");
   assert.ok((await assertPrivatePilotOutput(resolve(site.root, "dist"))).pages > 0);
   assert.equal(records[0].draft.published, false);
   assert.deepEqual(records[0].draft.dimensions, []);

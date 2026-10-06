@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
 
 export const repository = fileURLToPath(new URL("../../", import.meta.url));
-export async function isolatedProject(t) {
-  const root = await mkdtemp("/tmp/opencode/jordannesbitt-fixture-");
+export async function isolatedProject(t, { parent = "/tmp/opencode" } = {}) {
+  const root = await mkdtemp(resolve(parent, "jordannesbitt-fixture-"));
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const path of ["src", "public", "astro.config.mjs", "tsconfig.json", "package.json"]) await cp(resolve(repository, path), resolve(root, path), { recursive: true });
   await mkdir(resolve(root, "scripts/lib"), { recursive: true });
