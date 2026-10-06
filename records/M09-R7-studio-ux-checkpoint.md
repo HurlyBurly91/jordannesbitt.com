@@ -4,7 +4,7 @@ Intermediate technical evidence, **not M09 completion or owner usability/content
 
 ## IDs and scope
 
-M09-R7-01–11/P01/P02/D01/D02/V01 technically verified; V02 completes evidence/transport/human pointer. H01 needs owner practical usability/expert disclosure review; H02 retains one actual incomplete contrast check. Older R6/R1/R5 factual/rights/colour/final-content/launch gates persist. No superseded requirement meanings or final approval inferred.
+M09-R7-01–11/P01/P02/D01/D02/V01/V02 technically verified. H01/H02 are AWAITING_HUMAN practical usability/expert disclosure and current incomplete contrast review. Older R6/R1/R5 factual/rights/colour/final-content/launch gates persist. No superseded requirement meanings or final approval inferred.
 
 Only Studio HTML/CSS/JS,guide/domain UX documentation,interaction tests,demo driver and durable evidence change. `git diff --exit-code HEAD -- src scripts/lib/studio-store.mjs scripts/lib/studio-server.mjs scripts/lib/studio-export.mjs scripts/lib/studio-paths.mjs scripts/lib/studio-preview.mjs scripts/lib/ingestion.mjs` exits0 before checkpoint: public presentation/schema/backend/pipeline/release unchanged. No dependency/major feature/security architecture changes; LOW throughout.
 
@@ -43,3 +43,7 @@ Initial43-capture screenshot inspection led to concealing unrelated editor durin
 With Node22,owner starts updated working Studio from checkout: `npm run studio`. Default private data remains ~/.local/share/jordannesbitt-art/m09/studio. To inspect isolated demonstration, `JORDANNESBITT_M09_DATA=<artifact>/workspace npm run studio`; default owner data is not changed. studio/README.md explains normal visual flows and unchanged final approval/export controls. README/report/screenshots in private artifact provide exact paths/results.
 
 Owner must test practical simplified workflow and optional/expert control discoverability,manually review current incomplete contrast,then separately approve genuine public-source/rights/metadata/curation/professional-contact/business/launch-manifest/final-public-content gates. Public site was not redesigned. Intended UI/tests/docs-only checkpoint on redesign/astro-foundation,protected refs and unfamiliar empty untracked file preserved; return ACTIVE/HUMAN_VERIFICATION,never COMPLETE/final closeout.
+
+## Verified checkpoint transport
+
+Intended changed/new file/domain/UIDemo/test/state review,status/recentlog/origin/protectedrefs and gitdiff--check/cached--check pass. Staged11UI-tests-docs-demo-state-only paths;commit/push exits0 for **74ff6746ae54362df9b9e85049010b4b7fe2272c**, `Make M09 Studio image-first and simplify artist workflows`, on development branch. Post-push HEAD/origin match,master755df7f/backup3bc95c7 unchanged and only preserved unknown empty untracked file remains. Publicsrc/backend/security/schema/intake/release/content/media/rights/manifest not changed or staged. Final documentation preserves ACTIVE/HUMAN_VERIFICATION,H01/H02/oldergates and no M09completion/publication.

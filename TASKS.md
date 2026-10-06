@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R7
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -317,9 +317,10 @@ Reconstruction: origin/checkout73a8aca match; master755df7f/backup3bc95c7 unchan
   Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,80/80tests,0fail/skip/diagnostics; allprior79checks retained withnewvisualinteraction. Actual13pages/0images/2049bytesmaxJSgzip. Exact `git diff --exit-code HEAD -- src scripts/lib/studio-*.mjs scripts/lib/ingestion.mjs` preservation check exits0; public presentation/schema/backend/safety untouched. Real persistent demo/release checks next.
   First real UXdemo exits0:43captures/0violations/0reflow,169sources andauthoritative registry/Studio state untouched. Screenshot review finds existing editor should be concealed while choosing an attachment target and active-item wording should not be confused with Selected Work; minorUI clarification added,refresh pending. One360pxStudio color-contrast automated rule remains INCONCLUSIVE/manual,not a passing check. Strict release stillBLOCKED_CONTENT. No backend/public presentation changes.
   Final evidence: fullpostclarification `npm run verify` exits0,80/80tests/0fail-skip-diagnostics. Fresh UXdemo `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/ux-demo-2026-10-06T05-47-31-290Z-0f3a8a89` exits0,43UI/A–I/componentcaptures/0violations/0reflow at1440/768/360×900,DPR1/normalzoom. One360Studioartworks color-contrastINCONCLUSIVE rule retained forH02; no fullconformance claim. Two isolated private demo artworks,alternatephoto,reference-onlymedia,visualproject/Selectedorder/lead/editedpreviews and blockedunapproveddryrun pass; successfulapproveddryrun/exports tested onlysynthetically. Authoritativeownerstate+registry bytehashes unchanged;169/169sourcebytes+mtime preserved. Source/backend/pipeline preservation diff exits0 and actualrelease exits1/BLOCKED_CONTENT/same8issues. Final desktop intake-target/home/initialeditor/project screenshots inspected; not owner usability/art acceptance.
-- [~] M09-R7-V02 Reconcile docs/evidence/IDs;verified intended code/docs-only checkpoint and return ACTIVE/HUMAN_VERIFICATION with exact start/demo paths and genuine remaining approvals.
+- [x] M09-R7-V02 Reconcile docs/evidence/IDs;verified intended code/docs-only checkpoint and return ACTIVE/HUMAN_VERIFICATION with exact start/demo paths and genuine remaining approvals.
   Source: DERIVED. Dependencies:V01.
-- [ ] M09-R7-H01 Owner tests image-first normal intake/editor/library/project/selection/home/preview/public-preparation usability and expert disclosure; automation cannot approve usability or real content.
+  Evidence: docs/studio.md andstudio/README guide updated;intermediate records/M09-R7-studio-ux-checkpoint.md,not finalcloseout. Intended11UI-tests-docs-demo-statepaths reviewed/staged,gitdiffcheck/cachedcheck/status/log/origin/protectedrefs pass. Commit/push exits0 for74ff6746ae54362df9b9e85049010b4b7fe2272c withmatchingorigin;master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. No publicsrc/backend/models/intake/security/gates/actualcontent/privateimages-notes-drafts-screenshots changed/staged. State now ACTIVE/HUMAN_VERIFICATION with exact defaultstartup andisolateddemo paths;H01/H02/oldercontent-rights-source checks unresolved,no M09complete.
+- [H] M09-R7-H01 Owner tests image-first normal intake/editor/library/project/selection/home/preview/public-preparation usability and expert disclosure; automation cannot approve usability or real content.
   Source: USER/DERIVED human gate. Dependencies:V02. R6/R1/R5 factual/rights/final-content gates persist.
-- [ ] M09-R7-H02 Manually resolve one current360pxStudioartworks color-contrast INCONCLUSIVE automated rule; preserve older R5 manual/source-colour gates and do not count incomplete as a passing rule.
+- [H] M09-R7-H02 Manually resolve one current360pxStudioartworks color-contrast INCONCLUSIVE automated rule; preserve older R5 manual/source-colour gates and do not count incomplete as a passing rule.
   Source: DERIVED from final demo report. Dependencies:V01. Details in persistent report; no confirmed violation or public-presentation change.
