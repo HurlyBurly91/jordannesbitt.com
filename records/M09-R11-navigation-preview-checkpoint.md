@@ -36,4 +36,8 @@ Exact approved snapshot SHA25660d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f
 
 Guide/domain docs and M00 bounded grant reconciled. Reviewed code/tests/docs checkpoint on redesign/astro-foundation is followed by ACTIVE / HUMAN_VERIFICATION / M09-R11 with H01 awaiting owner. No final closeout or M09 COMPLETE. Owner startup: documented Node22 `npm run studio`; isolated demo startup adds `JORDANNESBITT_M09_DATA=<artifact>/workspace`.
 
-Owner repeats A–C, makes an unsaved edit before Back/Forward and switching drafts, and confirms useful loading/failure feedback. R10/R8 failed overall results and all older gates persist until explicit applicable acceptance. Checkpoint transport evidence is recorded after actual commit/push.
+Owner repeats A–C, makes an unsaved edit before Back/Forward and switching drafts, and confirms useful loading/failure feedback. R10/R8 failed overall results and all older gates persist until explicit applicable acceptance.
+
+## Verified checkpoint transport
+
+Intended diff, recent log, domain/state/ID evidence, protected refs and staged10 code/tests/docs-only paths reviewed; cached diff check exits0. Commit/push exits0 for **5825d67e12bb4cafcf321c429c5a5ab1a5d23974**, `Restore Studio history and show preview preparation`. Clean checkout and matching development remote verified; master755df7f/backup3bc95c7 unchanged. No private media, draft records, screenshots, actual public content or source/rights/manifest approval committed. R11-08/V02 now VERIFIED; H01 AWAITING_HUMAN. Final pointers ACTIVE / HUMAN_VERIFICATION / M09-R11, never COMPLETE.

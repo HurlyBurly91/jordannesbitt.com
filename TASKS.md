@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R11
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -480,7 +480,7 @@ Reconstruction: clean HEAD/origin2f06979 match;master755df7f/backup3bc95c7 uncha
   Source: USER. Dependencies:01–05.
 - [x] M09-R11-07 Persistent normaldesktop private Agrid→draft→Back→grid→Forward→draft;Bvaliddraft→visiblepreparing→actualartwork;CExactblankSave/Previewacceptederrorfocus. Capture actualstates,private/sourcepreserved,no realmetadataGit.
   Source: USER. Dependencies:06.
-- [ ] M09-R11-08 Run relevant/full/state/release/private/publicpreservation checks,return ACTIVE/HUMAN_VERIFICATION with exactstartup/demo and honestownerremainingreview;no M09complete.
+- [x] M09-R11-08 Run relevant/full/state/release/private/publicpreservation checks,return ACTIVE/HUMAN_VERIFICATION with exactstartup/demo and honestownerremainingreview;no M09complete.
   Source: USER. Dependencies:06,07.
 - [x] M09-R11-P01 Do notregressowner-PASS R10Exact/circaYearvalidation/actionability/focus/correction/Unknownoptional facts/current-edits preview semantics. Preserve R10-H01 overallFAILED/R8-H01historicalFAILED/older content-rights-colour-launch checks,without converting partialpasses into fullacceptance.
   Source: USER.
@@ -495,7 +495,8 @@ Reconstruction: clean HEAD/origin2f06979 match;master755df7f/backup3bc95c7 uncha
 - [x] M09-R11-V01 Run relevant/full/state/release checks,inspect actualhistory/edit/popup/content/viewport/private-preservation proof and record limits.
   Source: DERIVED. Dependencies:D01,D02.
   Final evidence: Linux/Node22.23.3/npm10.9.9 `npm run verify` exits0, statecheck PASS,86/86 tests,0fail/skip/Astro diagnostics. Actual public13pages/0artimages/maxJS2049bytesgzip. `npm run studio:navigation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/navigation-demo-2026-10-07T16-36-47-450Z-4abbee5a`:16steps/32PNGs,1440×900/DPR1/normalzoom,0observedaxe violations/incomplete/reflow. Inspected Back-grid/Forward-editor/preparing/actualartwork/Year-error frames; same popup succeeds after deliberately paused browser request and actual backend build. Real restart persists saved edits; authoritative owner state/registry bytes and169/169sourcebytes+mtime unchanged. Failure/path-stack sanitization uses synthetic intercepted failure,not a real owner build failure. Source/backend/intake/security/export/state-policy preservation diff exits0; actualrelease exits1/BLOCKED_CONTENT/same8issues. R10/R8 overall failed and older manual colour/final public gates remain unresolved; no human/usability/colour/public-source approval.
-- [~] M09-R11-V02 Reconcile docs/IDs/ownerpartialpass-failure evidence,reviewintendedcode-docsonlycheckpoint/transport andreturn humanstate/exactcommands.
+- [x] M09-R11-V02 Reconcile docs/IDs/ownerpartialpass-failure evidence,reviewintendedcode-docsonlycheckpoint/transport andreturn humanstate/exactcommands.
   Source: DERIVED. Dependencies:V01.
-- [ ] M09-R11-H01 Owner repeats A–C and testsBack/Forward/unsavedretention/visiblepreviewload-failure and acceptedYearinteraction;no fullusability/content/source/rights/M09acceptance inferredfromautomation.
+  Handoff evidence: docs/studio, guide, M00 bounded grant and intermediate records/M09-R11-navigation-preview-checkpoint.md reconciled. Reviewed intended diff/staged10code-tests-docs-only paths/cached--check/recentlog/origin/protectedrefs; commit/push exits0 for5825d67e12bb4cafcf321c429c5a5ab1a5d23974, matching remote and clean tracked checkout. Master755df7f/backup3bc95c7 unchanged; no real assets/private records/source approval/launch metadata staged. Headers now ACTIVE/HUMAN_VERIFICATION/M09-R11; H01 awaits owner, R10/R8 overall failed/older gates retained. Node22 startup: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'`; isolated demo adds `JORDANNESBITT_M09_DATA=<V01artifact>/workspace`. Stop for actual A–C/unsaved retention/loading usability review; no M09complete.
+- [H] M09-R11-H01 Owner repeats A–C and testsBack/Forward/unsavedretention/visiblepreviewload-failure and acceptedYearinteraction;no fullusability/content/source/rights/M09acceptance inferredfromautomation.
   Source: USER/DERIVED. Dependencies:V02. R10/R8overallfailed and allolder finalpublicgates remainunresolved.
