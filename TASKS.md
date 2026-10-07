@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: HUMAN_VERIFICATION
 Active-Request: M09-R12
 Specification: milestones/M09-content-acceptance.md
 ```
@@ -528,7 +528,7 @@ Reconstruction: clean HEAD/origin e113671a1fe19ece9c4d553512b75397c6ea1d69; mast
   Source: USER. Dependencies:05–07.
 - [x] M09-R12-10 Persistent normaldesktop demonstration A: A opens artwork/types unsaved Title, B opens same artwork and shows safe explicit behavior. B: Studio Preview→Preparing→actual artwork→Return to Studio→usable Studio. C: preview artwork→Archive→another artwork→Back. D: Exact+blank Year validation retained. Real source/owner-state/registry preserved; private evidence stays outside Git.
   Source: USER. Dependencies:08,09.
-- [ ] M09-R12-11 Run applicable full/state/release/privacy/security checks, document chosen semantics and limitations, checkpoint only authorized code/docs, return ACTIVE/HUMAN_VERIFICATION for owner review; never mark M09 COMPLETE.
+- [x] M09-R12-11 Run applicable full/state/release/privacy/security checks, document chosen semantics and limitations, checkpoint only authorized code/docs, return ACTIVE/HUMAN_VERIFICATION for owner review; never mark M09 COMPLETE.
   Source: USER. Dependencies:08–10.
 - [x] M09-R12-P01 Preserve owner-passed R11 single-document Back/Forward/same-draft/unsaved retention and visible Preparing→actual artwork; preserve R10 Exact/Circa Year validation, corrected-year Save/Preview, optional private facts and current-edits preview. No redesign/regression of passed behavior.
   Source: USER.
@@ -543,7 +543,8 @@ Reconstruction: clean HEAD/origin e113671a1fe19ece9c4d553512b75397c6ea1d69; mast
 - [x] M09-R12-V01 Run targeted/full/state/release/production-isolation checks, generate/inspect persistent A–D demonstration and source/owner preservation evidence; record actual outcomes and limitations.
   Source: DERIVED. Dependencies:D02.
   Final evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0; statecheck PASS,91/91tests,0fail/skip/Astro diagnostics. Prior86 retained plus Chromium/Firefox cross-tab and preview-return cases and atomic concurrency/note-version check. Both browsers close original tracked script-opened preview normally; denied-close and original-closed fallbacks verified, opener null before/after actual preview. API/session/unknown-referrer exceptions remain rejected; return admitted only for known live-preview document navigation. Actual public13pages/0images/2049bytesmaxJSgzip,production Studio-return exclusion proven; src/models/intake/colour/export/release/policy/lockfile preservation diff exits0. Strict release exits1/BLOCKED_CONTENT/same8issues. `npm run studio:coordination-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/coordination-demo-2026-10-07T19-29-54-514Z-de941e7a`:25steps/50PNGs,1440×900/DPR1/visualViewport.scale1,0observedaxe violations/incomplete/reflow. Actual A conflict/read-only/retained-title, B Preparing→actual artwork→return/original usable, C another artwork/Back, D Year-error frames inspected. Two explicitly selected frozen inputs,all real outputs persistent/private; ownerstate/registry bytes and169/169sourcebytes+mtime unchanged,real restart saves persist,all demo drafts/private-source-approval absent. Not owner usability/physical colour/full-WCAG/final-public acceptance; older incomplete colour gates unchanged.
-- [~] M09-R12-V02 Reconcile docs/state/provenance, review intended code/docs diff and protected refs, checkpoint under grant and return to owner gate.
+- [x] M09-R12-V02 Reconcile docs/state/provenance, review intended code/docs diff and protected refs, checkpoint under grant and return to owner gate.
   Source: DERIVED. Dependencies:V01.
-- [ ] M09-R12-H01 Owner reviews explicit multi-tab safety/close-save conflicts, Preview return and preview navigation plus preserved R11/R10 behaviors; automation is not acceptance.
+  Handoff evidence: canonical Studio/guide/M00 scope and intermediate records/M09-R12-cross-tab-return-checkpoint.md reconciled; intended diff/log/origin/protectedrefs and staged15code-tests-docs-only paths reviewed, cached diff check passes. Commit/push exits0 for0c489df1668ee4160df15a614ebb8e52dd0b9f0c, matching development remote/clean checkout; master755df7f/backup3bc95c7 unchanged. No real assets/drafts/private metadata/source-rights approval/launchmanifest/public-src redesign committed. Headers ACTIVE/HUMAN_VERIFICATION/M09-R12, H01 pending; R11/R10/R8 failures and older gates retained. Node22 startup: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'`; isolated demo adds `JORDANNESBITT_M09_DATA=<V01artifact>/workspace`. Stop for owner A–D/cross-tab clarity/return/fallback review, never COMPLETE.
+- [H] M09-R12-H01 Owner reviews explicit multi-tab safety/close-save conflicts, Preview return and preview navigation plus preserved R11/R10 behaviors; automation is not acceptance.
   Source: USER/DERIVED. Dependencies:V02. R11/R10/R8 overall failed and older final gates remain unresolved.

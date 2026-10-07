@@ -41,3 +41,7 @@ Inspected actual conflict/read-only/preview-return/original-ready/Archive-Back/Y
 ## Human handoff
 
 Docs/studio and guide describe the explicit ownership/return/fallback model; M00 bounded grant reconciled. R12-V02 checkpoint/transport and ACTIVE/HUMAN_VERIFICATION transition follow reviewed code/tests/docs-only commit on redesign/astro-foundation. Owner startup uses documented Node22 `npm run studio`; isolated demonstration adds `JORDANNESBITT_M09_DATA=<artifact>/workspace`. `npm run browser:install` installs Chromium shell and Firefox in disposable cache for reproducible verification. H01 must review A–D, single-writer clarity and preserved passed behavior. R11/R10/R8 overall failures/older gates stay unresolved; no final M09 closeout or COMPLETE.
+
+## Verified checkpoint transport
+
+Intended diff, domain/state/ID evidence, recent log, origin/protected refs and staged15code/tests/docs-only paths reviewed; cached diff check exits0. Commit/push exits0 for **0c489df1668ee4160df15a614ebb8e52dd0b9f0c**, `Guard Studio cross-tab drafts and add preview return`. Clean tracked checkout and matching development remote verified; master755df7f/backup3bc95c7 preserved. No private artwork/draft/screenshot/source metadata or actual public content/source-rights/manifest approval committed. R12-11/V02 VERIFIED; H01 AWAITING_HUMAN; final pointers ACTIVE / HUMAN_VERIFICATION / M09-R12. Prior failed human gates remain failed overall, not fabricated accepted.
