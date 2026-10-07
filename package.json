@@ -24,6 +24,7 @@
     "studio:demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-demo.mjs",
     "studio:intake-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs",
     "studio:validation-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --validation-flow",
+    "studio:navigation-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --navigation-flow",
     "verify": "npm run state:check && npm run build && npm test",
     "state:check": "node scripts/durable-state-check.mjs"
   },

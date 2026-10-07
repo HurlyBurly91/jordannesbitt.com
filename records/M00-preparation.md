@@ -73,3 +73,7 @@ Owner identifies blocking repeatedmissingICC/CLIflag/pendingeditor UX and author
 ## Actionable validation follow-up — M09-R10
 
 Owner explicitly reports M09-R8-H01 FAILED/notaccepted: Exact without validYear disables Save/Preview and appears broken. Authorize Studio-only click-validation/local accessible errors/focus/date guidance/unsaved preservation/current-edits Preview,testing and private normaldesktop reproduction. Factual catalogue date/optional-unknown truth and canonical backend/R8colour-intake/private persistence/state-machine/security/publication/export/public design remain unchanged. Generic code/docs checkpoints stay on development branch;no real source/rights/launch/manifest/deploy/M09complete authority. Older unresolved human/colour/content gates persist;LOW UI correction.
+
+## Navigation and preview-feedback follow-up — M09-R11
+
+Owner explicitly passes R10 Year validation/focus/correction and private optional-fact behavior, but R10-H01 fails overall for absent browser Back navigation and blank preview preparation. Authorize bounded Studio history/session-edit retention, visible synchronous popup preparation/sanitized failure, browser tests and persistent private desktop A–C demonstration over unchanged backend/current-edits preview. Existing development code/docs checkpoint grant applies; owner data, R8 semantics, public presentation, source/rights/export/security/release boundaries and older unresolved human gates persist. Return for owner usability review; no M09 completion or release authority.

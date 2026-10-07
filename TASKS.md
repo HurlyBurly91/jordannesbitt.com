@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R10
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R11
 Specification: milestones/M09-content-acceptance.md
 ```
 
@@ -458,3 +458,44 @@ Reconstruction: clean HEAD/origin476a5ff match;master755df7f/backup3bc95c7 prese
   Handoff: docs/studio/guide andintermediate records/M09-R10-actionable-validation-checkpoint.md reconciled;no finalcloseout. Source/state/protectedrefs/intenteddiff/staged12code-tests-docs-onlypaths/cachedcheck reviewed. Commit/push exits0 for57cfc83c654f4132caf26e7831ef62805d3a6530 withmatchingorigin;master755df7f/backup3bc95c7 preserved. No actualmedia/draft/private metadata/rights/sourcecontent staged;no publicsrc/backend/schema/intake/colour/security/state-architecture changes. Final ACTIVE/HUMAN_VERIFICATION/M09-R10 withOwnerH01pending andR8-H01explicitFAILED/unaccepted;startupNode22npmrunstudio,exactprivatevalidationdemo path inV01. OwnertestExactblank→clickSave/Preview→Yearlocalerror/focus→validYearORUnknown→Save→currentPreview/restart;no sourceexport/launchapproval.
 - [H] M09-R10-H01 Owner repeats screencast-invalidDate→Save/Preview actionableerror/focus→validYearORUnknown→Save/Preview/restart usability;review absence of unrelated mandatory optional fields. Automation is not acceptance;R8-H01/older factual/final-public gates stay unresolved.
   Source: USER/DERIVED. Dependencies:V02.
+  FAILED overall owner review,NOT ACCEPTED. Latest video explicitly PASSES ExactblankYear→Save/Preview local/global error+Yearfocus,validYear removesblocker,unrelatedoptionalunknown facts do not blockprivate draft. Preserve these verified owner behaviors. New failures: draft opening has no pushState/popstate,Back fails toreturngrid;validPreview opens visiblyblank about:blank whilebuilding. Remediation M09-R11;no finalusability/content/rights approval and R8-H01 remainsits priorfailed/unaccepted gate.
+
+## M09-R11 — Browser navigation and visible preview preparation
+
+Source: USER,latest owner video from failed R10-H01. Bounded Studio client-navigation/progress correction over existing backend and canonical private/current-edits preview. Preserve accepted R10 validation/correction/private optional facts,all R8colour/intake/metadata/storage semantics,state-machine architecture,security/publication/export gates and public R2 presentation. Existing code/docs checkpoint grant remainsdevelopmentonly;no real source/rights/launch/deploy/M09complete authority. LOW UI section,no new privileged data/security/export architecture.
+
+Reconstruction: clean HEAD/origin2f06979 match;master755df7f/backup3bc95c7 unchanged. CurrentopenArtwork/showTab mutateDOMwithoutbrowserhistory;currentpreviewPage opensaboutblank synchronously thenawaitsprivatebuild. Reuse normal local fragment/history-state neutral identifiers only,with current-document unsaved form/photo caches (not source/historymetadata). Preserve savedrefresh/restart behavior;warn before actualdocumentexitdiscard where necessary. Popup synchronously receives minimal safeDOMpreparationtext/privateStudio stylesheet beforeawaiting,then samewindowactualroute or sanitizedfailure. Backend/public source/schema/gates unchanged.
+
+- [x] M09-R11-01 Openingdraftfromgrid pushesappropriateprivateStudiohistory;Back→grid,Forward→samedraft;repeatopen/back andtabnav produce noduplicate/loopentries;ordinarydirectstartup opensgrid/artworkview.
+  Source: USER.
+- [x] M09-R11-02 Navigation uses loopback/private fragment/query/internalneutralidentifier only,no titles/private artworkmetadata/publicexternalURLs or weakenedIDs/privacy rules.
+  Source: USER.
+- [x] M09-R11-03 Back/grid↔draft/otherdraft practical current-session unsavededits retention;explicitwarning before any actualdiscard. No silent loss;unchanged savedrefresh/restart persistence.
+  Source: USER. Dependencies:01.
+- [x] M09-R11-04 Popupblocker-safe synchronouslyopenonce,immediatelyshow restrainedlocal “Preparing artwork preview…” content/progress. Afterbuild navigate samepopupactualexpectedartworkroute;slowbuild never deadblank.
+  Source: USER.
+- [x] M09-R11-05 Failedbuild shows humanfailure inpopup+Studio,no privatepaths/stacktraces/emptytab. Invalidform preservesacceptedR10 validationandopensnone;oneclickneverduplicatetabs. OpeningaloneisnotPreviewpass.
+  Source: USER. Dependencies:04.
+- [x] M09-R11-06 Add browser interactions: grid/open/Back/Forward,repeatnohistorygrowth,unsavedBack retention,otherartwork/tabcoherence,directstartup;validpopupvisiblePreparing→realURL/content,controlledslowbuild,failure,invalidnoPopup,oneduplicateproof;retainfullpriorvalidation/safetytests.
+  Source: USER. Dependencies:01–05.
+- [x] M09-R11-07 Persistent normaldesktop private Agrid→draft→Back→grid→Forward→draft;Bvaliddraft→visiblepreparing→actualartwork;CExactblankSave/Previewacceptederrorfocus. Capture actualstates,private/sourcepreserved,no realmetadataGit.
+  Source: USER. Dependencies:06.
+- [ ] M09-R11-08 Run relevant/full/state/release/private/publicpreservation checks,return ACTIVE/HUMAN_VERIFICATION with exactstartup/demo and honestownerremainingreview;no M09complete.
+  Source: USER. Dependencies:06,07.
+- [x] M09-R11-P01 Do notregressowner-PASS R10Exact/circaYearvalidation/actionability/focus/correction/Unknownoptional facts/current-edits preview semantics. Preserve R10-H01 overallFAILED/R8-H01historicalFAILED/older content-rights-colour-launch checks,without converting partialpasses into fullacceptance.
+  Source: USER.
+- [x] M09-R11-P02 No publicdesign/src/canonicalmodels/intake-colour/security/exportgates/backendprivatepersistence/statepolicy changes,new majorfeatures/services/master/deploy/manifest/checkout/privacy leak/falseapproval. Sessioncache lives only inStudio document,not publicGit or historymetadata;ownerworkingstate/registry/sourcebytes preserved.
+  Source: USER and DERIVED.
+- [x] M09-R11-D01 Implement explicit view/history semantics+sessioneditcache and preparing/failure popup flow over current validated functions/endpoints,avoid internalrerenderentries/races/duplicatewindow behavior.
+  Source: DERIVED. Dependencies:requirements/currentDOMfacts.
+  Evidence: neutral fragment/history state, push/pop/duplicate suppression, document-only form/photo caches, explicit document-exit warning, synchronous preparing popup and sanitized failure over unchanged APIs. Initial 13/14 targeted run exposed clean cached editors hiding newly attached backend photos; restore only dirty caches, reload clean canonical records. Corrected targeted14/14 and final full86/86 pass. Popup title follows head construction; modern beforeunload preventDefault preserves warning without deprecated-property diagnostics.
+- [x] M09-R11-D02 Preserve/add navigation/slow-failed-success-popup/actualURL/validation browser tests and persistent isolated A–C demonstration.
+  Source: DERIVED. Dependencies:D01.
+  Evidence: prior12 Studio cases retained plus history/session retention/privacy/no-loop/direct-known-unknown startup/actual exit-warning-dismissal and controlled slow-success-safe-failure/actual artwork content/invalid-no-popup cases. Exit-warning driver initially timed out waiting for dismissed reload, then auto-owned-page close canceled its context; concurrent dialog handling with location.reload verifies warning and retained fields. Final full suite passes; private A–C demo completed at V01 path.
+- [x] M09-R11-V01 Run relevant/full/state/release checks,inspect actualhistory/edit/popup/content/viewport/private-preservation proof and record limits.
+  Source: DERIVED. Dependencies:D01,D02.
+  Final evidence: Linux/Node22.23.3/npm10.9.9 `npm run verify` exits0, statecheck PASS,86/86 tests,0fail/skip/Astro diagnostics. Actual public13pages/0artimages/maxJS2049bytesgzip. `npm run studio:navigation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/navigation-demo-2026-10-07T16-36-47-450Z-4abbee5a`:16steps/32PNGs,1440×900/DPR1/normalzoom,0observedaxe violations/incomplete/reflow. Inspected Back-grid/Forward-editor/preparing/actualartwork/Year-error frames; same popup succeeds after deliberately paused browser request and actual backend build. Real restart persists saved edits; authoritative owner state/registry bytes and169/169sourcebytes+mtime unchanged. Failure/path-stack sanitization uses synthetic intercepted failure,not a real owner build failure. Source/backend/intake/security/export/state-policy preservation diff exits0; actualrelease exits1/BLOCKED_CONTENT/same8issues. R10/R8 overall failed and older manual colour/final public gates remain unresolved; no human/usability/colour/public-source approval.
+- [~] M09-R11-V02 Reconcile docs/IDs/ownerpartialpass-failure evidence,reviewintendedcode-docsonlycheckpoint/transport andreturn humanstate/exactcommands.
+  Source: DERIVED. Dependencies:V01.
+- [ ] M09-R11-H01 Owner repeats A–C and testsBack/Forward/unsavedretention/visiblepreviewload-failure and acceptedYearinteraction;no fullusability/content/source/rights/M09acceptance inferredfromautomation.
+  Source: USER/DERIVED. Dependencies:V02. R10/R8overallfailed and allolder finalpublicgates remainunresolved.

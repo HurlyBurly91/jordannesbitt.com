@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R10
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R11
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R10 awaits owner actionable-validation review. Node22 `npm run studio`;Save/Preview click invalidDate→localYearerror/focus→validYearORUnknown→Save/currenteditedPreview.84tests/statecheck/0diagnostics;22privatePNGs/0axe-incomplete-reflow/restartpass at /home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/validation-demo-2026-10-06T20-16-18-903Z-76a94b0d. Checkpoint57cfc83 pushed/transportverified. R8-H01 remainsFAILED/unaccepted;oldergates/backend/publicdesign/R8rules/ownerdata preserved,release BLOCKED_CONTENT,no COMPLETE.
+M09-R11 navigation/session edit retention and visible preview preparation/failure are implemented; targeted Studio tests passed 14/14 after correcting clean-cache refresh. Full verification and persistent desktop A–C demonstration are now in progress. Owner-passed R10 Year validation remains preserved; R10-H01 overall FAILED/not accepted, R8 failure and older gates remain unresolved. Return to HUMAN_VERIFICATION after verified evidence; never COMPLETE.

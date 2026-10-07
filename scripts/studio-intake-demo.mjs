@@ -13,8 +13,8 @@ const {snapshot,directory}=await loadSnapshot(resolve(base,"snapshots/run-2026-1
 assert.equal(snapshot.snapshotSha256,"60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c");
 const entry=snapshot.included.find((image)=>image.id==="w-0001");assert.equal(entry.image.hasIcc,false);
 const registry=await readFile(resolve(base,"id-registry.json")),ownerState=await readFile(resolve(base,"studio/state.json"));
-const validationFlow=process.argv.includes("--validation-flow");
-const runId=`${validationFlow?"validation-demo":"intake-demo"}-${new Date().toISOString().replace(/[:.]/g,"-")}-${randomUUID().slice(0,8)}`;
+const navigationFlow=process.argv.includes("--navigation-flow"),validationFlow=navigationFlow||process.argv.includes("--validation-flow");
+const runId=`${navigationFlow?"navigation-demo":validationFlow?"validation-demo":"intake-demo"}-${new Date().toISOString().replace(/[:.]/g,"-")}-${randomUUID().slice(0,8)}`;
 const output=resolve(base,"studio/demonstrations",runId),workspace=resolve(output,"workspace");
 await mkdir(resolve(output,"screenshots"),{recursive:true,mode:0o700});await mkdir(workspace,{recursive:true,mode:0o700});await writeFile(resolve(workspace,"id-registry.json"),registry,{mode:0o600,flag:"wx"});
 let service=await startStudio({dataRoot:workspace,allowPublicExport:false});
@@ -52,8 +52,18 @@ try{
   }
   await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
   await capture("05-save-draft","Save private draft without dimensions,price,edition,rights or public-source approval.");
+  if(navigationFlow){
+    await page.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await page.locator("#artwork-form").isVisible(),false);await capture("05a-artwork-grid","A: artwork grid with existing saved draft.");
+    await page.getByRole("button",{name:`Open ${label}`,exact:true}).click();await capture("05b-open-draft-history","A: open draft creates a private neutral-ID history entry.");
+    await page.goBack();assert.equal(await page.locator("#artwork-form").isVisible(),false);await capture("05c-browser-back-grid","A: browser Back returns to grid.");
+    await page.goForward();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),label);await capture("05d-browser-forward-draft","A: browser Forward restores same draft.");
+  }
   if(validationFlow){
-    const popupPromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const previewPage=await popupPromise;await previewPage.waitForURL("http://127.0.0.1:*/artwork/**");await previewPage.waitForLoadState();assert.equal(await previewPage.locator("h1").innerText(),label);
+    let releaseBuild;const gate=new Promise((done)=>releaseBuild=done);
+    if(navigationFlow)await page.route("**/api/preview/build",async(route)=>{await gate;await route.continue();});
+    const popupPromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const previewPage=await popupPromise;
+    if(navigationFlow){const mainPage=page;page=previewPage;await page.getByRole("heading",{name:"Preparing artwork preview…",exact:true}).waitFor();await capture("05e-visible-preparing-preview","B: synchronous same popup has visible preparation while the browser request is deliberately paused for capture;actual backend build follows.");page=mainPage;releaseBuild();}
+    await previewPage.waitForURL("http://127.0.0.1:*/artwork/**");await previewPage.waitForLoadState();assert.equal(await previewPage.locator("h1").innerText(),label);
     const mainPage=page;page=previewPage;await capture("05b-valid-current-draft-preview","After correction/Save,the current production-component draft preview succeeds with edited title/alt and truthful Unknown date.");page=mainPage;await previewPage.close();
   }
   const job=service.studio.state().jobs.at(-1),manifest=JSON.parse(await readFile(resolve(service.studio.root,"derivatives",job.result.mediaId,"manifest.json")));assert.equal(job.status,"complete");assert.equal(manifest.settings.profile,"explicit-srgb-assumption");
@@ -63,7 +73,7 @@ try{
   await capture("06-restart-reopen-persisted","Actual server restarted; Title,Medium,Alt text and explicit per-image pipeline profile persist.");
   const state=service.studio.state();assert.equal(state.catalogue.artworks.length,1);assert.equal(state.catalogue.artworks[0].published,false);assert.equal(state.catalogue.artworks[0].kind,"unclassified");assert.ok(!state.workflow[state.catalogue.artworks[0].id].approved);
   assert.deepEqual(await readFile(resolve(base,"id-registry.json")),registry);assert.deepEqual(await readFile(resolve(base,"studio/state.json")),ownerState);const preservation=await sourcePreservation(snapshot);assert.equal(preservation.unchanged,169);
-  const report={request:validationFlow?"M09-R10":"M09-R8",previewModel:"current edited draft;invalid data focuses blockers,valid edits privately save",runId,output,workspace,studioRoot:service.studio.root,snapshotSha256:snapshot.snapshotSha256,pipelineProfile:manifest.settings.profile,ownerStateRegistryPreserved:true,sourcePreservation:preservation,restartPersisted:true,sequence,screenshots:sequence.length*2,violations:sequence.flatMap((step)=>step.accessibility.violations).length,incomplete:sequence.flatMap((step)=>step.accessibility.incomplete),reflowFailures:sequence.filter((step)=>!step.reflow).length,publicSourceApproval:false,repositoryWritesEnabled:false,milestoneComplete:false};
+  const report={request:navigationFlow?"M09-R11":validationFlow?"M09-R10":"M09-R8",previewModel:"current edited draft;invalid data focuses blockers,valid edits privately save",runId,output,workspace,studioRoot:service.studio.root,snapshotSha256:snapshot.snapshotSha256,pipelineProfile:manifest.settings.profile,ownerStateRegistryPreserved:true,sourcePreservation:preservation,restartPersisted:true,sequence,screenshots:sequence.length*2,violations:sequence.flatMap((step)=>step.accessibility.violations).length,incomplete:sequence.flatMap((step)=>step.accessibility.incomplete),reflowFailures:sequence.filter((step)=>!step.reflow).length,publicSourceApproval:false,repositoryWritesEnabled:false,milestoneComplete:false};
   await writeFile(resolve(output,"report.json"),JSON.stringify(report,null,2)+"\n",{mode:0o600});
   await writeFile(resolve(output,"README.md"),`# Studio explicit-colour intake sequence\n\nActual authorised untagged corpus image;isolated persistent workspace ${workspace}. Owner state/registry unchanged;169sources preserved. Temporary title/medium/alt labels are interface demonstration,not owner artistic/rights/public-source approval.\n\n${sequence.map((step)=>`- ${step.step}: ${step.description} (${step.viewport})`).join("\n")}\n\n${report.screenshots} screenshot files;observedaxeviolations ${report.violations},incomplete ${report.incomplete.length},reflow ${report.reflowFailures}. Actual server restarted/reopened and edits persisted. Existing conversion pipeline unchanged;explicit image-scoped sRGB choice recorded in private manifest.\n\nOwner tool/Node22 from checkout: npm run studio. Demo: JORDANNESBITT_M09_DATA=${workspace} npm run studio. All private outputs persist under M09root. No actual repositorywrite/commit/deploy/launchapproval/M09complete.\n`,{mode:0o600});
   await writeFile(resolve(base,"studio/latest-demonstration.json"),JSON.stringify({output,runId,report:resolve(output,"report.json")},null,2)+"\n",{mode:0o600});

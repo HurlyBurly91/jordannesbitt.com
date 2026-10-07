@@ -468,3 +468,52 @@ test("Save and current-edits Preview remain actionable, focus invalid years, pre
   const restarted=await startStudio(options);t.after(()=>restarted.stop());const reopened=await context.newPage();await reopened.goto(restarted.origin);await reopened.getByText(/Studio ready\./).waitFor();await reopened.getByRole("button",{name:"Open Synthetic current-edits preview title",exact:true}).click();
   assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic current-edits preview title");assert.equal(await reopened.locator("#artwork-form").getByLabel("Year",{exact:true}).inputValue(),"2001");await context.close();
 });
+
+test("Studio history returns grid/draft with Forward and preserves unsaved session edits without duplicate entries", async (t) => {
+  const {options}=await setup(t,{allowPublicExport:false});const service=await startStudio(options);t.after(()=>service.stop());
+  const one=await add(service.studio),two=await add(service.studio,"other.png");await edit(service.studio,one.artworkId);await edit(service.studio,two.artworkId);
+  const browser=await chromium.launch();t.after(()=>browser.close());const page=await browser.newPage({viewport:{width:1440,height:900}});
+  await page.goto(service.origin);await page.getByText(/Studio ready\./).waitFor();
+  assert.equal(await page.locator("#artwork-form").isVisible(),false,"ordinary startup is artwork grid");
+  const initialHistory=await page.evaluate(()=>history.length),firstTitle=service.studio.state().catalogue.artworks[0].title,secondTitle=service.studio.state().catalogue.artworks[1].title;
+  await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();
+  assert.equal(await page.evaluate(()=>history.length),initialHistory+1);
+  await page.getByLabel("Title",{exact:true}).fill("Unsaved private title not for URLs");await page.getByLabel("Materials",{exact:true}).fill("Keep these unsaved materials");
+  await page.goBack();assert.equal(await page.locator("#artwork-form").isVisible(),false);assert.equal(await page.locator("#work-list").isVisible(),true);
+  await page.goForward();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs");assert.equal(await page.getByLabel("Materials",{exact:true}).inputValue(),"Keep these unsaved materials");
+  assert.doesNotMatch(page.url(),/Unsaved|materials|sourceSha256/);assert.deepEqual(await page.evaluate(()=>history.state),{studio:1,tab:"collection",artworkId:one.artworkId});
+  const length=await page.evaluate(()=>history.length);
+  await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();assert.equal(await page.evaluate(()=>history.length),length,"same draft click does not push/reset edits");
+  for(let attempt=0;attempt<3;attempt++){await page.goBack();await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();assert.equal(await page.evaluate(()=>history.length),length);assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs");}
+  await page.getByRole("button",{name:`Open ${secondTitle}`,exact:true}).click();assert.match(page.url(),new RegExp(two.artworkId));
+  await page.goBack();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs");
+  await page.getByRole("button",{name:"Photos & references",exact:true}).click();const afterTab=await page.evaluate(()=>history.length);await page.getByRole("button",{name:"Photos & references",exact:true}).click();assert.equal(await page.evaluate(()=>history.length),afterTab);
+  await page.goBack();assert.equal(await page.getByLabel("Materials",{exact:true}).inputValue(),"Keep these unsaved materials");
+  await page.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await page.locator("#artwork-form").isVisible(),false);await page.getByRole("button",{name:`Open ${secondTitle}`,exact:true}).click();await page.getByRole("button",{name:"Artworks",exact:true}).click();await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs","switching among drafts retains cache,not just hidden DOM");
+  assert.equal(service.studio.state().catalogue.artworks[0].title,firstTitle,"navigation does not implicitly save or approve");
+  await page.getByRole("button",{name:"Artworks",exact:true}).click();
+  const exitDialog=page.waitForEvent("dialog").then(async(dialog)=>{assert.equal(dialog.type(),"beforeunload","document exit warns for cached dirty draft even while grid is visible");await dialog.dismiss();});
+  await Promise.all([exitDialog,page.evaluate(()=>location.reload())]);assert.equal(page.isClosed(),false);
+  await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();assert.equal(await page.getByLabel("Materials",{exact:true}).inputValue(),"Keep these unsaved materials");
+  const direct=await browser.newPage();await direct.goto(`${service.origin}/#artwork/${two.artworkId}`);await direct.getByText(/Studio ready\./).waitFor();assert.equal(await direct.getByLabel("Title",{exact:true}).inputValue(),secondTitle,"neutral deep fragment opens known draft directly");
+  await direct.close();const invalid=await browser.newPage();await invalid.goto(`${service.origin}/#artwork/not-a-known-id`);await invalid.getByText(/Studio ready\./).waitFor();assert.equal(await invalid.locator("#artwork-form").isVisible(),false);assert.equal(new URL(invalid.url()).hash,"#artworks");await invalid.close();
+  await page.close();
+});
+
+test("popup shows Preparing synchronously through a slow build, reaches actual artwork, and reports safe failure without extra tabs", async (t) => {
+  const {options}=await setup(t,{allowPublicExport:false});const service=await startStudio(options);t.after(()=>service.stop());
+  const {artworkId}=await add(service.studio);await edit(service.studio,artworkId);
+  const browser=await chromium.launch();t.after(()=>browser.close());const context=await browser.newContext({viewport:{width:1440,height:900}}),page=await context.newPage();
+  await page.goto(service.origin);await page.getByText(/Studio ready\./).waitFor();await page.getByRole("button",{name:`Open ${service.studio.state().catalogue.artworks[0].title}`,exact:true}).click();
+  let release;const delayed=new Promise((done)=>release=done);let requests=0;
+  await page.route("**/api/preview/build",async(route)=>{requests++;await delayed;await route.continue();});
+  const popupPromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const popup=await popupPromise;
+  await popup.getByRole("heading",{name:"Preparing artwork preview…",exact:true}).waitFor();assert.match(await popup.getByRole("status").innerText(),/Please wait/);
+  await new Promise((done)=>setTimeout(done,300));assert.equal(context.pages().length,2);assert.equal(requests,1);assert.equal(await popup.locator("h1").innerText(),"Preparing artwork preview…","controlled slow build never presents a dead-looking blank page");
+  release();await popup.waitForURL(`http://127.0.0.1:*/artwork/${artworkId}/`);await popup.waitForLoadState();assert.equal(await popup.locator("h1").innerText(),service.studio.state().catalogue.artworks[0].title);assert.match(await popup.locator("[data-local-pilot]").innerText(),/PRIVATE LOCAL DRAFT/);await popup.close();
+  await page.unroute("**/api/preview/build");await page.route("**/api/preview/build",(route)=>route.fulfill({status:400,contentType:"application/json",body:JSON.stringify({error:"Build failed /home/jordan/private/secret\n at technical-stack:12"})}));
+  const failurePromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const failure=await failurePromise;
+  await failure.getByRole("heading",{name:"Preview could not be prepared",exact:true}).waitFor();await page.locator("#message").getByText(/preview could not be prepared/).waitFor();assert.doesNotMatch(await failure.locator("body").innerText(),/secret|\/home\/|technical-stack/);assert.doesNotMatch(await page.locator("#message").innerText(),/secret|\/home\/|technical-stack/);assert.equal(context.pages().length,2);await failure.close();
+  await page.getByLabel("Date",{exact:true}).selectOption("exact");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();assert.equal(context.pages().length,1);assert.equal(await page.locator("#artwork-year").getAttribute("aria-invalid"),"true");assert.ok(await page.locator("#artwork-year").evaluate((input)=>document.activeElement===input));
+  assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);assert.equal(service.studio.state().workflow[artworkId].approved,null);await context.close();
+});
