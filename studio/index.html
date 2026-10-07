@@ -29,6 +29,11 @@
     <details id="snapshot-tools"><summary>Advanced: use a frozen review image</summary><label>Frozen image ID<select id="snapshot-id" aria-label="Frozen image ID"><option value="">Load available IDs</option></select></label><button id="load-snapshot">Load frozen IDs</button><button id="import-snapshot">Use selected frozen image</button><p class="hint">This preserves its neutral identity; provisional facts/groups are not imported.</p></details>
   </section>
   <section id="jobs-panel" hidden><h3>Photo progress</h3><div id="jobs"></div></section>
+  <section id="artwork-coordination" class="task-panel" role="region" aria-labelledby="coordination-title" hidden>
+    <h3 id="coordination-title">Artwork open in another tab</h3><p id="coordination-message" role="status" aria-live="polite"></p>
+    <div class="form-actions"><button id="coordination-check" type="button">Check again</button><button id="coordination-saved" type="button">Open saved version (read-only)</button><button id="coordination-other" type="button">Return to other tab</button><button id="coordination-reload" type="button" hidden>Reload saved version</button></div>
+    <p class="hint">One tab can edit an artwork at a time. Switch to its Studio tab to continue unsaved edits. Save and return to the grid in that tab, or close it, then Check again here. Opening this tab never saves another tab's work.</p>
+  </section>
   <form id="artwork-form" novalidate hidden>
     <div class="section-heading"><div><p id="artwork-phase" class="phase"></p><h2 id="editor-title">Artwork</h2></div><div><button type="button" id="preview-artwork">Preview artwork</button><button type="submit" class="primary-action">Save draft</button></div></div>
     <p id="editor-action-note" class="hint" aria-live="polite"></p>

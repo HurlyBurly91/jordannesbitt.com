@@ -3,9 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R11
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R12
 Specification: milestones/M09-content-acceptance.md
 ```
 
-M09-R11 awaits owner Back/Forward, unsaved-edit retention and preview-loading review. Node22 `npm run studio`; A grid→draft→Back/grid→Forward/draft, B visible preparation→actual artwork, C accepted Year validation. Full86/86 tests/statecheck/zero diagnostics; persistent16step/32PNG demo at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/navigation-demo-2026-10-07T16-36-47-450Z-4abbee5a`, zero observed axe/incomplete/reflow, saved restart and169sources/ownerstate/registry preserved. Checkpoint5825d67 pushed/transport verified. R10-H01 overall FAILED/not accepted despite passed Year behavior; R8 failure/older gates persist. Release BLOCKED_CONTENT; no COMPLETE.
+M09-R12 core implemented and targeted concurrency/return checks pass in Chromium/Firefox; HIGH section completed, explicit LOW return issued. Single-artwork ownership/read-only conflicts, atomic saved-version guard and opener-null preview return/fallback are in place. Full verification and persistent desktop A–D demonstration pending. R11-H01 FAILED overall with owner-passed sub-behaviors preserved; R10/R8 historical failures and older gates persist. Return to HUMAN_VERIFICATION after verified follow-up; no COMPLETE.

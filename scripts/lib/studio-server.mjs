@@ -32,12 +32,17 @@ export async function startStudio(options = {}) {
     const json = (status, data) => { response.writeHead(status, { "Content-Type": "application/json; charset=utf-8" }); response.end(JSON.stringify(data)); };
     try {
       if (request.socket.remoteAddress !== "127.0.0.1" || request.headers.host !== new URL(origin).host) throw new Error("Forbidden: exact loopback Host required");
-      if ((request.headers.origin && request.headers.origin !== origin) || ["cross-site", "same-site"].includes(request.headers["sec-fetch-site"])) throw new Error("Forbidden: same-origin studio request required");
+      // Browsers differ on the site classification of distinct loopback ports.
+      // Admit only a document return from one of this process's live previews.
+      let referringPreview = false;
+      try { const referrer = new URL(request.headers.referer); referringPreview = [...previews.values()].some((entry) => entry.origin === referrer.origin); } catch {}
+      const returnNavigation = request.method === "GET" && new URL(request.url, origin).pathname === "/" && new URL(request.url, origin).searchParams.get("return") === "preview" && request.headers["sec-fetch-mode"] === "navigate" && request.headers["sec-fetch-dest"] === "document" && referringPreview;
+      if ((request.headers.origin && request.headers.origin !== origin) || (["cross-site", "same-site"].includes(request.headers["sec-fetch-site"]) && !returnNavigation)) throw new Error("Forbidden: same-origin studio request required");
       const rawPath = decodeURIComponent(request.url.split("?")[0]);
       if (rawPath.includes("\\") || rawPath.includes("\0") || rawPath.split("/").includes("..")) throw new Error("Unsafe path traversal");
       const url = new URL(request.url, origin), path = url.pathname;
-      if (request.method === "GET" && ["/", "/studio.js", "/studio.css"].includes(path)) {
-        const file = path === "/" ? "index.html" : path === "/studio.js" ? "app.js" : "styles.css";
+      if (request.method === "GET" && ["/", "/studio.js", "/tab-coordination.js", "/studio.css"].includes(path)) {
+        const file = path === "/" ? "index.html" : path === "/studio.js" ? "app.js" : path === "/tab-coordination.js" ? "tab-coordination.js" : "styles.css";
         response.writeHead(200, { "Content-Type": file.endsWith("html") ? "text/html; charset=utf-8" : file.endsWith("js") ? "text/javascript; charset=utf-8" : "text/css; charset=utf-8" });
         response.end(await readFile(resolve(uiRoot, file))); return;
       }
@@ -56,7 +61,8 @@ export async function startStudio(options = {}) {
       if (typeof supplied !== "string" || supplied.length !== token.length || !timingSafeEqual(Buffer.from(supplied), Buffer.from(token))) throw new Error("Forbidden: studio session token required");
       if (request.method === "GET" && path === "/api/state") {
         const state = studio.state();
-        json(200, { ...state, actualPublic: readCatalogue(studio.repository).artworks.filter((work) => work.published && !work.fixture).map((work) => ({ id: work.id, slug: work.slug })), repositoryWritesEnabled: studio.allowPublicExport }); return;
+        const artworkVersions = Object.fromEntries(state.catalogue.artworks.map((work) => [work.id, studio.artworkVersion(work.id, state)]));
+        json(200, { ...state, artworkVersions, actualPublic: readCatalogue(studio.repository).artworks.filter((work) => work.published && !work.fixture).map((work) => ({ id: work.id, slug: work.slug })), repositoryWritesEnabled: studio.allowPublicExport }); return;
       }
       if (request.method === "GET" && path === "/api/snapshot") { json(200, await studio.snapshotChoices()); return; }
       if (request.method !== "POST") { json(404, { error: "Studio route not found" }); return; }
@@ -71,7 +77,10 @@ export async function startStudio(options = {}) {
       let data;
       try { data = JSON.parse((await body(request, 1024 * 1024)).toString("utf8")); } catch { throw new Error("Invalid metadata JSON or oversized request"); }
       if (path === "/api/snapshot/import") { json(202, { jobId: await studio.importSnapshot(data.id, data) }); return; }
-      if (path === "/api/artwork/save") { json(200, await studio.saveArtwork(data.id, data.record, data.note)); return; }
+      if (path === "/api/artwork/save") {
+        if (typeof data.expectedVersion !== "string" || !/^[a-f0-9]{64}$/.test(data.expectedVersion)) throw new Error("Reload this artwork before saving; a current saved-version check is required.");
+        json(200, await studio.saveArtwork(data.id, data.record, data.note, data.expectedVersion)); return;
+      }
       if (path === "/api/project/save") { json(200, await studio.saveProject(data.record, data.note)); return; }
       if (path === "/api/media/attach") { json(200, { artworkId: await studio.attachMedia(data.mediaId, data) }); return; }
       if (path === "/api/curation") { await studio.curate(data); json(200, { saved: true }); return; }
@@ -87,7 +96,7 @@ export async function startStudio(options = {}) {
           try { preview = await buildStudioPreview(studio); } finally { previewBusy = false; }
         } else preview = studio.state().previews.find((entry) => entry.id === data.id);
         if (!preview) throw new Error("Preview not found");
-        if (!previews.has(preview.id)) previews.set(preview.id, await openStudioPreview(studio, preview.id));
+        if (!previews.has(preview.id)) previews.set(preview.id, await openStudioPreview(studio, preview.id, { studioOrigin: origin, artworkId: data.returnArtworkId }));
         json(200, { ...preview, origin: previews.get(preview.id).origin }); return;
       }
       json(404, { error: "Studio route not found" });

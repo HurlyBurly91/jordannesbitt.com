@@ -1,3 +1,4 @@
+import { coordinateArtworkTabs } from "./tab-coordination.js";
 const $ = (id) => document.getElementById(id);
 const field = (form, name) => form.elements.namedItem(name);
 const lines = (value) => value.split(/\n/).map((value) => value.trim()).filter(Boolean);
@@ -7,6 +8,53 @@ let colourBatch = null, selectionRevision = 0, inspecting = false, savingDraft =
 let previewing = false, validationAttempted = false, validationIssues = [];
 let previewPopupBusy = false, navigationReady = false, studioView = {tab:"collection",artworkId:null};
 const sessionEditors = new Map();
+let editorAccess = "checking", editingVersion, openRevision = 0, savedReadOnly = false, peerDirty = false, peerState = "unknown";
+const previewReturns = new Map();
+const tabs = coordinateArtworkTabs({
+  isDirty: (id) => (editingArtwork === id && editorDirty) || sessionEditors.get(id)?.dirty,
+  onStatus: ({ id, type, dirty }) => {
+    if (id !== editingArtwork || studioView.artworkId !== id || editorAccess === "owned" || editorAccess === "stale") return;
+    peerDirty = type === "status" && dirty;
+    peerState = type;
+    if (type === "saved" && savedReadOnly) { savedReadOnly = false; $("artwork-form").hidden = true; }
+    renderCoordination();
+  },
+  onFocus: (id) => { window.focus(); if (id === editingArtwork && !$("artwork-form").hidden) field($("artwork-form"), "title").focus(); message("Continue your edits in this Studio tab."); },
+  onReturn: (nonce) => {
+    const popup = previewReturns.get(nonce); if (!popup || popup.closed) return;
+    // Request arrives only after the returning tab has navigated back to Studio origin.
+    try { if(popup.location.origin!==location.origin)return; } catch { return; }
+    window.focus(); popup.close(); previewReturns.delete(nonce);
+    message("Returned from the private preview. Studio is ready.");
+  },
+});
+function canEditArtwork() { return editorAccess === "owned" && tabs.owns(editingArtwork); }
+function releaseCleanEditors(except) {
+  for (const id of new Set([editingArtwork, ...sessionEditors.keys()])) if (id && id !== except && !((id === editingArtwork && editorDirty) || sessionEditors.get(id)?.dirty)) tabs.release(id);
+}
+function renderCoordination() {
+  const panel = $("artwork-coordination"); panel.hidden = !editingArtwork || editorAccess === "owned";
+  $("coordination-title").textContent = editorAccess === "checking" ? "Checking other Studio tabs…" : editorAccess === "stale" ? "Newer saved version — edits not saved" : editorAccess === "unavailable" ? "Tab coordination unavailable" : savedReadOnly ? "Saved version — read-only" : "Artwork open in another tab";
+  $("coordination-message").textContent = editorAccess === "stale" ? "The saved draft changed since you opened it. Your unsaved edits are retained here, but cannot overwrite the newer saved version. Reload explicitly before editing again." : editorAccess === "unavailable" ? "This browser cannot safely coordinate artwork editing. Use a browser with Web Locks and BroadcastChannel support." : editorAccess === "checking" ? "Please wait before editing." : peerDirty ? "This artwork has unsaved edits open in another Studio tab." : peerState === "released" ? "The other Studio tab changed or closed. Check again to load the latest saved draft. Unsaved work from a closed tab is not saved." : "Another Studio tab owns this artwork. It may have newer unsaved edits; this tab cannot edit it.";
+  $("coordination-check").hidden = editorAccess === "stale" || editorAccess === "unavailable";
+  $("coordination-check").disabled = editorAccess === "checking";
+  $("coordination-saved").hidden = editorAccess === "stale" || editorAccess === "unavailable" || editorAccess === "checking";
+  $("coordination-other").hidden = editorAccess === "stale" || editorAccess === "unavailable" || editorAccess === "checking";
+  $("coordination-reload").hidden = editorAccess !== "stale";
+  $("collection").insertBefore(panel, $("artwork-form"));
+  updateEditorActions();
+}
+$("coordination-check").addEventListener("click", action(() => openArtwork(editingArtwork, { historyMode: "none" })));
+$("coordination-other").addEventListener("click", () => { tabs.focus(editingArtwork); message("Switch to the other Studio tab to continue your edits. Browser focus may require selecting that tab yourself."); });
+$("coordination-saved").addEventListener("click", action(async () => {
+  const id = editingArtwork; await refresh(); if (id !== editingArtwork) return;
+  savedReadOnly = true; renderArtwork(id, { focus: false }); renderCoordination();
+}));
+$("coordination-reload").addEventListener("click", action(async () => {
+  if (!confirm("Discard the retained unsaved edits in this tab and reload the newer saved version?")) return;
+  sessionEditors.delete(editingArtwork); editorDirty = false;
+  await openArtwork(editingArtwork, { force: true, historyMode: "none" });
+}));
 const errorNodes = new Map();
 const currentJobs = new Set();
 const mediaSelection = new Set(), incomingJobs = new Map();
@@ -80,11 +128,11 @@ function showTab(id) {
   if (id === "curation") openCuration();
 }
 function rememberEditor() {
-  if (!editingArtwork || !state?.catalogue.artworks.some((work)=>work.id===editingArtwork)) return;
+  if (!editingArtwork || !["owned", "stale"].includes(editorAccess) || !state?.catalogue.artworks.some((work)=>work.id===editingArtwork)) return;
   syncPrimaryAlt();
   sessionEditors.set(editingArtwork, {
     controls:[...$("artwork-form").querySelectorAll("[name]")].map((control)=>({name:control.name,type:control.type,value:control.value,checked:control.checked})),
-    images:structuredClone(editingImages),dirty:editorDirty,validationAttempted,
+    images:structuredClone(editingImages),dirty:editorDirty,validationAttempted,version:editingVersion,
     details:[...$("artwork-form").querySelectorAll("details")].map((details)=>details.open),
   });
 }
@@ -93,7 +141,7 @@ function restoreEditor(snapshot) {
   const controls=[...$("artwork-form").querySelectorAll("[name]")],used=new Set();
   for(const saved of snapshot.controls){const control=controls.find((control)=>!used.has(control)&&control.name===saved.name&&control.type===saved.type);if(control){control.value=saved.value;control.checked=saved.checked;used.add(control);}}
   for(const [index,details]of [...$("artwork-form").querySelectorAll("details")].entries())details.open=snapshot.details[index]||false;
-  editorDirty=snapshot.dirty;validationAttempted=snapshot.validationAttempted;updateSimpleFields();
+  editorDirty=snapshot.dirty;editingVersion=snapshot.version;validationAttempted=snapshot.validationAttempted;updateSimpleFields();
 }
 function updateLocation(view,{replace=false}={}) {
   if(!navigationReady)return;
@@ -104,7 +152,7 @@ function updateLocation(view,{replace=false}={}) {
   if(!same||replace){const method=replace?"replaceState":"pushState";history[method]({studio:1,...view},"",location.pathname+location.search+fragment);}
 }
 function navigateTab(id,{historyMode="push"}={}) {
-  rememberEditor();showTab(id);
+  rememberEditor();releaseCleanEditors();openRevision++;showTab(id);$("artwork-coordination").hidden=true;
   if(id==="collection"){ $("artwork-form").hidden=true;$("intake-panel").hidden=true;$("work-list").scrollIntoView({block:"start",behavior:"instant"}); }
   updateLocation({tab:id,artworkId:null},{replace:historyMode==="replace"});
 }
@@ -113,14 +161,16 @@ function viewFromLocation() {
   if(artwork&&state.catalogue.artworks.some((work)=>work.id===artwork[1]))return {tab:"collection",artworkId:artwork[1]};
   return {tab:tab?.[1]||"collection",artworkId:null};
 }
-function restoreNavigation(view) {
+async function restoreNavigation(view) {
   rememberEditor();studioView={...view};
-  if(view.artworkId)openArtwork(view.artworkId,{historyMode:"none"});
-  else{showTab(view.tab);if(view.tab==="collection"){$("artwork-form").hidden=true;$("intake-panel").hidden=true;$("work-list").scrollIntoView({block:"start",behavior:"instant"});}}
+  if(view.artworkId)await openArtwork(view.artworkId,{historyMode:"none"});
+  else{releaseCleanEditors();openRevision++;$("artwork-coordination").hidden=true;showTab(view.tab);if(view.tab==="collection"){$("artwork-form").hidden=true;$("intake-panel").hidden=true;$("work-list").scrollIntoView({block:"start",behavior:"instant"});}}
 }
-window.addEventListener("popstate",()=>{if(navigationReady)restoreNavigation(viewFromLocation());});
+window.addEventListener("popstate",()=>{if(navigationReady)restoreNavigation(viewFromLocation()).catch((error)=>message(error.message,true));});
+window.addEventListener("pageshow",(event)=>{if(event.persisted&&navigationReady)restoreNavigation(viewFromLocation()).catch((error)=>message(error.message,true));});
 window.addEventListener("beforeunload",(event)=>{if(editorDirty||[...sessionEditors.values()].some((draft)=>draft.dirty))event.preventDefault();});
 function showIntake(purpose = "artwork", target = "") {
+  rememberEditor();releaseCleanEditors();openRevision++;$("artwork-coordination").hidden=true;
   resetColourSelection({ clearFiles: true });
   showTab("collection"); $("intake-panel").hidden = false;
   $("artwork-form").hidden = true;
@@ -156,12 +206,12 @@ async function refresh({ editor = false } = {}) {
   if (!state.catalogue.artworks.length) $("work-list").append(node("p", "Start by adding a photo.", "hint"));
   renderProgress();
   renderMedia(); renderProjects(); renderReview(); updateIntake();
-  if (editor && editingArtwork) openArtwork(editingArtwork, { focus: false, force:true,historyMode:"none" });
+  if (editor && editingArtwork) await openArtwork(editingArtwork, { focus: false, force:true,historyMode:"none" });
   await finishIncomingJobs();
 }
 async function makePrimary(artworkId, source) {
   const work = state.catalogue.artworks.find((work) => work.id === artworkId);
-  await api("/api/artwork/save", { id: artworkId, record: { ...work, reproductions: work.reproductions.map((image) => ({ ...image, role: image.src === source ? "primary" : image.role === "primary" ? "alternate" : image.role })) } });
+  await api("/api/artwork/save", { id: artworkId, expectedVersion: state.artworkVersions[artworkId], record: { ...work, reproductions: work.reproductions.map((image) => ({ ...image, role: image.src === source ? "primary" : image.role === "primary" ? "alternate" : image.role })) } });
 }
 async function finishIncomingJobs() {
   for (const [id, context] of [...incomingJobs]) {
@@ -174,7 +224,7 @@ async function finishIncomingJobs() {
       await makePrimary(job.result.artworkId, media.reproduction.src); state = await api("/api/state");
     }
     if (id === pendingEditorJob || (context.purpose === "attach" && !editorDirty)) {
-      pendingEditorJob = null; openArtwork(job.result.artworkId); $("intake-panel").hidden = true; message("Ready. Your draft is open and editable.");
+      pendingEditorJob = null; await openArtwork(job.result.artworkId); $("intake-panel").hidden = true; message(canEditArtwork() ? "Ready. Your draft is open and editable." : "Photo ready. Check the other Studio tab before editing.");
     }
   }
 }
@@ -276,17 +326,32 @@ function validateEditedArtwork(actionName = "Save") {
 }
 function updateEditorActions() {
   const busy = savingDraft || previewing || previewPopupBusy;
-  for (const control of $("artwork-form").querySelectorAll('button[type="submit"]')) { control.disabled = busy || !editingArtwork; control.setAttribute("aria-describedby",control.closest(".form-actions") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
-  for (const id of ["preview-artwork","preview-artwork-bottom"]) { $(id).disabled = busy || !editingArtwork; $(id).setAttribute("aria-describedby",id.endsWith("bottom") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  for (const control of $("artwork-form").querySelectorAll("input,select,textarea,button")) control.disabled = busy || !canEditArtwork();
+  for (const control of $("artwork-form").querySelectorAll('button[type="submit"]')) { control.setAttribute("aria-describedby",control.closest(".form-actions") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  for (const id of ["preview-artwork","preview-artwork-bottom"]) { $(id).setAttribute("aria-describedby",id.endsWith("bottom") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
   $("editor-action-note").textContent = savingDraft ? "Saving draft…" : previewing ? "Preparing the current edited draft preview…" : !editingArtwork ? "Prepare a photo before editing this draft." : validationIssues.length ? "Correct the marked field, then click Save draft or Preview artwork again. Both actions remain available." : "Save draft checks your entries. Preview artwork validates and privately saves current edits before previewing. Optional facts may stay unknown.";
   $("editor-action-note-bottom").textContent = $("editor-action-note").textContent;
 }
-function openArtwork(id, { focus = true, force = false, historyMode = "push" } = {}) {
-  if(!force&&editingArtwork===id&&editorDirty){showTab("collection");$("artwork-form").hidden=false;if(historyMode!=="none")updateLocation({tab:"collection",artworkId:id},{replace:historyMode==="replace"});if(focus){$("artwork-form").scrollIntoView({block:"start",behavior:"instant"});field($("artwork-form"),"title").focus({preventScroll:true});}return;}
+async function openArtwork(id, { focus = true, force = false, historyMode = "push" } = {}) {
+  if(!force&&editingArtwork===id&&editorDirty&&canEditArtwork()){showTab("collection");$("artwork-form").hidden=false;renderCoordination();if(historyMode!=="none")updateLocation({tab:"collection",artworkId:id},{replace:historyMode==="replace"});if(focus){$("artwork-form").scrollIntoView({block:"start",behavior:"instant"});field($("artwork-form"),"title").focus({preventScroll:true});}return;}
   if(!force)rememberEditor();
+  releaseCleanEditors(id);
   const cached=!force&&sessionEditors.get(id)?.dirty?sessionEditors.get(id):null;
+  const revision=++openRevision;editingArtwork=id;editorDirty=false;savedReadOnly=false;peerDirty=false;peerState="unknown";
+  editorAccess=tabs.supported?"checking":"unavailable";showTab("collection");$("artwork-form").hidden=true;renderCoordination();
+  if(historyMode!=="none")updateLocation({tab:"collection",artworkId:id},{replace:historyMode==="replace"});
+  const owned=await tabs.acquire(id);
+  if(revision!==openRevision){if(editingArtwork!==id&&!cached)tabs.release(id);return;}
+  if(!owned){editorAccess=tabs.supported?"blocked":"unavailable";renderCoordination();tabs.query(id);$("artwork-coordination").scrollIntoView({block:"start",behavior:"instant"});return;}
+  state=await api("/api/state");
+  if(revision!==openRevision){if(editingArtwork!==id&&!cached)tabs.release(id);return;}
+  editorAccess="owned";renderArtwork(id,{focus,cached});
+  if(cached&&cached.version!==state.artworkVersions[id])editorAccess="stale";
+  renderCoordination();tabs.announce(id);
+}
+function renderArtwork(id,{focus=true,cached=null}={}) {
   clearValidation(); validationAttempted = false;
-  editingArtwork = id; pendingEditorJob = null; editorDirty = false; const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
+  editingArtwork = id; pendingEditorJob = null; editorDirty = false; editingVersion=state.artworkVersions[id];const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
   showTab("collection"); const form = $("artwork-form"); form.hidden = false; form.reset();
   for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = false;
   $("editor-title").textContent = title(work); $("artwork-id").textContent = `Neutral identity: ${work.id}`; $("artwork-phase").textContent = phase(work);
@@ -305,8 +370,7 @@ function openArtwork(id, { focus = true, force = false, historyMode = "push" } =
   renderWorkListSelection();
   if(cached)restoreEditor(cached);
   $("collection").insertBefore(form, $("work-list"));
-  if(historyMode!=="none")updateLocation({tab:"collection",artworkId:id},{replace:historyMode==="replace"});
-  if (focus) { form.scrollIntoView({ block: "start", behavior: "instant" }); field(form,"title").focus({ preventScroll: true }); }
+  if (focus && canEditArtwork()) { form.scrollIntoView({ block: "start", behavior: "instant" }); field(form,"title").focus({ preventScroll: true }); }
 }
 function renderWorkListSelection() { for (const card of $("work-list").querySelectorAll("[data-artwork-id]")) card.setAttribute("aria-pressed", String(card.dataset.artworkId === editingArtwork)); }
 function renderArtworkProjects() {
@@ -339,10 +403,12 @@ function renderReproductions() {
     details.append(summary, role, alt, caption, node("p", `${image.width}×${image.height} pixels · ${image.src}`, "technical-block")); group.append(details); $("reproduction-fields").append(group);
   });
   updateEditorActions();
+  if(editorDirty)tabs.announce(editingArtwork);
 }
 function moveView(index, direction) { syncPrimaryAlt(); const other = index + direction; if (other < 0 || other >= editingImages.length) return; [editingImages[index], editingImages[other]] = [editingImages[other], editingImages[index]]; editorDirty = true; renderReproductions(); }
 async function saveArtwork({ actionName = "Save" } = {}) {
   if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
+  if (!canEditArtwork()) { renderCoordination();message("This tab cannot save this artwork. Continue in its owning Studio tab, or check again after that tab closes.",true);return null; }
   if (!validateEditedArtwork(actionName)) return null;
   const form = $("artwork-form"), previous = state.catalogue.artworks.find((work) => work.id === editingArtwork), sizes = [];
   for (const kind of dimensions) { const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`); if (width !== undefined || height !== undefined || depth !== undefined) { if (width === undefined || height === undefined) throw new Error(`${kind} size needs width and height, or leave its fields blank`); sizes.push({ kind, width, height, depth, unit: field(form, `${kind}-unit`).value }); } }
@@ -355,14 +421,16 @@ async function saveArtwork({ actionName = "Save" } = {}) {
   syncPrimaryAlt();
   const record = { ...previous, title: field(form, "title").value.trim() || `Private draft ${previous.id} (title not supplied)`, slug: field(form, "slug").value.trim(), aliases: lines(field(form, "aliases").value), medium: field(form, "medium").value, kind: field(form, "kind").value, date: date(form), techniques: lines(field(form, "techniques").value), materials: optional(form, "materials"), description: optional(form, "description"), dimensions: sizes, reproductions: editingImages, published: field(form, "published").checked, featured: field(form, "featured").checked, selectedOrder: field(form, "featured").checked ? number(form, "selectedOrder") : undefined, availability, edition, framing: optional(form, "framing"), condition: optional(form, "condition") };
   savingDraft = true; updateEditorActions();
-  try { await api("/api/artwork/save", { id: editingArtwork, record, note: field(form, "privateNote").value }); sessionEditors.delete(editingArtwork); await refresh({ editor: true }); message("Draft saved. Nothing has been made public."); return editingArtwork; }
+  const savedId=editingArtwork,expectedVersion=editingVersion,note=field(form,"privateNote").value;
+  try { await api("/api/artwork/save", { id:savedId, expectedVersion, record, note }); sessionEditors.delete(savedId);if(editingArtwork===savedId)editorDirty=false;tabs.saved(savedId);await refresh({ editor:editingArtwork===savedId });tabs.announce(savedId);message("Draft saved. Nothing has been made public.");return savedId; }
   catch (error) {
+    if (/Draft changed since/.test(error.message)) { if(editingArtwork===savedId){editorAccess="stale";renderCoordination();}message(error.message,true);return null; }
     const name = /date|year/i.test(error.message) ? "year" : /slug|alias|address/i.test(error.message) ? "slug" : /price|currency/i.test(error.message) ? "price" : /availability|reviewed/i.test(error.message) ? "availability" : /edition/i.test(error.message) ? "editionSize" : "title";
     renderValidation([{control:field(form,name),text:humanReason(error.message)}],{actionName}); return null;
   }
   finally { savingDraft = false; updateEditorActions(); }
 }
-$("artwork-form").addEventListener("input", () => { editorDirty = true; updateSimpleFields(); });
+$("artwork-form").addEventListener("input", () => { if(!canEditArtwork())return;editorDirty = true; updateSimpleFields();tabs.announce(editingArtwork); });
 $("artwork-form").addEventListener("submit", action(() => saveArtwork()));
 for (const input of document.querySelectorAll('[name="purpose"]')) input.addEventListener("change", updateIntake);
 $("show-intake").addEventListener("click", () => showIntake()); $("media-add-images").addEventListener("click", () => showIntake("media")); $("close-intake").addEventListener("click", () => { resetColourSelection({clearFiles:true}); $("intake-panel").hidden = true; $("artwork-form").hidden = !editingArtwork; });
@@ -497,7 +565,7 @@ async function buildPreview() {
   if (editingArtwork && !validateEditedArtwork("Preview")) return null;
   if (editorDirty && !await saveArtwork({actionName:"Preview"})) return null;
   previewing = true; updateEditorActions();
-  try { message("Preparing your preview…"); currentPreview = await api("/api/preview/build", {}); await refresh(); }
+  try { message("Preparing your preview…"); currentPreview = await api("/api/preview/build", {returnArtworkId:studioView.artworkId||undefined}); await refresh(); }
   catch { throw new Error("The preview could not be prepared. Your draft is still private. Check your entries and try again."); }
   finally { previewing = false; updateEditorActions(); }
   $("preview-links").replaceChildren(); const record = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0];
@@ -506,10 +574,17 @@ async function buildPreview() {
 }
 async function previewPage(kind) {
   if(previewPopupBusy)return;
+  if(kind==="artwork"&&!canEditArtwork()){renderCoordination();return;}
   if (editingArtwork && !validateEditedArtwork("Preview")) return;
   previewPopupBusy=true;updateEditorActions();
   const popup = window.open("about:blank", "_blank");
-  if(popup){renderPreviewStatus(popup,{failed:false,kind});popup.opener=null;}
+  if(popup){
+    const nonce=crypto.randomUUID();
+    popup.sessionStorage.setItem("studio-preview-return",nonce);
+    for(const [key,entry]of previewReturns)if(entry.closed)previewReturns.delete(key);
+    previewReturns.set(nonce,popup);
+    renderPreviewStatus(popup,{failed:false,kind});popup.opener=null;
+  }
   try { if (kind === "project") await saveProject(); if (kind === "selected" && selectedDirty) await saveCuration(); const preview = await buildPreview(); if (!preview) { if(popup)renderPreviewStatus(popup,{failed:true,kind});return; } const work = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0], project = state.catalogue.projects.find((entry) => entry.id === editingProject); const path = kind === "project" ? `/projects/${project.slug}/` : kind === "selected" ? "/work/" : kind === "home" ? "/" : `/artwork/${work.slug}/`; if (popup&&!popup.closed) popup.location.href = preview.origin + path; else { showTab("review"); message("Open the preview link below."); } }
   catch {if(popup&&!popup.closed)renderPreviewStatus(popup,{failed:true,kind});message("The preview could not be prepared. Your draft is still private. Check your entries and try again.",true);}
   finally{previewPopupBusy=false;updateEditorActions();}
@@ -541,4 +616,10 @@ $("prepare-export").addEventListener("click", action(async () => { const checked
 $("write-export").addEventListener("click", action(async () => { if (!exportPlan) throw new Error("Prepare a current dry-run first"); const result = await api("/api/export/write", { token: exportPlan.token, confirmation: $("export-confirmation").value }); $("export-confirmation").value = ""; exportPlan = null; $("export-plan").textContent = JSON.stringify(result, null, 2); await refresh(); message("Approved public-source files written. No commit, deployment or launch-manifest approval performed."); }));
 for (const control of document.querySelectorAll("[data-tab]")) control.addEventListener("click", () => navigateTab(control.dataset.tab));
 $("refresh").addEventListener("click", action(() => refresh())); roleOptions($("intake-role")); roleOptions($("media-role"));
-try { const session = await (await fetch("/api/session")).json(); token = session.token; await refresh(); navigationReady=true;const firstView=viewFromLocation();updateLocation(firstView,{replace:true});restoreNavigation(firstView);message("Studio ready. Nothing here is public."); setInterval(async () => { if (state.jobs.some((job) => job.status === "running") || incomingJobs.size) { try { await refresh(); } catch (error) { message(error.message, true); } } }, 1000); } catch (error) { message(error.message, true); }
+try {
+  const returnNonce=sessionStorage.getItem("studio-preview-return"),fromPreview=new URL(location.href).searchParams.get("return")==="preview";sessionStorage.removeItem("studio-preview-return");
+  if(returnNonce)tabs.returnToOwner(returnNonce);
+  const session = await (await fetch("/api/session")).json(); token = session.token; await refresh(); navigationReady=true;const firstView=viewFromLocation();updateLocation(firstView,{replace:true});await restoreNavigation(firstView);
+  message(returnNonce||fromPreview?"Studio ready here. If the original tab could not be focused or this preview tab could not close, continue here or switch to the original Studio tab.":"Studio ready. Nothing here is public.");
+  setInterval(async () => { if(editingArtwork&&editorAccess==="blocked")tabs.query(editingArtwork);if (state.jobs.some((job) => job.status === "running") || incomingJobs.size) { try { await refresh(); } catch (error) { message(error.message, true); } } }, 1000);
+} catch (error) { message(error.message, true); }

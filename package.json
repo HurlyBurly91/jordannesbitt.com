@@ -12,7 +12,7 @@
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host 127.0.0.1",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
     "test": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/*.test.mjs",
-    "browser:install": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers playwright install chromium --only-shell",
+    "browser:install": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers playwright install chromium firefox --only-shell",
     "build:preview": "ASTRO_TELEMETRY_DISABLED=1 astro check && ASTRO_TELEMETRY_DISABLED=1 astro build --mode preview --outDir /tmp/opencode/jordannesbitt-preview",
     "release:check": "node scripts/release-check.mjs",
     "check:output": "node scripts/check-output.mjs",
@@ -25,6 +25,7 @@
     "studio:intake-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs",
     "studio:validation-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --validation-flow",
     "studio:navigation-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --navigation-flow",
+    "studio:coordination-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --coordination-flow",
     "verify": "npm run state:check && npm run build && npm test",
     "state:check": "node scripts/durable-state-check.mjs"
   },

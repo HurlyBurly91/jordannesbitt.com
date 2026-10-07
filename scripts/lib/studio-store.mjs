@@ -76,6 +76,9 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   async function globalDigest(current = state) { return hashBytes(Buffer.from(JSON.stringify({ catalogue: current.catalogue, assets: current.assets }))); }
   function invalidate(next, id) { next.workflow[id] = { ...next.workflow[id], reviewed: null, approved: null }; }
   function recordFor(current, id) { return [...current.catalogue.artworks, ...current.catalogue.projects].find((record) => record.id === id); }
+  function artworkVersion(id, current = state) {
+    return hashBytes(Buffer.from(JSON.stringify({ record: current.catalogue.artworks.find((work) => work.id === id), note: current.notes[id] ?? "" })));
+  }
   async function allocate() {
     const unlock = await lock(base, "studio-registry.lock");
     try {
@@ -137,7 +140,7 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   catch (error) { await releaseLock(); throw error; }
   const studio = {
     base, root, repository, allowPublicExport, snapshotPath,
-    state: () => clone(state), transact, digest, globalDigest, assetBytes, recordFor,
+    state: () => clone(state), transact, digest, globalDigest, assetBytes, recordFor, artworkVersion,
     async close() { if (closed) return; closed = true; await Promise.all([...pending]); await queue; await releaseLock(); },
     async waitForJobs() { await Promise.all([...pending]); },
     async inspectImage(bytes, options = {}) {
@@ -194,10 +197,12 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
         });
       });
     },
-    async saveArtwork(id, input, note) {
+    async saveArtwork(id, input, note, expectedVersion) {
       return transact((next) => {
         const at = next.catalogue.artworks.findIndex((work) => work.id === id);
         if (at < 0 || input.id !== id) throw new Error("Artwork ID is immutable; duplicate/new IDs require explicit intake");
+        // Compare inside the serialized transaction, not a racy client-side preflight.
+        if (expectedVersion !== undefined && expectedVersion !== artworkVersion(id, next)) throw new Error("Draft changed since you opened it. Your unsaved edits have not overwritten the newer saved version. Reload the saved version before editing again.");
         const record = artworkSchema.parse(input);
         if (record.fixture) throw new Error("Fixture flags are not artwork authoring fields");
         const published = readCatalogue(repository).artworks.find((work) => work.id === id);

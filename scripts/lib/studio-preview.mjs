@@ -28,7 +28,7 @@ export async function buildStudioPreview(studio) {
     for (const url of new Set([...catalogue.artworks, ...catalogue.professional].flatMap(recordAssets))) await project.asset(url, await studio.assetBytes(url, state));
     const layoutPath = resolve(project.root, "src/layouts/BaseLayout.astro");
     await writeFile(layoutPath, (await readFile(layoutPath, "utf8"))
-      .replace("<body>", '<body><aside class="pilot-notice" role="note" data-local-pilot>PRIVATE LOCAL DRAFT — Studio preview. Renderer visibility is not public-source, rights, curation or launch approval.</aside>')
+      .replace("<body>", '<body><aside class="pilot-notice" role="note" data-local-pilot>PRIVATE LOCAL DRAFT — Studio preview. <a data-studio-return href="/__studio-return">← Return to Studio</a> · Returns to your original Studio when possible, otherwise opens Studio here. Renderer visibility is not public-source, rights, curation or launch approval.</aside>')
       .replace('<script is:inline type="application/ld+json" set:html={safeJson(artistSchema)} />', "")
       .replace('<p>© {new Date().getFullYear()}</p>', '<p>Private draft preview — rights/launch approval separate</p>'));
     const pagePath = resolve(project.root, "src/pages/artwork/[slug].astro");
@@ -51,15 +51,19 @@ export async function buildStudioPreview(studio) {
     return result;
   } finally { for (const fn of cleanup.reverse()) await fn(); }
 }
-export async function openStudioPreview(studio, id) {
+export async function openStudioPreview(studio, id, { studioOrigin, artworkId } = {}) {
   const preview = studio.state().previews.find((entry) => entry.id === id);
   if (!preview) throw new Error("Preview not found; build it first");
   const root = await safeFile(studio.root, preview.site);
+  if (studioOrigin && !/^http:\/\/127\.0\.0\.1:[1-9]\d{0,4}$/.test(studioOrigin)) throw new Error("Exact loopback Studio origin required for preview return");
+  const knownArtwork = studio.state().catalogue.artworks.some((work) => work.id === artworkId);
+  const returnUrl = studioOrigin ? `${studioOrigin}/?return=preview#${knownArtwork ? `artwork/${artworkId}` : "artworks"}` : null;
   let origin;
   const mime = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".xml": "application/xml", ".jpg": "image/jpeg", ".png": "image/png", ".webp": "image/webp", ".avif": "image/avif", ".mp4": "video/mp4", ".webm": "video/webm", ".vtt": "text/vtt", ".pdf": "application/pdf" };
   const server = createServer(async (request, response) => {
     response.setHeader("X-Robots-Tag", "noindex, nofollow");
     response.setHeader("Cache-Control", "no-store");
+    response.setHeader("Referrer-Policy", "origin");
     response.setHeader("X-Content-Type-Options", "nosniff");
     response.setHeader("Cross-Origin-Resource-Policy", "same-origin");
     response.setHeader("Content-Security-Policy", "frame-ancestors 'none'; object-src 'none'; base-uri 'none'");
@@ -68,13 +72,19 @@ export async function openStudioPreview(studio, id) {
       if (request.headers.origin && request.headers.origin !== origin) throw new Error("Forbidden preview Origin");
       if (request.headers["sec-fetch-site"] === "cross-site" || (request.headers["sec-fetch-site"] === "same-site" && request.headers["sec-fetch-mode"] !== "navigate")) throw new Error("Forbidden cross-origin preview read");
       const path = decodeURIComponent(request.url.split("?")[0]);
+      if (path === "/__studio-return") {
+        if (!returnUrl) { response.writeHead(409, { "Content-Type": "text/plain; charset=utf-8" }); response.end("Return to the Studio tab that created this preview, or start Studio again."); return; }
+        response.writeHead(303, { Location: returnUrl, "Referrer-Policy": "no-referrer" }); response.end(); return;
+      }
       if (path.includes("\\") || path.includes("\0") || path.split("/").includes("..")) throw new Error("Unsafe preview path");
       let file = resolve(root, `.${path}`);
       if (!inside(root, file)) throw new Error("Unsafe preview root");
       file = await safeFile(root, file);
       if ((await lstat(file)).isDirectory()) file = await safeFile(root, resolve(file, "index.html"));
       if (!mime[extname(file)] || !(await lstat(file)).isFile()) throw new Error("Preview file not served");
-      response.writeHead(200, { "Content-Type": mime[extname(file)] }); response.end(await readFile(file));
+      const bytes = await readFile(file);
+      response.writeHead(200, { "Content-Type": mime[extname(file)] });
+      response.end(extname(file) === ".html" && returnUrl ? bytes.toString("utf8").replace('href="/__studio-return"', `href="${returnUrl}"`) : bytes);
     } catch (error) { response.writeHead(error.message.startsWith("Forbidden") ? 403 : 404).end("Private preview file unavailable"); }
   });
   await new Promise((done, reject) => { server.once("error", reject); server.listen(0, "127.0.0.1", done); });

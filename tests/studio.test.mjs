@@ -6,7 +6,7 @@ import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { request as httpRequest } from "node:http";
 import sharp from "sharp";
-import { chromium } from "playwright";
+import { chromium, firefox } from "playwright";
 import { isolatedProject } from "./helpers/build-project.mjs";
 import { openStudio } from "../scripts/lib/studio-store.mjs";
 import { startStudio } from "../scripts/lib/studio-server.mjs";
@@ -46,6 +46,10 @@ async function edit(studio, id, changes = {}) {
 async function approved(studio, ids) {
   await buildStudioPreview(studio);
   for (const id of ids) { await studio.markReviewed(id); await studio.approve(id, { confirmation: "APPROVE PUBLIC SOURCE", rightsConfirmed: true }); }
+}
+async function editorReady(page, { readOnly = false } = {}) {
+  await page.locator("#artwork-form").waitFor({state:"visible"});
+  if (!readOnly) await page.waitForFunction(()=>!document.querySelector('#artwork-form [name="title"]').disabled);
 }
 
 test("studio canonical drafts, explicit identity/media/order/curation and ID continuity round-trip privately", async (t) => {
@@ -373,7 +377,7 @@ test("untagged colour choice leads to focused ready editor, optional draft save 
   await page.close();await service.stop();
   const restarted=await startStudio(options);t.after(()=>restarted.stop());const reopened=await browser.newPage();await reopened.goto(restarted.origin);await reopened.getByText(/Studio ready\./).waitFor();
   await reopened.getByRole("button",{name:"Open Synthetic persisted colour-choice draft",exact:true}).click();
-  assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic persisted colour-choice draft");
+  await editorReady(reopened);assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic persisted colour-choice draft");
   assert.equal(await reopened.getByLabel("Medium",{exact:true}).inputValue(),"drawing");
   assert.match(await reopened.getByLabel("Alt text",{exact:true}).inputValue(),/Synthetic untagged rectangle/);
   assert.deepEqual(await readFile(original),originalBytes);assert.equal((await lstat(original,{bigint:true})).mtimeNs,originalMtime);
@@ -466,7 +470,7 @@ test("Save and current-edits Preview remain actionable, focus invalid years, pre
   assert.equal(service.studio.state().catalogue.artworks[0].published,false); assert.equal(service.studio.state().workflow[artworkId].approved,null);assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);
   await popup.close();await page.close();await service.stop();
   const restarted=await startStudio(options);t.after(()=>restarted.stop());const reopened=await context.newPage();await reopened.goto(restarted.origin);await reopened.getByText(/Studio ready\./).waitFor();await reopened.getByRole("button",{name:"Open Synthetic current-edits preview title",exact:true}).click();
-  assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic current-edits preview title");assert.equal(await reopened.locator("#artwork-form").getByLabel("Year",{exact:true}).inputValue(),"2001");await context.close();
+  await editorReady(reopened);assert.equal(await reopened.getByLabel("Title",{exact:true}).inputValue(),"Synthetic current-edits preview title");assert.equal(await reopened.locator("#artwork-form").getByLabel("Year",{exact:true}).inputValue(),"2001");await context.close();
 });
 
 test("Studio history returns grid/draft with Forward and preserves unsaved session edits without duplicate entries", async (t) => {
@@ -489,7 +493,7 @@ test("Studio history returns grid/draft with Forward and preserves unsaved sessi
   await page.goBack();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs");
   await page.getByRole("button",{name:"Photos & references",exact:true}).click();const afterTab=await page.evaluate(()=>history.length);await page.getByRole("button",{name:"Photos & references",exact:true}).click();assert.equal(await page.evaluate(()=>history.length),afterTab);
   await page.goBack();assert.equal(await page.getByLabel("Materials",{exact:true}).inputValue(),"Keep these unsaved materials");
-  await page.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await page.locator("#artwork-form").isVisible(),false);await page.getByRole("button",{name:`Open ${secondTitle}`,exact:true}).click();await page.getByRole("button",{name:"Artworks",exact:true}).click();await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs","switching among drafts retains cache,not just hidden DOM");
+  await page.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await page.locator("#artwork-form").isVisible(),false);await page.getByRole("button",{name:`Open ${secondTitle}`,exact:true}).click();await editorReady(page);await page.getByRole("button",{name:"Artworks",exact:true}).click();await page.getByRole("button",{name:`Open ${firstTitle}`,exact:true}).click();await editorReady(page);assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Unsaved private title not for URLs","switching among drafts retains cache,not just hidden DOM");
   assert.equal(service.studio.state().catalogue.artworks[0].title,firstTitle,"navigation does not implicitly save or approve");
   await page.getByRole("button",{name:"Artworks",exact:true}).click();
   const exitDialog=page.waitForEvent("dialog").then(async(dialog)=>{assert.equal(dialog.type(),"beforeunload","document exit warns for cached dirty draft even while grid is visible");await dialog.dismiss();});
@@ -516,4 +520,78 @@ test("popup shows Preparing synchronously through a slow build, reaches actual a
   await failure.getByRole("heading",{name:"Preview could not be prepared",exact:true}).waitFor();await page.locator("#message").getByText(/preview could not be prepared/).waitFor();assert.doesNotMatch(await failure.locator("body").innerText(),/secret|\/home\/|technical-stack/);assert.doesNotMatch(await page.locator("#message").innerText(),/secret|\/home\/|technical-stack/);assert.equal(context.pages().length,2);await failure.close();
   await page.getByLabel("Date",{exact:true}).selectOption("exact");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();assert.equal(context.pages().length,1);assert.equal(await page.locator("#artwork-year").getAttribute("aria-invalid"),"true");assert.ok(await page.locator("#artwork-year").evaluate((input)=>document.activeElement===input));
   assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);assert.equal(service.studio.state().workflow[artworkId].approved,null);await context.close();
+});
+
+for (const engine of [chromium, firefox]) test(`Studio tabs have explicit single-artwork ownership, read-only saved views, close recovery and metadata-free coordination (${engine.name()})`, async (t) => {
+  const {options}=await setup(t,{allowPublicExport:false});const service=await startStudio(options);t.after(()=>service.stop());
+  const one=await add(service.studio),two=await add(service.studio,"second.png");await edit(service.studio,one.artworkId);await edit(service.studio,two.artworkId);
+  const savedTitle=service.studio.state().catalogue.artworks[0].title,otherTitle=service.studio.state().catalogue.artworks[1].title;
+  const browser=await engine.launch();t.after(()=>browser.close());const context=await browser.newContext({viewport:{width:1440,height:900}});
+  await context.addInitScript(()=>{const Original=BroadcastChannel;window.tabTraffic=[];window.BroadcastChannel=class extends Original{constructor(name){super(name);window.tabTraffic.push({name});}postMessage(data){window.tabTraffic.push({data});super.postMessage(data);}};});
+  const a=await context.newPage(),b=await context.newPage();await a.goto(service.origin);await a.getByText(/Studio ready\./).waitFor();await a.getByRole("button",{name:`Open ${savedTitle}`,exact:true}).click();
+  await a.getByLabel("Title",{exact:true}).fill("Unsaved A title must stay private");await a.getByLabel("Materials",{exact:true}).fill("Unsaved A materials");
+  await b.goto(`${service.origin}/#artwork/${one.artworkId}`);await b.getByText("This artwork has unsaved edits open in another Studio tab.",{exact:true}).waitFor();
+  assert.equal(await b.locator("#artwork-form").isVisible(),false,"persisted fields not silently shown as current");assert.equal(service.studio.state().catalogue.artworks[0].title,savedTitle,"opening second tab never saves");
+  await b.getByRole("button",{name:"Open saved version (read-only)",exact:true}).click();await editorReady(b,{readOnly:true});assert.equal(await b.getByLabel("Title",{exact:true}).inputValue(),savedTitle);assert.equal(await b.getByLabel("Title",{exact:true}).isDisabled(),true);assert.equal(await b.getByRole("button",{name:"Save draft",exact:true}).first().isDisabled(),true);
+  await b.getByRole("button",{name:"Return to other tab",exact:true}).click();await a.getByText("Continue your edits in this Studio tab.",{exact:true}).waitFor();
+  await b.evaluate((id)=>{const c=new BroadcastChannel("studio-tabs-v1");c.postMessage({type:"released",tab:"stale-announcement",sequence:2,id});c.postMessage({type:"status",tab:"stale-announcement",sequence:1,id,dirty:false});c.close();},one.artworkId);
+  await b.getByRole("button",{name:"Check again",exact:true}).click();await b.getByRole("heading",{name:"Artwork open in another tab",exact:true}).waitFor();assert.equal(await b.locator("#artwork-form").isVisible(),false,"stale announcements never grant ownership");
+  await b.getByRole("button",{name:`Open ${otherTitle}`,exact:true}).click();await b.getByLabel("Title",{exact:true}).fill("Independent B artwork");await b.getByRole("button",{name:"Save draft",exact:true}).first().click();await b.getByText(/Draft saved\./).waitFor();
+  assert.equal(await a.getByLabel("Title",{exact:true}).inputValue(),"Unsaved A title must stay private");await a.getByRole("button",{name:"Save draft",exact:true}).first().click();await a.getByText(/Draft saved\./).waitFor();
+  await b.getByRole("button",{name:`Open ${savedTitle}`,exact:true}).click();await b.getByRole("button",{name:"Open saved version (read-only)",exact:true}).click();await editorReady(b,{readOnly:true});assert.equal(await b.getByLabel("Title",{exact:true}).inputValue(),"Unsaved A title must stay private","explicit saved view reloads current authoritative save");
+  await a.getByLabel("Materials",{exact:true}).fill("Dirty again before close");await a.close();await b.getByRole("button",{name:"Check again",exact:true}).click();await b.getByLabel("Title",{exact:true}).waitFor();await b.waitForFunction(()=>!document.querySelector('[name="title"]').disabled);
+  assert.equal(await b.getByLabel("Materials",{exact:true}).inputValue(),"Unsaved A materials","closing A discards unsaved change without background saving");
+  const rapid=await context.newPage();await rapid.goto(`${service.origin}/#artwork/${one.artworkId}`);await rapid.getByRole("heading",{name:"Artwork open in another tab",exact:true}).waitFor();await rapid.close();
+  const locks=await b.evaluate(()=>navigator.locks.query());assert.equal(locks.held.filter((lock)=>lock.name===`studio-artwork-${one.artworkId}`).length,1);
+  const traffic=await b.evaluate(()=>JSON.stringify({url:location.href,history:history.state,traffic:window.tabTraffic}));assert.doesNotMatch(traffic,/Unsaved A|Independent B|PRIVATE NOTE|materials|sourceSha256|rights/);
+  await b.getByLabel("Title",{exact:true}).fill("Older dirty B copy");
+  // A separate browser storage context cannot share Web Locks, so atomic save checks
+  // must still protect an older dirty editor from another real tab's saved change.
+  const separate=await browser.newContext(),c=await separate.newPage();await c.goto(`${service.origin}/#artwork/${one.artworkId}`);await c.getByText(/Studio ready\./).waitFor();await c.getByLabel("Title",{exact:true}).fill("Newer authoritative save");await c.getByRole("button",{name:"Save draft",exact:true}).first().click();await c.getByText(/Draft saved\./).waitFor();await separate.close();
+  await b.getByRole("button",{name:"Save draft",exact:true}).first().click();await b.getByRole("heading",{name:"Newer saved version — edits not saved",exact:true}).waitFor();assert.equal(await b.getByLabel("Title",{exact:true}).inputValue(),"Older dirty B copy");assert.equal(service.studio.state().catalogue.artworks[0].title,"Newer authoritative save");
+  b.once("dialog",(dialog)=>dialog.accept());await b.getByRole("button",{name:"Reload saved version",exact:true}).click();await b.waitForFunction(()=>document.querySelector('[name="title"]').value==="Newer authoritative save"&&!document.querySelector('[name="title"]').disabled);
+  await context.close();
+});
+
+test("atomic artwork version check refuses concurrent stale saves, includes private note changes and keeps HTTP trust gates", async(t)=>{
+  const {options}=await setup(t,{allowPublicExport:false});const service=await startStudio(options);t.after(()=>service.stop());const {artworkId}=await add(service.studio);await edit(service.studio,artworkId);
+  const record=service.studio.state().catalogue.artworks[0],version=service.studio.artworkVersion(artworkId);
+  const outcomes=await Promise.allSettled([service.studio.saveArtwork(artworkId,{...record,title:"First contender"},"one",version),service.studio.saveArtwork(artworkId,{...record,title:"Second contender"},"two",version)]);
+  assert.equal(outcomes.filter((entry)=>entry.status==="fulfilled").length,1);assert.match(outcomes.find((entry)=>entry.status==="rejected").reason.message,/Draft changed since/);
+  const now=service.studio.state().catalogue.artworks[0],noteVersion=service.studio.artworkVersion(artworkId);await service.studio.saveArtwork(artworkId,now,"Note-only newer save",noteVersion);await assert.rejects(service.studio.saveArtwork(artworkId,now,"Old note",noteVersion),/Draft changed since/);
+  const {token}=await(await fetch(service.origin+"/api/session")).json();assert.equal((await fetch(service.origin+"/api/artwork/save",{method:"POST",headers:{"x-studio-token":token,"content-type":"application/json"},body:JSON.stringify({id:artworkId,record:now})})).status,400);
+  assert.equal(await rawRequest(service.origin,"/api/session",{"Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"navigate"}),403);
+  assert.equal(await rawRequest(service.origin,"/",{"Sec-Fetch-Site":"same-site","Sec-Fetch-Mode":"navigate"}),403,"arbitrary same-site navigation is not a preview return");
+  assert.equal(await rawRequest(service.origin,"/?return=preview",{"Sec-Fetch-Site":"cross-site","Sec-Fetch-Mode":"navigate","Sec-Fetch-Dest":"document",Referer:"http://127.0.0.1:12345/"}),403,"unknown loopback referrer cannot grant return access");
+  assert.equal(await rawRequest(service.origin,"/",{"Sec-Fetch-Site":"cross-site","Sec-Fetch-Mode":"navigate"}),403);
+  assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);
+});
+
+for (const engine of [chromium, firefox]) test(`private preview returns to original protected Studio or usable loopback fallback while keeping ordinary route history (${engine.name()})`, async(t)=>{
+  const {options,project}=await setup(t,{allowPublicExport:false});const service=await startStudio(options);t.after(()=>service.stop());
+  const one=await add(service.studio),two=await add(service.studio,"another.png");await edit(service.studio,one.artworkId);await edit(service.studio,two.artworkId);const titles=service.studio.state().catalogue.artworks.map((work)=>work.title);
+  const group=await service.studio.saveProject({title:"Synthetic preview group",memberIds:[one.artworkId,two.artworkId]});
+  const browser=await engine.launch();t.after(()=>browser.close());const context=await browser.newContext({viewport:{width:1440,height:900}}),a=await context.newPage();await a.goto(service.origin);await a.getByText(/Studio ready\./).waitFor();await a.getByRole("button",{name:`Open ${titles[0]}`,exact:true}).click();
+  let release;const gate=new Promise((done)=>release=done);await a.route("**/api/preview/build",async(route)=>{await gate;await route.continue();});
+  const opened=context.waitForEvent("page");await a.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const popup=await opened;
+  await popup.getByRole("heading",{name:"Preparing artwork preview…",exact:true}).waitFor();assert.equal(await popup.evaluate(()=>opener),null);release();await popup.waitForURL(`http://127.0.0.1:*/artwork/${one.artworkId}/`);await popup.waitForLoadState();const previewOrigin=new URL(popup.url()).origin;
+  assert.equal(await popup.evaluate(()=>opener),null);await popup.getByRole("link",{name:"← Return to Studio",exact:true}).waitFor();
+  assert.equal(await popup.getByRole("link",{name:"← Return to Studio",exact:true}).getAttribute("href"),`${service.origin}/?return=preview#artwork/${one.artworkId}`);
+  const returnHeaders={"Sec-Fetch-Site":"cross-site","Sec-Fetch-Mode":"navigate","Sec-Fetch-Dest":"document",Referer:previewOrigin+"/"};
+  assert.equal(await rawRequest(service.origin,"/?return=preview",returnHeaders),200,"live preview can return only to Studio document");assert.equal(await rawRequest(service.origin,"/api/session",returnHeaders),403,"return exception does not expose session API");
+  await popup.locator(".site-header").getByRole("link",{name:"Archive",exact:true}).click();await popup.waitForURL(/\/archive\/?$/);await popup.locator("[data-archive-list]").getByRole("link",{name:new RegExp(titles[1])}).click();await popup.waitForURL(`**/artwork/${two.artworkId}/`);
+  await popup.goBack();assert.match(new URL(popup.url()).pathname,/^\/archive\/?$/);await popup.goForward();assert.equal(new URL(popup.url()).pathname,`/artwork/${two.artworkId}/`);
+  for(const path of ["/","/archive/","/work/",`/projects/${group.slug}/`,`/artwork/${one.artworkId}/`]){const html=await(await fetch(previewOrigin+path)).text();assert.match(html,/data-studio-return/);}
+  const closed=popup.waitForEvent("close",{timeout:1500}).then(()=>true).catch(()=>false);await popup.getByRole("link",{name:"← Return to Studio",exact:true}).click().catch((error)=>assert.match(error.message,/closed|interrupted/));
+  if(await closed){await a.getByText("Returned from the private preview. Studio is ready.",{exact:true}).waitFor();t.diagnostic(`${engine.name()}: returned preview closed via original protected Studio handle`);}
+  else{await popup.waitForURL(`${service.origin}/?return=preview#artwork/${one.artworkId}`);await popup.getByText(/Studio ready here\./).waitFor();await popup.getByRole("button",{name:"Return to other tab",exact:true}).click();await a.getByText("Continue your edits in this Studio tab.",{exact:true}).waitFor();await popup.close();t.diagnostic(`${engine.name()}: explicit loopback fallback and original-tab focus request verified`);}
+  await a.getByLabel("Materials",{exact:true}).fill("Studio usable after return");
+  await context.addInitScript(()=>{window.close=()=>{};});
+  const deniedOpened=context.waitForEvent("page");await a.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const denied=await deniedOpened;await denied.waitForURL(`http://127.0.0.1:*/artwork/${one.artworkId}/`);
+  await denied.getByRole("link",{name:"← Return to Studio",exact:true}).click();await denied.waitForURL(`${service.origin}/?return=preview#artwork/${one.artworkId}`);await denied.getByText(/Studio ready here\./).waitFor();assert.equal(denied.isClosed(),false,"denied programmatic close falls back to explicit Studio page");await denied.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await denied.locator("#work-list").isVisible(),true);await denied.close();
+  await a.close();const fallback=await context.newPage();await fallback.goto(previewOrigin+`/artwork/${one.artworkId}/`);await fallback.getByRole("link",{name:"← Return to Studio",exact:true}).click();await fallback.waitForURL(`${service.origin}/?return=preview#artwork/${one.artworkId}`);await fallback.getByText(/Studio ready here\./).waitFor();assert.equal(await fallback.getByLabel("Title",{exact:true}).isEnabled(),true);
+  assert.doesNotMatch(fallback.url(),/Synthetic|NOTE|rights|source|previews/);assert.equal(await fallback.evaluate(()=>opener),null);
+  await fallback.getByLabel("Date",{exact:true}).selectOption("exact");await fallback.getByRole("button",{name:"Preview artwork",exact:true}).first().click();assert.equal(context.pages().length,1);assert.equal(await fallback.locator("#artwork-year").getAttribute("aria-invalid"),"true");
+  const built=await project.build();assert.equal(built.code,0,built.output);for(const path of ["index.html","archive/index.html","about/index.html"])assert.doesNotMatch(await readFile(resolve(project.root,"dist",path),"utf8"),/data-studio-return|Return to Studio|studio-tabs-v1/);
+  await context.close();
 });
