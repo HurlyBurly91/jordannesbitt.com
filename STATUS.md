@@ -3,11 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R14
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R13
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-M09-R14 is the owner-authorized in-place migration to the versioned experimental framework 1.1.0 / schema 2. Project-owned history is preserved through the migration snapshot and existing records; application behavior is intentionally unchanged. Validate schema/evidence/framework integrity and build compatibility, then restore the pre-migration M09-R13 owner-review gate. No M09 completion or publication authority is implied.
+M09-R13 remains the live owner gate: editable same/different-artwork tabs, advisory/no-metadata-copy behavior, CAS conflict retention/review/confirmed reload, URL/history and preserved validation/preview require explicit owner review. The R14 durable-state migration is complete: managed framework 1.1.0/schema2 installed, strict schema/project validation and build passed, and the pre-schema2 ledger is preserved verbatim in records. Older real-content/rights/colour/launch human gates remain live; release remains BLOCKED_CONTENT and M09 is not COMPLETE.

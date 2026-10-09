@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R14
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R13
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -158,21 +158,21 @@ Historical technical requirements M09-R13-01 through M09-R13-14 and their V01/V0
 
 Source: USER, 2026-10-09. Update this repository to conform to the current `durable-state-machine` experimental branch without clobbering project-owned durable state. Preserve the old ledger/history and make current state conform in place.
 
-- [~] M09-R14-01 Install and integrate the versioned experience-augmented framework 1.1.0 / schema 2 from experimental commit 7dd83b11600ebb16af784026ed66845278c9c1f0.
+- [x] M09-R14-01 Install and integrate the versioned experience-augmented framework 1.1.0 / schema 2 from experimental commit 7dd83b11600ebb16af784026ed66845278c9c1f0.
   Source: USER
   Requirement: Use the managed `.durable-state/MANIFEST` + `.durable-state/framework/` distribution and project-owned root integration wrappers.
   Verified-By:
     - M09-R14-V01
     - M09-R14-V02
 
-- [~] M09-R14-P01 Preserve existing project truth and provenance while migrating: product roadmap, M09 identity, stable IDs/meanings, unresolved human gates, historical evidence/failures/supersession, canonical docs, records, experiences, Git/privacy/publication/model-effort rules and application behavior.
+- [x] M09-R14-P01 Preserve existing project truth and provenance while migrating: product roadmap, M09 identity, stable IDs/meanings, unresolved human gates, historical evidence/failures/supersession, canonical docs, records, experiences, Git/privacy/publication/model-effort rules and application behavior.
   Source: USER
   Requirement: Do not overwrite old state with bootstrap/template values; archive the pre-schema-2 live ledger verbatim and keep all still-relevant human gates live.
   Verified-By:
     - M09-R14-V01
     - M09-R14-V02
 
-- [~] M09-R14-P02 Do not use the framework migration to authorize or change website behavior, real content/rights, deployment, protected refs, external services, M09 completion, M10 release or M11 commerce.
+- [x] M09-R14-P02 Do not use the framework migration to authorize or change website behavior, real content/rights, deployment, protected refs, external services, M09 completion, M10 release or M11 commerce.
   Source: USER
   Requirement: Migration changes durable-state ownership/schema only.
   Verified-By:
@@ -185,14 +185,16 @@ Source: USER, 2026-10-09. Update this repository to conform to the current `dura
     - M09-R14-P01
     - M09-R14-P02
   Conclusion: The safe migration is to vendor the framework-owned release, convert root AGENTS/RUN_PROMPT into project-specific wrappers, archive the full schema-1 live ledger, keep only still-relevant unresolved gates in bounded schema-2 TASKS, and add explicit coverage for new migration requirements.
-  Conclusion-Status: DERIVED
+  Conclusion-Status: VERIFIED
   Conclusion-Scope: Durable-state policy/state only at project head 03ceb7ee175b74d327b8b7699b66efb2e5759307 plus framework source commit 7dd83b11600ebb16af784026ed66845278c9c1f0; no application behavior migration.
   Conclusion-Evidence:
+    - M09-R14-V01
+    - M09-R14-V02
     - records/M09-schema1-ledger-snapshot-2026-10-09.md
     - .durable-state/MANIFEST
     - .durable-state/framework/SCHEMAS.md
   Conclusion-Limitations:
-    - Automated schema validation has not yet established the migration checkpoint.
+    - Deterministic validation establishes schema/integration consistency only; it does not re-certify historical application evidence or human judgments.
     - Historical application evidence remains historical and is not relabelled as current schema-2 evidence.
   Conclusion-Recheck-On:
     - Framework/schema version change
@@ -200,7 +202,7 @@ Source: USER, 2026-10-09. Update this repository to conform to the current `dura
     - Missing preserved stable ID/human gate
     - Any application/material file change introduced by the migration
 
-- [~] M09-R14-V01 Validate target schema, manifest/framework integration, live-ledger coverage and repository-specific durable invariants.
+- [x] M09-R14-V01 Validate target schema, manifest/framework integration, live-ledger coverage and repository-specific durable invariants.
   Source: DERIVED
   Covers:
     - M09-R14-01
@@ -209,10 +211,13 @@ Source: USER, 2026-10-09. Update this repository to conform to the current `dura
   Command: npm run state:check
   Oracle: property-or-invariant
   Expected: Framework schema-2 strict validation and project-specific state checks both exit 0 with the managed framework hash/markers and live state consistent.
+  Result: PASS GitHub Actions run 37984997352 completed npm run state:check successfully; framework strict schema-2 validation and the project checker both exited 0.
+  Repository-State: HEAD=8a3f3c4dd8d5569324005d271ed50e93230e7256; WORKTREE=CLEAN
   Limitations:
     - Structural validation does not prove website behavior, artistic quality, rights, factual content or human acceptance.
+    - The central checkout CLI status command was not executed in GitHub Actions; equivalent manifest/payload/integration identity is checked by the project state checker.
 
-- [ ] M09-R14-V02 Verify the policy/schema migration did not alter application behavior or protected project boundaries.
+- [x] M09-R14-V02 Verify the policy/schema migration did not alter application behavior or protected project boundaries.
   Source: DERIVED
   Covers:
     - M09-R14-01
@@ -222,5 +227,8 @@ Source: USER, 2026-10-09. Update this repository to conform to the current `dura
   Command: npm run build
   Oracle: integration-or-end-to-end
   Expected: Existing Astro build/check succeeds with no application-source changes; migration diff remains limited to durable-state/framework/project-policy files and historical snapshot/record.
+  Result: PASS GitHub Actions run 37984997352 completed npm run build successfully after strict state validation; migration introduced no src/ or application-test changes.
+  Repository-State: HEAD=8a3f3c4dd8d5569324005d271ed50e93230e7256; WORKTREE=CLEAN
   Limitations:
     - Build success is not public-content, usability, colour, rights or release approval.
+    - The prior R13 95/95 application-suite result remains historical evidence at its recorded material checkpoint; this policy/schema migration did not relabel it as newly executed.
