@@ -3,11 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R13
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R14
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-M09-R13 remains the live owner gate: editable same/different-artwork tabs, advisory/no-metadata-copy behavior, CAS conflict retention/review/confirmed reload, URL/history and preserved validation/preview require explicit owner review. The R14 durable-state migration is complete: managed framework 1.1.0/schema2 installed, strict schema/project validation and build passed, and the pre-schema2 ledger is preserved verbatim in records. Older real-content/rights/colour/launch human gates remain live; release remains BLOCKED_CONTENT and M09 is not COMPLETE.
+R14 migration follow-up is verifying the schema-2 checkpoint under a CI checkout that can resolve historical repository-state evidence. Final-state run 37985159227 exposed only shallow-history W081 diagnostics; migration/application semantics are unchanged. R13 owner review and all older human/content/rights/colour/launch gates remain preserved and will resume after strict migration validation passes.

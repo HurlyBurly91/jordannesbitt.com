@@ -134,3 +134,9 @@ Active-Request: M09-R13
 ```
 
 The next substantive action is the already-pending R13 owner usability review, not another framework migration.
+
+## Verification-environment correction
+
+The first post-handoff final-state CI run, `37985159227`, did **not** pass strict validation. The schema-2 validator reported W081 for the recorded evidence commit because the existing GitHub Actions checkout used `fetch-depth: 1`; the referenced migration evidence commit was therefore unavailable in the CI worktree. Strict mode correctly promoted those warnings to failure and skipped the build.
+
+This is not recorded as a passing final-state result. The migration request is temporarily reopened in `AUTOMATED_VERIFICATION`. CI checkout is changed to full history so repository-state applicability can be checked as designed. No application source or durable semantics are changed by this correction.
