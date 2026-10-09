@@ -50,3 +50,28 @@ Only `.durable-state/framework/` and `.durable-state/MANIFEST` are framework-own
 No application source, application tests, content, catalogue records, milestone contracts, PROJECT.md, canonical behavior docs or private Studio data are changed in this implementation checkpoint.
 
 Final strict validation/build/diff review remain pending before returning to R13 HUMAN_VERIFICATION.
+
+## Verification and final handoff
+
+Implementation checkpoint: `8f2741c5437a7cf72d928265d83138df30cd4a0d`.
+
+GitHub Actions run `38002592227` passed:
+- `npm ci`;
+- `npm run state:check`;
+- framework strict validator: **VALID, 0 errors, 0 warnings**;
+- project-specific checker: **PASS**;
+- `npm run build`.
+
+Diff review from pre-update project head `15cc418ed53cea8f4b8dd38eefd543e660877a08` through the verified implementation checkpoint contains only:
+- `.durable-state/` framework/manifest;
+- root project durable-state integration/state;
+- project checker;
+- the R15 checkpoint and verbatim pre-update ledger archive.
+
+There are no `src/`, application-test, production-content, PROJECT, milestone-contract or private-artwork changes in the update.
+
+Protected refs remain:
+- `master`: `755df7fee1a515388a035fce8e9e672070a1d2b4`
+- `backup/pre-astro-redesign`: `3bc95c75bbe85918ce10498af31a751e2cf58fc6`
+
+R15 is complete. The live execution pointer returns to `M09 / ACTIVE / HUMAN_VERIFICATION / M09-R13`. R13 owner review and every inherited unresolved content/rights/colour/launch gate remain pending; no human acceptance or M09 completion is inferred.
