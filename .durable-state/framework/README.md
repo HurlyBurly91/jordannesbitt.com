@@ -43,7 +43,8 @@ hash. The updater refuses to overwrite locally modified framework files.
 ## Schema 2 executable semantics
 
 Schema 2 preserves the bounded state model and adds three mechanically supported
-semantics:
+semantics. Framework 1.1.2 additionally recognizes letter-suffixed milestone IDs (M14A), historical follow-up IDs
+and provenance-bound legacy evidence when migrating existing repositories:
 
 ```text
 typed decision-shaping conclusions

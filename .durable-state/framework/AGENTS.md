@@ -215,7 +215,10 @@ HUMAN
 ```
 
 A verified automated item records the actual command, expected result, actual
-PASS result, oracle class, limitations, and repository state. A verified human
+PASS result, oracle class, limitations, and repository state. During the
+one-time schema-1 migration, explicitly flagged HISTORICAL_RECORDED evidence
+preserves old PASS claims without asserting current execution or fabricating
+lost commands; it never replaces current automated evidence. A verified human
 item records `Human-Decision: ACCEPTED` and its human source. Passing tests do
 not authorize completion of an uncovered requirement or an unresolved human
 gate.

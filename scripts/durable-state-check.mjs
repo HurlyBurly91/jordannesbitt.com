@@ -98,10 +98,10 @@ if (errors.length === 0) {
   const expected={
     FORMAT_VERSION:"1",
     VARIANT:"experience-augmented",
-    FRAMEWORK_VERSION:"1.1.0",
+    FRAMEWORK_VERSION:"1.1.2",
     SCHEMA_VERSION:"2",
     SOURCE_REPOSITORY:"HurlyBurly91/durable-state-machine",
-    SOURCE_COMMIT:"7dd83b11600ebb16af784026ed66845278c9c1f0",
+    SOURCE_COMMIT:"a6a58d297e7233ee86850c39869958edd032b31f",
   };
   for(const [key,value] of Object.entries(expected)) if(manifest[key]!==value) errors.push(`MANIFEST ${key}=${manifest[key]} expected ${value}`);
   if(!/^[0-9a-f]{64}$/.test(manifest.PAYLOAD_SHA256??"")) errors.push("MANIFEST PAYLOAD_SHA256 invalid");

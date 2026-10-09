@@ -181,6 +181,14 @@ loaders consume only explicitly accepted and validated runtime schemas.
 
 ## 4. `TASKS.md` — bounded live execution ledger
 
+Existing stable identifiers are preserved. Numeric milestones such as `M14` and
+uppercase letter-suffixed milestones such as `M14A` are both valid. This
+applies consistently to status headers, requests, task IDs, references and
+follow-ups (for example `M14A-R1-D04` and `M14A-R2-F01-01`).
+Do not rename an existing milestone to satisfy a validator; lowercase
+suffixes and malformed IDs remain invalid.
+
+
 `TASKS.md` is authoritative live execution state, not permanent history.
 
 Header:
@@ -270,6 +278,49 @@ Human evidence:
 
 Before acceptance, use `[H]` and omit the decision fields. Automated success
 cannot substitute for the human decision.
+
+### Explicitly limited migration compatibility
+
+Pre-schema-2 ledgers may contain completed verification items that reported PASS
+without preserving the exact shell invocation or repository fingerprint. Do not
+invent these facts. Only for an existing, completed `Vxx` item copied from an
+immutable schema-1 snapshot under `records/`, use:
+
+```text
+Gate: FUNCTIONAL | CONSTRAINT | INVARIANT | INTEGRATION | PRESENTATION
+Covers:
+  - <specific requirement ID>
+Evidence-Mode: HISTORICAL_RECORDED
+Evidence-Source: records/<frozen schema-1 ledger>.md
+Result: PASS as recorded in archived ledger (NOT rerun)
+Limitations:
+  - Historical assertion only; not a current verification or independently reconstructed command
+```
+
+The validator requires an exact `[x]` declaration of the same verification ID
+in the named archive. It cannot establish that the historical test actually ran
+or passed. This is **provenance preservation**, not a substitute for the normal
+`Command`, `Oracle`, `Expected`, and `Repository-State` required of new
+automated verification. New tests must never use `HISTORICAL_RECORDED`.
+
+An inherited unresolved `Hxx` gate may cover an archived requirement without
+copying all historical task entries back into the bounded live ledger:
+
+```text
+- [H] M06-R11-H01 inherited unresolved human gate
+  Gate: HUMAN
+  Covers:
+    - M06-R11-05-04
+  Coverage-Source: records/M06-pre-experience-TASKS.snapshot.md
+```
+
+The validator checks that the archived ID has an exact task declaration under
+`records/`. Live `Verified-By` / `Covers` links remain bidirectional; a
+frozen archive cannot acquire a reverse link. Archived coverage does not
+authorize human acceptance or close an unresolved gate.
+
+Nested follow-up IDs such as `M06-R20-F01-02` and pre-existing multi-part
+requirement IDs are preserved verbatim, not flattened or renumbered.
 
 Gate classes:
 

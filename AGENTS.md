@@ -4,7 +4,7 @@ Framework-Policy: .durable-state/framework/AGENTS.md
 
 Before substantive work, read and obey the versioned framework policy above. This root file is project-owned specialization for the **experience-augmented durable-state architecture**. Project rules may narrow or extend the framework but may not silently weaken its durability, provenance, verification, security, evidence, or human-acceptance invariants.
 
-Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.1.0 / schema 2 from `HurlyBurly91/durable-state-machine` experimental commit `7dd83b11600ebb16af784026ed66845278c9c1f0`.
+Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.1.2 / schema 2 from `HurlyBurly91/durable-state-machine` experimental commit `a6a58d297e7233ee86850c39869958edd032b31f`.
 
 ## Repository and product scope
 

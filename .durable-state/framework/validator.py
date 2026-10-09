@@ -22,12 +22,17 @@ from typing import Iterable, Sequence
 
 SUPPORTED_SCHEMA_VERSION = "2"
 
-MILESTONE_RE = re.compile(r"^M\d+$")
-REQUEST_RE = re.compile(r"^(M\d+-R\d+)$")
-TASK_ID_PATTERN = r"M\d+-R\d+-(?:P|D|V|H)?\d+"
+# A milestone may have a stable uppercase suffix, e.g. M14A.
+# Use one grammar for headers, task IDs, references and request headings.
+MILESTONE_PATTERN = r"M\d+[A-Z]*"
+REQUEST_PATTERN = rf"{MILESTONE_PATTERN}-R\d+"
+MILESTONE_RE = re.compile(rf"^{MILESTONE_PATTERN}$")
+REQUEST_RE = re.compile(rf"^({REQUEST_PATTERN})$")
+TASK_ID_PATTERN = rf"{REQUEST_PATTERN}(?:-F\d+)?-(?:(?:P|D|V|H)\d+|\d+(?:-\d+)*)"
 TASK_ID_RE = re.compile(rf"^{TASK_ID_PATTERN}$")
 TASK_REF_RE = re.compile(rf"\b({TASK_ID_PATTERN})\b")
-REQUEST_HEADING_RE = re.compile(r"^##\s+(M\d+-R\d+)\s+(?:—|-)\s+(.+?)\s*$")
+REQUEST_HEADING_RE = re.compile(rf"^##\s+({REQUEST_PATTERN})\s+(?:—|-)\s+(.+?)\s*$")
+FOLLOWUP_HEADING_RE = re.compile(rf"^###\s+({REQUEST_PATTERN}-F\d+)\s+(.+?)\s*$")
 TASK_LINE_RE = re.compile(
     rf"^\s*-\s+\[([ ~?Hx-])\]\s+({TASK_ID_PATTERN})(?:\s+(.*?))?\s*$"
 )
@@ -162,6 +167,7 @@ class Validator:
         self._git_head: str | None = None
         self._material_dirty: bool | None = None
         self._worktree_fingerprints: dict[str, str] = {}
+        self._archive_cache: dict[str, str] = {}
 
     def add(
         self,
@@ -302,6 +308,7 @@ class Validator:
         current_request: str | None = None
         current_task: Task | None = None
         current_list_field: str | None = None
+        in_inherited_section = False
         in_fence = False
 
         for line_number, raw in enumerate(lines, start=1):
@@ -312,14 +319,22 @@ class Validator:
             if in_fence:
                 continue
 
-            request_match = REQUEST_HEADING_RE.match(raw)
+            request_match = REQUEST_HEADING_RE.match(raw) or FOLLOWUP_HEADING_RE.match(raw)
             if request_match:
                 current_request = request_match.group(1)
+                in_inherited_section = False
                 if current_request in requests:
                     self.error(
                         "E020", path, line_number, f"duplicate request heading {current_request}"
                     )
                 requests[current_request] = line_number
+                current_task = None
+                current_list_field = None
+                continue
+
+            if raw.startswith("## "):
+                in_inherited_section = raw.strip() == "## Inherited unresolved human gates"
+                current_request = None
                 current_task = None
                 current_list_field = None
                 continue
@@ -337,9 +352,11 @@ class Validator:
                 )
                 tasks.append(current_task)
                 current_list_field = None
-                if current_request is None:
+                if current_request is None and not (in_inherited_section and current_task.kind == "H"):
                     self.error("E021", path, line_number, f"task {task_id} is outside a request group")
-                elif current_request != request:
+                elif current_request is not None and current_request != request and not (
+                    current_request.startswith(request + "-F")
+                ):
                     self.error(
                         "E022",
                         path,
@@ -415,7 +432,7 @@ class Validator:
         milestone = status.get("Milestone")
         state = status.get("State")
         if milestone and not MILESTONE_RE.fullmatch(milestone.value):
-            self.error("E032", status_path, milestone.line, "Milestone must match M<number>")
+            self.error("E032", status_path, milestone.line, "Milestone must match M<number><optional uppercase suffix>")
         if state and state.value not in ALLOWED_MILESTONE_STATES:
             self.error(
                 "E033",
@@ -454,7 +471,7 @@ class Validator:
                     "E039",
                     status_path,
                     active_request.line,
-                    "Active-Request must match M<number>-R<number>",
+                    "Active-Request must match M<number><optional uppercase suffix>-R<number>",
                 )
             elif active_request.value not in ledger.requests:
                 self.error(
@@ -520,7 +537,9 @@ class Validator:
             else:
                 task_by_id[task.task_id] = task
 
-            if task.request not in ledger.requests:
+            if task.request not in ledger.requests and not (
+                task.kind == "H" and task.values("Coverage-Source")
+            ):
                 self.error(
                     "E052", ledger.path, task.line, f"task {task.task_id} has no matching request heading"
                 )
@@ -569,11 +588,38 @@ class Validator:
                 found.append((match.group(1), item.line))
         return found
 
+    def _archived_task_found(
+        self, source: FieldValue | None, task_id: str, *, marker: str | None = None
+    ) -> bool:
+        """Check an exact task declaration in an existing local archive."""
+        if source is None or not source.value.startswith("records/"):
+            return False
+        path = (self.root / source.value).resolve()
+        try:
+            path.relative_to((self.root / "records").resolve())
+        except ValueError:
+            return False
+        if not path.is_file():
+            return False
+        key = str(path)
+        if key not in self._archive_cache:
+            try:
+                self._archive_cache[key] = path.read_text(encoding="utf-8")
+            except (OSError, UnicodeError):
+                return False
+        mark = re.escape(marker) if marker is not None else r"[ ~?Hx-]"
+        pattern = rf"(?m)^\s*-\s*\[{mark}\]\s+{re.escape(task_id)}(?=\s|$)"
+        return re.search(pattern, self._archive_cache[key]) is not None
+
     def _validate_references(self, ledger: ParsedLedger, task_by_id: dict[str, Task]) -> None:
         for task in ledger.tasks:
             for field_name in REFERENCE_FIELDS:
                 for ref, line in self._refs(task.values(field_name)):
                     if ref not in task_by_id:
+                        if field_name == "Covers" and task.kind == "H" and self._archived_task_found(
+                            task.first("Coverage-Source"), ref
+                        ):
+                            continue
                         self.error(
                             "E060",
                             ledger.path,
@@ -635,6 +681,15 @@ class Validator:
                     task.values("Verified-By")[0].line,
                     f"Verified-By is intended for R/P requirements, not {task.kind} tasks",
                 )
+
+            if task.kind == "H" and task.values("Coverage-Source"):
+                archive = task.first("Coverage-Source")
+                if not any(
+                    ref not in task_by_id and self._archived_task_found(archive, ref)
+                    for ref, _ in self._refs(task.values("Covers"))
+                ):
+                    self.error("E077", ledger.path, task.line,
+                               f"{task.task_id} Coverage-Source requires an exact archived requirement")
 
             if task.kind in {"V", "H"}:
                 covers = self._refs(task.values("Covers"))
@@ -715,25 +770,50 @@ class Validator:
                             "E084", ledger.path, oracle_values[0].line, f"invalid Oracle {oracle!r}"
                         )
                 if task.marker == "x":
-                    self._require_task_field(ledger, task, "Command", "E085")
-                    self._require_task_field(ledger, task, "Oracle", "E086")
-                    self._require_task_field(ledger, task, "Expected", "E087")
-                    result_values = self._require_task_field(ledger, task, "Result", "E088")
-                    repository_values = self._require_task_field(
-                        ledger, task, "Repository-State", "E089"
-                    )
-                    self._require_task_field(ledger, task, "Limitations", "E096")
-                    if result_values and not result_values[0].value.upper().startswith("PASS"):
-                        self.error(
-                            "E090",
-                            ledger.path,
-                            result_values[0].line,
-                            f"verified V task {task.task_id} must record a PASS result",
+                    mode = task.first("Evidence-Mode")
+                    if mode is not None and mode.value == "HISTORICAL_RECORDED":
+                        source_values = self._require_task_field(
+                            ledger, task, "Evidence-Source", "E097"
                         )
-                    if repository_values:
-                        self._validate_repository_state_value(
-                            ledger.path, repository_values[0], task.task_id
+                        if source_values and not self._archived_task_found(
+                            source_values[0], task.task_id, marker="x"
+                        ):
+                            self.error(
+                                "E098", ledger.path, source_values[0].line,
+                                f"{task.task_id} is not recorded as verified in its archival source",
+                            )
+                        result_values = self._require_task_field(
+                            ledger, task, "Result", "E088"
                         )
+                        self._require_task_field(ledger, task, "Limitations", "E096")
+                        if result_values and not result_values[0].value.upper().startswith("PASS"):
+                            self.error(
+                                "E090", ledger.path, result_values[0].line,
+                                f"{task.task_id} historical result must begin PASS",
+                            )
+                    else:
+                        if mode is not None:
+                            self.error(
+                                "E099", ledger.path, mode.line,
+                                f"unsupported Evidence-Mode {mode.value!r}",
+                            )
+                        self._require_task_field(ledger, task, "Command", "E085")
+                        self._require_task_field(ledger, task, "Oracle", "E086")
+                        self._require_task_field(ledger, task, "Expected", "E087")
+                        result_values = self._require_task_field(ledger, task, "Result", "E088")
+                        repository_values = self._require_task_field(
+                            ledger, task, "Repository-State", "E089"
+                        )
+                        self._require_task_field(ledger, task, "Limitations", "E096")
+                        if result_values and not result_values[0].value.upper().startswith("PASS"):
+                            self.error(
+                                "E090", ledger.path, result_values[0].line,
+                                f"verified V task {task.task_id} must record a PASS result",
+                            )
+                        if repository_values:
+                            self._validate_repository_state_value(
+                                ledger.path, repository_values[0], task.task_id
+                            )
                 elif any(
                     item.value.upper().startswith("PASS") for item in task.values("Result")
                 ):
