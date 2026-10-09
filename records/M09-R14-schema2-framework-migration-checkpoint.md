@@ -140,3 +140,17 @@ The next substantive action is the already-pending R13 owner usability review, n
 The first post-handoff final-state CI run, `37985159227`, did **not** pass strict validation. The schema-2 validator reported W081 for the recorded evidence commit because the existing GitHub Actions checkout used `fetch-depth: 1`; the referenced migration evidence commit was therefore unavailable in the CI worktree. Strict mode correctly promoted those warnings to failure and skipped the build.
 
 This is not recorded as a passing final-state result. The migration request is temporarily reopened in `AUTOMATED_VERIFICATION`. CI checkout is changed to full history so repository-state applicability can be checked as designed. No application source or durable semantics are changed by this correction.
+
+## Final strict verification
+
+The CI checkout was corrected to `fetch-depth: 0` so schema-2 repository-state evidence can be resolved instead of being silently unavailable in shallow history.
+
+GitHub Actions run `37985419117` at `bf29db6f8a544046e223ee4657768328f2c0da8f` passed:
+
+- `npm ci`;
+- `npm run state:check` with framework `--strict` validation plus project-specific manifest/integration checks;
+- `npm run build`.
+
+This supersedes the failed shallow-history final-state attempt as the current migration verification. The failure remains recorded above rather than being rewritten as a pass.
+
+The final handoff commit changes only live ledger/status/provenance after this verified material checkpoint, so the recorded repository-state evidence remains applicable under the framework's material-file rules. Execution returns to M09-R13 / HUMAN_VERIFICATION; no human gate is closed by R14.
