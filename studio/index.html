@@ -30,9 +30,9 @@
   </section>
   <section id="jobs-panel" hidden><h3>Photo progress</h3><div id="jobs"></div></section>
   <section id="artwork-coordination" class="task-panel" role="region" aria-labelledby="coordination-title" hidden>
-    <h3 id="coordination-title">Artwork open in another tab</h3><p id="coordination-message" role="status" aria-live="polite"></p>
-    <div class="form-actions"><button id="coordination-check" type="button">Check again</button><button id="coordination-saved" type="button">Open saved version (read-only)</button><button id="coordination-other" type="button">Return to other tab</button><button id="coordination-reload" type="button" hidden>Reload saved version</button></div>
-    <p class="hint">One tab can edit an artwork at a time. Switch to its Studio tab to continue unsaved edits. Save and return to the grid in that tab, or close it, then Check again here. Opening this tab never saves another tab's work.</p>
+    <h3 id="coordination-title">Edits in another Studio tab</h3><p id="coordination-message" role="status" aria-live="polite"></p>
+    <div class="form-actions"><button id="coordination-review" type="button" hidden>Review newer saved version</button><button id="coordination-reload" type="button" hidden>Discard my unsaved edits and reload</button></div>
+    <section id="newer-saved-review" hidden><h4>Newer saved version — your editor below is unchanged</h4><div id="newer-saved-fields" class="fields"></div><details><summary>Full saved record (technical details)</summary><pre id="newer-saved-record" tabindex="0" role="region" aria-label="Newer saved artwork and private note"></pre></details></section>
   </section>
   <form id="artwork-form" novalidate hidden>
     <div class="section-heading"><div><p id="artwork-phase" class="phase"></p><h2 id="editor-title">Artwork</h2></div><div><button type="button" id="preview-artwork">Preview artwork</button><button type="submit" class="primary-action">Save draft</button></div></div>

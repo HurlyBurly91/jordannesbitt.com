@@ -13,14 +13,14 @@ const {snapshot,directory}=await loadSnapshot(resolve(base,"snapshots/run-2026-1
 assert.equal(snapshot.snapshotSha256,"60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c");
 const entry=snapshot.included.find((image)=>image.id==="w-0001");assert.equal(entry.image.hasIcc,false);
 const registry=await readFile(resolve(base,"id-registry.json")),ownerState=await readFile(resolve(base,"studio/state.json"));
-const coordinationFlow=process.argv.includes("--coordination-flow"),navigationFlow=coordinationFlow||process.argv.includes("--navigation-flow"),validationFlow=navigationFlow||process.argv.includes("--validation-flow");
-const runId=`${coordinationFlow?"coordination-demo":navigationFlow?"navigation-demo":validationFlow?"validation-demo":"intake-demo"}-${new Date().toISOString().replace(/[:.]/g,"-")}-${randomUUID().slice(0,8)}`;
+const navigationFlow=process.argv.includes("--navigation-flow"),validationFlow=navigationFlow||process.argv.includes("--validation-flow");
+const runId=`${navigationFlow?"navigation-demo":validationFlow?"validation-demo":"intake-demo"}-${new Date().toISOString().replace(/[:.]/g,"-")}-${randomUUID().slice(0,8)}`;
 const output=resolve(base,"studio/demonstrations",runId),workspace=resolve(output,"workspace");
 await mkdir(resolve(output,"screenshots"),{recursive:true,mode:0o700});await mkdir(workspace,{recursive:true,mode:0o700});await writeFile(resolve(workspace,"id-registry.json"),registry,{mode:0o600,flag:"wx"});
 let service=await startStudio({dataRoot:workspace,allowPublicExport:false});
 const browser=await chromium.launch(),context=await browser.newContext({viewport:{width:1440,height:900},deviceScaleFactor:1,reducedMotion:"reduce"});
 await context.route("**/*",(route)=>new URL(route.request().url()).hostname==="127.0.0.1"?route.continue():route.abort());
-let page=await context.newPage();const sequence=[],label="Intake UX demonstration (title not supplied)",secondLabel="Second navigation demonstration (title not supplied)";
+let page=await context.newPage();const sequence=[],label="Intake UX demonstration (title not supplied)";
 async function editorReady(){await page.locator("#artwork-form").waitFor({state:"visible"});await page.waitForFunction(()=>!document.querySelector('#artwork-form [name="title"]').disabled);}
 async function capture(step,description){
   await prepareScreenshot(page);const accessibility=await auditAccessibility(page,{developerInjection:true}),reflow=await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1);
@@ -54,17 +54,6 @@ try{
   }
   await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
   await capture("05-save-draft","Save private draft without dimensions,price,edition,rights or public-source approval.");
-  if(coordinationFlow){
-    const second=snapshot.included.find((image)=>image.id==="w-0002");assert.equal(second.image.hasIcc,false);
-    await page.getByRole("button",{name:"Add images",exact:true}).click();await page.locator("#files").setInputFiles(resolve(directory,second.snapshotRelativeFile));await page.getByRole("button",{name:"Create draft",exact:true}).click();await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();await editorReady();
-    await page.getByLabel("Title",{exact:true}).fill(secondLabel);await page.getByLabel("Alt text",{exact:true}).fill("Private route-navigation demonstration; artwork facts unconfirmed");await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
-    await capture("05n-second-private-navigation-draft","Second explicitly selected frozen image supports preview route navigation;neutral interface label,not approved metadata.");
-    await page.getByRole("button",{name:`Open ${label}`,exact:true}).click();await editorReady();await page.getByLabel("Title",{exact:true}).fill(`${label} — unsaved tab A edit`);await capture("05o-tab-a-unsaved-title","A: Studio tab A has a newer unsaved Title;authoritative private saved title unchanged.");
-    const tabA=page,tabB=await context.newPage();await tabB.goto(tabA.url());page=tabB;await page.getByText("This artwork has unsaved edits open in another Studio tab.",{exact:true}).waitFor();assert.equal(await page.locator("#artwork-form").isVisible(),false);assert.equal(service.studio.state().catalogue.artworks[0].title,label);await capture("05p-tab-b-explicit-conflict","A: same-artwork tab B explicitly warns;no silently stale editor or independent writable copy.");
-    await page.getByRole("button",{name:"Open saved version (read-only)",exact:true}).click();await page.locator("#artwork-form").waitFor({state:"visible"});assert.equal(await page.getByLabel("Title",{exact:true}).isDisabled(),true);await capture("05q-tab-b-saved-read-only","A: explicit saved-version choice is visibly read-only;unsaved A edits remain in their owning tab.");
-    await page.getByRole("button",{name:"Return to other tab",exact:true}).click();await tabA.getByText("Continue your edits in this Studio tab.",{exact:true}).waitFor();await tabB.close();page=tabA;assert.match(await page.getByLabel("Title",{exact:true}).inputValue(),/unsaved tab A edit/);await capture("05r-original-tab-retains-unsaved","A: original Studio retains unsaved Title after second tab closes;no automatic save.");
-    await page.getByLabel("Title",{exact:true}).fill(label);await page.getByRole("button",{name:"Save draft",exact:true}).first().click();await page.getByText(/Draft saved\./).waitFor();
-  }
   if(navigationFlow){
     await page.getByRole("button",{name:"Artworks",exact:true}).click();assert.equal(await page.locator("#artwork-form").isVisible(),false);await capture("05a-artwork-grid","A: artwork grid with existing saved draft.");
     await page.getByRole("button",{name:`Open ${label}`,exact:true}).click();await editorReady();await capture("05b-open-draft-history","Preserved R11: open draft creates a private neutral-ID history entry.");
@@ -78,12 +67,7 @@ try{
     if(navigationFlow){const mainPage=page;page=previewPage;await page.getByRole("heading",{name:"Preparing artwork preview…",exact:true}).waitFor();await capture("05e-visible-preparing-preview","B: synchronous same popup has visible preparation while the browser request is deliberately paused for capture;actual backend build follows.");page=mainPage;releaseBuild();}
     await previewPage.waitForURL("http://127.0.0.1:*/artwork/**");await previewPage.waitForLoadState();assert.equal(await previewPage.locator("h1").innerText(),label);
     const mainPage=page;page=previewPage;await capture("05b-valid-current-draft-preview","B: actual production-component artwork preview succeeds;private Return to Studio is visible.");
-    if(coordinationFlow){
-      await page.locator(".site-header").getByRole("link",{name:"Archive",exact:true}).click();await page.waitForURL(/\/archive\/?$/);await capture("05s-preview-archive","C: artwork→Archive follows ordinary preview navigation.");
-      await page.locator("[data-archive-list]").getByRole("link",{name:/Second navigation demonstration/}).click();await capture("05t-preview-another-artwork","C: Archive→another artwork in the same private preview tab.");
-      await page.goBack();assert.match(new URL(page.url()).pathname,/^\/archive\/?$/);await capture("05u-preview-browser-back","C: browser Back returns to Archive normally;Return to Studio remains available.");
-      const closed=page.waitForEvent("close");await page.getByRole("link",{name:"← Return to Studio",exact:true}).click().catch((error)=>assert.match(error.message,/closed|interrupted/));await closed;page=mainPage;await page.getByText("Returned from the private preview. Studio is ready.",{exact:true}).waitFor();await editorReady();await capture("05v-returned-original-studio","B: Return to Studio closes its script-opened preview with opener protection retained;original Studio is usable again.");
-    }else{page=mainPage;await previewPage.close();}
+    page=mainPage;await previewPage.close();
   }
   const job=service.studio.state().jobs.at(-1),manifest=JSON.parse(await readFile(resolve(service.studio.root,"derivatives",job.result.mediaId,"manifest.json")));assert.equal(job.status,"complete");assert.equal(manifest.settings.profile,"explicit-srgb-assumption");
   await page.close();await service.stop();service=await startStudio({dataRoot:workspace,allowPublicExport:false});page=await context.newPage();
@@ -91,10 +75,9 @@ try{
   await editorReady();
   assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),label);assert.equal(await page.getByLabel("Medium",{exact:true}).inputValue(),"painting");assert.match(await page.getByLabel("Alt text",{exact:true}).inputValue(),/Private intake workflow demonstration/);assert.doesNotMatch(await page.locator("body").innerText(),/--assume-srgb|Missing ICC profile/);
   await capture("06-restart-reopen-persisted","Actual server restarted; Title,Medium,Alt text and explicit per-image pipeline profile persist.");
-  const state=service.studio.state();assert.equal(state.catalogue.artworks.length,coordinationFlow?2:1);for(const work of state.catalogue.artworks){assert.equal(work.published,false);assert.equal(work.kind,"unclassified");assert.ok(!state.workflow[work.id].approved);}
+  const state=service.studio.state();assert.equal(state.catalogue.artworks.length,1);for(const work of state.catalogue.artworks){assert.equal(work.published,false);assert.equal(work.kind,"unclassified");assert.ok(!state.workflow[work.id].approved);}
   assert.deepEqual(await readFile(resolve(base,"id-registry.json")),registry);assert.deepEqual(await readFile(resolve(base,"studio/state.json")),ownerState);const preservation=await sourcePreservation(snapshot);assert.equal(preservation.unchanged,169);
   const report={request:navigationFlow?"M09-R11":validationFlow?"M09-R10":"M09-R8",previewModel:"current edited draft;invalid data focuses blockers,valid edits privately save",runId,output,workspace,studioRoot:service.studio.root,snapshotSha256:snapshot.snapshotSha256,pipelineProfile:manifest.settings.profile,ownerStateRegistryPreserved:true,sourcePreservation:preservation,restartPersisted:true,sequence,screenshots:sequence.length*2,violations:sequence.flatMap((step)=>step.accessibility.violations).length,incomplete:sequence.flatMap((step)=>step.accessibility.incomplete),reflowFailures:sequence.filter((step)=>!step.reflow).length,publicSourceApproval:false,repositoryWritesEnabled:false,milestoneComplete:false};
-  if(coordinationFlow)Object.assign(report,{request:"M09-R12",crossTabBehavior:"single-artwork owner;explicit warning;only explicit saved version is read-only",previewReturn:"original tracked preview closed;Studio usable again",previewHistory:"artwork→Archive→another artwork→Back",browser:browser.version()});
   await writeFile(resolve(output,"report.json"),JSON.stringify(report,null,2)+"\n",{mode:0o600});
   await writeFile(resolve(output,"README.md"),`# Studio explicit-colour intake sequence\n\nActual authorised untagged corpus image;isolated persistent workspace ${workspace}. Owner state/registry unchanged;169sources preserved. Temporary title/medium/alt labels are interface demonstration,not owner artistic/rights/public-source approval.\n\n${sequence.map((step)=>`- ${step.step}: ${step.description} (${step.viewport})`).join("\n")}\n\n${report.screenshots} screenshot files;observedaxeviolations ${report.violations},incomplete ${report.incomplete.length},reflow ${report.reflowFailures}. Actual server restarted/reopened and edits persisted. Existing conversion pipeline unchanged;explicit image-scoped sRGB choice recorded in private manifest.\n\nOwner tool/Node22 from checkout: npm run studio. Demo: JORDANNESBITT_M09_DATA=${workspace} npm run studio. All private outputs persist under M09root. No actual repositorywrite/commit/deploy/launchapproval/M09complete.\n`,{mode:0o600});
   await writeFile(resolve(base,"studio/latest-demonstration.json"),JSON.stringify({output,runId,report:resolve(output,"report.json")},null,2)+"\n",{mode:0o600});

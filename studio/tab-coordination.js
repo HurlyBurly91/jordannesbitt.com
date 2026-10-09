@@ -1,49 +1,40 @@
-// Browser-only ownership. Peer announcements never authorize writes or carry drafts.
-export function coordinateArtworkTabs({ isDirty, onStatus, onFocus, onReturn }) {
-  const supported = Boolean(navigator.locks && globalThis.BroadcastChannel);
-  const tab = crypto.randomUUID(), held = new Map(), pending = new Map(), peers = new Map();
-  const channel = supported ? new BroadcastChannel("studio-tabs-v1") : null;
-  const validId = (id) => typeof id === "string" && /^[a-z][a-z0-9-]*$/.test(id);
-  let sequence = 0;
+// Advisory browser presence only. Authoritative CAS lives in the private store.
+export function coordinateArtworkTabs({ isDirty, onStatus, onSaved, onReturn }) {
+  const tab = crypto.randomUUID(), local = new Map(), peers = new Map();
+  const validId = (id) => typeof id === "string" && /^[a-z][a-z0-9-]{0,79}$/.test(id);
+  let channel = null, sequence = 0, suspended = false;
+  try { if (globalThis.BroadcastChannel) channel = new BroadcastChannel("studio-tabs-v1"); } catch {}
   function send(type, data = {}) { channel?.postMessage({ type, tab, sequence: ++sequence, ...data }); }
-  function announce(id) { if (held.has(id)) send("status", { id, dirty: Boolean(isDirty(id)) }); }
+  function status() { send("status", { drafts: [...local].map(([id, dirty]) => ({ id, dirty })) }); }
   channel?.addEventListener("message", ({ data }) => {
     if (!data || typeof data.tab !== "string" || data.tab === tab || !Number.isSafeInteger(data.sequence)) return;
     const previous = peers.get(data.tab);
     if (previous && previous.sequence >= data.sequence) return;
     if (peers.size >= 64 && !previous) peers.delete(peers.keys().next().value);
-    peers.set(data.tab, { sequence: data.sequence });
+    const peer = { sequence: data.sequence, seen: Date.now(), drafts: previous?.drafts ?? new Map() };
+    peers.set(data.tab, peer);
     if (data.type === "return" && typeof data.nonce === "string" && /^[a-f0-9-]{36}$/.test(data.nonce)) { onReturn(data.nonce); return; }
-    if (!validId(data.id)) return;
-    if (data.type === "query") announce(data.id);
-    if (data.type === "focus" && held.has(data.id)) onFocus(data.id);
-    if (["status", "released", "saved"].includes(data.type)) onStatus({ id: data.id, type: data.type, dirty: data.dirty === true });
+    if (data.type === "query") { if (!suspended) status(); return; }
+    if (data.type === "status" && Array.isArray(data.drafts)) {
+      peer.drafts = new Map(data.drafts.slice(0, 1024).filter((draft) => draft && validId(draft.id)).map((draft) => [draft.id, draft.dirty === true]));
+      onStatus();
+    }
+    if (data.type === "closed") { peer.drafts.clear(); onStatus(); }
+    if (data.type === "saved" && validId(data.id)) { peer.drafts.set(data.id, false); onStatus(); onSaved(data.id); }
   });
-  function release(id) {
-    pending.get(id)?.cancel();
-    const entry = held.get(id);
-    if (entry) { held.delete(id); entry.release(); send("released", { id }); }
-  }
-  async function acquire(id) {
-    if (!supported || !validId(id)) return false;
-    if (held.has(id)) return true;
-    if (pending.has(id)) return pending.get(id).ready;
-    let answer, unlock, cancelled = false;
-    const ready = new Promise((done) => { answer = done; });
-    const lifetime = new Promise((done) => { unlock = done; });
-    pending.set(id, { ready, cancel: () => { cancelled = true; } });
-    navigator.locks.request(`studio-artwork-${id}`, { ifAvailable: true }, async (lock) => {
-      pending.delete(id);
-      if (!lock || cancelled) { answer(false); send("query", { id }); return; }
-      held.set(id, { release: unlock }); answer(true); announce(id);
-      await lifetime;
-    }).catch(() => { pending.delete(id); answer(false); });
-    return ready;
-  }
-  window.addEventListener("pagehide", () => { for (const id of new Set([...held.keys(), ...pending.keys()])) release(id); });
+  setInterval(() => {
+    if (!suspended) status();
+    let expired = false;
+    for (const [id, peer] of peers) if (Date.now() - peer.seen > 4000) { peers.delete(id); expired = true; }
+    if (expired) onStatus();
+  }, 1000);
+  window.addEventListener("pagehide", () => { suspended = true; send("closed"); });
+  window.addEventListener("pageshow", () => { suspended = false; status(); send("query"); });
   return {
-    supported, acquire, release, owns: (id) => held.has(id), announce,
-    query: (id) => send("query", { id }), focus: (id) => send("focus", { id }),
-    saved: (id) => send("saved", { id }), returnToOwner: (nonce) => send("return", { nonce }),
+    supported: Boolean(channel),
+    sync(ids) { local.clear(); for (const id of ids) if (validId(id)) local.set(id, Boolean(isDirty(id))); status(); },
+    announce(id) { if (validId(id)) { local.set(id, Boolean(isDirty(id))); status(); } },
+    hasDirty(id) { return [...peers.values()].some((peer) => Date.now() - peer.seen <= 4000 && peer.drafts.get(id)); },
+    query: () => send("query"), saved: (id) => send("saved", { id }), returnToOwner: (nonce) => send("return", { nonce }),
   };
 }
