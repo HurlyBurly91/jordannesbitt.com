@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R13
+Phase: FOLLOW_UP
+Active-Request: M09-R15
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -234,3 +234,74 @@ Source: USER, 2026-10-09. Update this repository to conform to the current `dura
   Limitations:
     - Build success is not public-content, usability, colour, rights or release approval.
     - The prior R13 95/95 application-suite result remains historical evidence at its recorded material checkpoint; this policy/schema migration did not relabel it as newly executed.
+
+## M09-R15 — Framework 1.1.2 same-schema compatibility update
+
+Source: USER, 2026-10-09. Update this repository again to conform to the latest `durable-state-machine` experimental branch, like the previous migration, without clobbering project-owned durable state. Current upstream experimental commit: `a6a58d297e7233ee86850c39869958edd032b31f`; release 1.1.2, schema 2.
+
+- [~] M09-R15-01 Update the managed framework snapshot and manifest from 1.1.0/schema2 to 1.1.2/schema2, preserving updater ownership and payload-integrity checks.
+  Source: USER
+  Requirement: Same-schema update must replace only framework-owned payload/manifest unless a narrow project compatibility correction is explicitly reviewed.
+  Verified-By:
+    - M09-R15-V01
+    - M09-R15-V02
+
+- [~] M09-R15-02 Conform the bounded live ledger to the updated schema-2 compatibility semantics for inherited unresolved human gates and historical evidence without inventing replacement facts.
+  Source: USER
+  Requirement: Preserve original stable H IDs and archived requirement/evidence provenance; use Coverage-Source/HISTORICAL_RECORDED compatibility only where supported by actual archives. Do not manufacture commands, repository-state claims, acceptance, or duplicate historical request groups merely to satisfy the validator.
+  Verified-By:
+    - M09-R15-V01
+
+- [~] M09-R15-P01 Preserve all project-specific product/Git/privacy/publication/model-effort policy, PROJECT/milestones/docs/records/experiences, current M09-R13 owner gate, older unresolved human gates, historical failures, stable IDs and application behavior.
+  Source: USER
+  Requirement: No bootstrap reset, no history loss, no inferred human acceptance, no public/release/external-effect authority expansion.
+  Verified-By:
+    - M09-R15-V01
+    - M09-R15-V02
+
+- [x] M09-R15-D01 Inspect the upstream delta and choose the least-destructive update path.
+  Source: DERIVED
+  Requires:
+    - M09-R15-01
+    - M09-R15-02
+    - M09-R15-P01
+  Conclusion: Upstream 1.1.2 remains schema 2, so the framework payload is a compatible managed update. Its material compatibility additions recognize nested follow-up IDs, inherited pending H gates through Coverage-Source archives, and HISTORICAL_RECORDED V evidence without fabricated commands/repository state. This project can therefore remove the previous live-ledger bridge requirements after archiving the pre-update schema-2 ledger, while preserving original H IDs and archived requirements.
+  Conclusion-Status: DERIVED
+  Conclusion-Scope: Durable-state policy/live-ledger representation only at project head 15cc418ed53cea8f4b8dd38eefd543e660877a08 and upstream experimental a6a58d297e7233ee86850c39869958edd032b31f; no application change.
+  Conclusion-Evidence:
+    - .durable-state/MANIFEST
+    - records/M09-schema1-ledger-snapshot-2026-10-09.md
+    - upstream framework/experience-augmented/SCHEMAS.md at a6a58d297e7233ee86850c39869958edd032b31f
+  Conclusion-Limitations:
+    - Final strict validation against the updated payload remains pending.
+  Conclusion-Recheck-On:
+    - Framework schema version change
+    - Strict-validator diagnostic
+    - Missing archived coverage target
+    - Any application/material file introduced by the update
+
+- [~] M09-R15-V01 Validate framework 1.1.2 identity/hash/integration and strict schema-2 live-ledger compatibility after the update.
+  Source: DERIVED
+  Covers:
+    - M09-R15-01
+    - M09-R15-02
+    - M09-R15-P01
+  Gate: INVARIANT
+  Command: npm run state:check
+  Oracle: property-or-invariant
+  Expected: Strict framework validation and project-specific checks exit 0 with no warnings, and archived inherited-gate coverage resolves exactly.
+  Limitations:
+    - Structural validation does not prove website behavior or human acceptance.
+
+- [~] M09-R15-V02 Verify the same-schema framework update did not alter application behavior or protected project boundaries.
+  Source: DERIVED
+  Covers:
+    - M09-R15-01
+    - M09-R15-P01
+  Gate: CONSTRAINT
+  Command: npm run build
+  Oracle: integration-or-end-to-end
+  Expected: Astro build/check passes; diff contains only framework/manifest plus reviewed durable-state compatibility/provenance/validation files, not application source/tests/content.
+  Limitations:
+    - Build success is not owner usability/content/rights/release approval.
+
