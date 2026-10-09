@@ -28,7 +28,7 @@
     "studio:coordination-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-multitab-demo.mjs",
     "studio:multitab-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-multitab-demo.mjs",
     "verify": "npm run state:check && npm run build && npm test",
-    "state:check": "node scripts/durable-state-check.mjs"
+    "state:check": "python3 .durable-state/framework/validator.py --strict . && node scripts/durable-state-check.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",

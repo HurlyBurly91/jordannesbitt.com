@@ -3,601 +3,224 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R13
-Specification: milestones/M09-content-acceptance.md
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R14
+Spec: milestones/M09-content-acceptance.md
+Ledger: TASKS.md
+Experience-Retrieval: disabled
 ```
 
-## Current authorization and reconstruction
+This is the bounded schema-2 live execution ledger.
 
-Source: USER, explicit M09 real-image pilot request, 2026-10-03. Approved read-only input root: `/home/jordan/Desktop/myinsta`. This is bounded authority to inventory/inspect/classify and exercise real images locally, extend local review code/documentation, run checks and checkpoint permitted code/documentation on redesign/astro-foundation. Stop at the next genuine owner-review gate. It is NOT approval to commit original/derived artwork images or private real-image metadata to public source, publish production records, create/approve a launch manifest, choose final launch content, deploy/publicly preview, modify master/backup/hosting/DNS, send messages, purchase/activate services/payments, or change host configuration.
+The complete pre-schema-2 ledger, including every historical M09-R1 through R13 task, original evidence prose, failed human observations and supersession notes, is preserved verbatim at `records/M09-schema1-ledger-snapshot-2026-10-09.md`. Existing per-request checkpoint records remain authoritative historical provenance. Do not load the migration snapshot unless old task-level provenance is actually needed.
 
-Initial reconstruction: M08 technical complete; old grant ended before M09. New request activates M09-R1 only. Clean development checkout/expected origin at 32ded12; remote matches, protected refs remain master755df7f/backup3bc95c7. Current actual content arrays empty and release BLOCKED_CONTENT. Existing Node22/npm10 temporary runtime and selected openai/gpt-6.1-sol/max facts are in docs/operations.md; no runtime/model substitution. M08 evidence archived already; no unresolved M08 human checks to supersede. M09 final public/human acceptance remains unresolved.
+## M09-R1 — Remaining real-image and final-content owner gates
 
-Pilot checkpoint cdcb339b5ef1086ece7111e74e0f64d9162faebf committed/pushed and matching remote/clean checkout verified. Committed inventory is22code/documentation files only: no artwork assets, source-linked private metadata or production content/identity/manifest changes. Final documentation transport evidence preserves the ACTIVE/HUMAN_VERIFICATION gate; no further implementation until owner feedback/new request.
+- [ ] M09-R1-09 Owner reviews provisional classifications, ambiguity, date proxies, visual groups/composition and reproduction quality before those provisional choices are treated as accepted content.
+  Source: DERIVED from preserved M09-R1-H01; schema-2 formalization only.
+  Requirement: Explicit owner review remains required for provisional real-image classifications/groups/reproduction quality.
+  Verified-By:
+    - M09-R1-H01
 
-## M09-R1 — Local Instagram real-image pilot
-
-- [x] M09-R1-01 Snapshot supported image files present at initial inventory time and record exact files/checksums/timestamps used for every review run; directory may receive later exports, which must not silently change an existing run.
-  Source: USER. Ignore `.gallery-dl-jordancnesbitt.sqlite3` and all non-image files; no broader directories or source writes.
-- [x] M09-R1-02 Use each source image's filesystem modification calendar date as its provisional artwork creation date for testing, explicitly retaining original mtime/timezone and owner-instruction provenance, revision status and ambiguity for later correction.
-  Source: USER. Do not infer a date from Instagram numeric IDs or EXIF instead.
-- [x] M09-R1-03 Leave unsupplied physical dimensions absent/unknown; they are not a pilot blocker.
-  Source: USER.
-- [x] M09-R1-04 Inspect actual images for provisional medium/category/likely technique, orientation and useful visual relationships; record confidence/ambiguity, never force an uncertain medium or treat classifications as permanent owner approval.
-  Source: USER.
-- [x] M09-R1-05 Assign neutral immutable internal IDs consistent with catalogue rules; retain original relative/numeric Instagram filename separately as source provenance, not conceptual identity. Preserve assignments across runs; apparent duplicate works require owner decision, not silent merges/reassignment.
-  Source: USER and DERIVED (identity preservation).
-- [x] M09-R1-06 Generate local real-image production-component review for representative artwork pages, test Selected Work sequence, provisional group layout when useful, archive/medium and homepage composition; all temporary choices/labels must be explicitly review-only.
-  Source: USER. Missing artwork/project titles use neutral UI review labels, not invented permanent titles/series names or artistic/rights claims.
-- [x] M09-R1-07 Run relevant automated checks on the real pilot while actual npm run release:check remains BLOCKED_CONTENT; do not weaken central publication/release guards.
-  Source: USER.
-- [x] M09-R1-08 Produce a local owner summary with exact included files, per-file provisional dates/classifications/ambiguities/groups, screenshot/review paths, image/colour/format problems and genuine decisions required next.
-  Source: USER. All image-specific intake/classification/output remains outside public Git until separately approved for public source.
-- [x] M09-R1-P01 Do not invent artwork titles, physical dimensions, prices, availability, edition sizes, project/series names, exhibitions, provenance or unsupplied rights/artist claims. No final selection/publication/launch manifest approval or real messages/services.
-  Source: USER. Ownership/authorship is not inferred merely from a source image; default unknown offer state, no rights/creator EXIF insertion.
-- [x] M09-R1-P02 Preserve source bytes/mtime, original identity/neutral URLs/design/major, protected refs, per-root cache isolation and public-repository boundary. Images, source-linked private metadata, contact sheets, snapshots and real screenshots remain in approved local output under /tmp/opencode, never tracked/staged/publicly uploaded.
-  Source: USER and DERIVED. noindex is courtesy, not confidentiality; loopback only, no external requests.
-- [x] M09-R1-D01 Implement explicit-root frozen image inventory/stable-copy/checksum/private ID registry and contact sheets; include late/changing/corrupt file outcomes without scanning/opening non-images.
-  Source: DERIVED. Dependencies: authorization captured above.
-  Evidence: First frozen snapshot run-2026-10-03T18-41-12-446Z-f889d58b captured169/169 readable supported images at18:41:12.462Z; ignored1nonimage without opening (SQLite),0exclusions,8contact sheets. SnapshotSHA256 2abd063c70708d9b2ce9cf9b5c858de1cd735baf7be0d8ae88beb81a9efeb57e; local path /tmp/opencode/jordannesbitt-m09/snapshots/run-2026-10-03T18-41-12-446Z-f889d58b/snapshot.json; timezoneAmerica/Toronto. All sheets and11 selected originals inspected; detailed private classifications/review plan saved locally, not Git. Run is fixed even if later exports arrive. Source preservation/repeat tests passed in V01.
-- [x] M09-R1-D02 Extend private real-pilot adapter/tooling for unknown classifications/object kinds and neutral display labels with owner-mtime date provenance; preserve production schemas/predicate/release gate and absent physical data.
-  Source: DERIVED. Dependencies: D01, visual inspection. Temporary view models may use rendering flags only inside an independent labelled/noindex local root; production data remains unchanged.
-  Decisions to implement: unknown/unclassified medium and object kind are explicit, not guessed; supplied file dates retain provisional labels; UI review labels are not artwork/project names. Local provisional page must not emit artist/rights attribution, offers or public-content/launch approval. Untagged Instagram web exports may be interpreted as sRGB solely for this reversible local comparison, with assumption recorded and source copies unchanged; owner colour acceptance remains required. No automatic lighting/crop/perspective correction.
-- [x] M09-R1-D03 Build cached unmodified-edge/orientation/colour-aware derivatives and representative real-component package, summary and metrics/screenshots from the frozen snapshot; no source metadata or rights invention.
-  Source: DERIVED. Dependencies: D01,D02.
-  Evidence: First real pilot command exceeded600000ms during full JPEG/WebP/AVIF encoding; not a passing run.93complete per-ID caches and2incomplete .pending directories observed locally, no review created yet. pgrep confirms no surviving pilot/preview process. Resume using checksum-verified complete caches with larger timeout; pending directories are ignored/not reused or published. Source snapshot/production boundary remain intact; no owner input required for this operational retry.
-  Retry evidence: Local review run review-2026-10-03T19-30-46-223Z-08d38c36 completed169inputs/10representatives/63screenshots,169/169sourcebytes+mtimeunchanged,0reflow failures,3axe target-size violations on archive multigroup links. Initial full-page images reveal unloaded below-fold lazy pictures; not accepted final screenshot evidence. Private exact169-file/date/classification/group table exists locally; all colour profiles absent and local sRGB interpretation explicitly recorded. No actual publication/rights/owner acceptance.
-- [x] M09-R1-D04 Fix actual real-pilot multi-group link targets, force complete image loading for screenshots only, and use explicitly labelled small group-layout samples while retaining all provisional candidate memberships in private metadata.
-  Source: DERIVED from real run inspection. Do not suppress axe/alter production lazy loading/performance measurement or silently turn samples into final series/curation. CLI must fail substantive checks rather than return apparent success with violations. Refresh a new review run from the same frozen snapshot/cache, never overwrite prior evidence.
-  Implementation: Generic24px archive group link targets, capture-only eager decode (shared synthetic/real capture), explicit private layout samples/full-member distinction and failure exits implemented. Added synthetic snapshot/date/late-arrival/neutral-ID/private-boundary/unknown-semantics/multigroup/capture regression tests. Full production checks and a new image-complete real capture pending.
-  Verification: Production npm run verify exits0 (69pass,0fail/skips;1unused-import hint subsequently removed). Refreshed real run review-2026-10-03T19-51-25-949Z-8424931d passes169/10/69captures,0axe/0reflow,source169/169unchanged; actual decoded screenshots inspected. Final private-only metadata/disclosure audit also removes inherited medium/selection artist bylines and authored-connection labels, and checks zero creator/rights/offer assertions. New refreshed capture/check required after these scoped overlay refinements; actual public templates/identity/metadata remain unchanged except generic unknown semantics/capture/hit-area support.
-  Final verification work: Added an independent synthetic-source private-adapter regression covering assertion omission, absent owner facts/dimensions and unchanged private published:false drafts. Run targeted pilot tests/check diagnostics and refresh exact local real package; no additional real metadata/rights choice is inferred.
-- [x] M09-R1-V01 Verify supported-only snapshot/late-file isolation, stable IDs, date provenance, missing dimensions/unknown semantics, source hashes/mtime preservation and no private artefacts in production/Git.
-  Source: DERIVED. Dependencies: D01–D03. Actual commands/environment/results verified below.
-  Final evidence: npm run verify exit0 (69tests/no failures/skips; initial1unused-import hint removed); final npm run check exit0/0diagnostics and targeted pilot suite4/4 pass. Synthetic checks prove supported-only/SQLite-ignore/corrupt/symlink/late arrivals, neutral IDs and date timezone, unchanged bytes/mtime and private-draft/provisional-view separation. Actual source169/169 hashes+mtime unchanged in final real run. Git diff verifies actual content/identity/manifest/assets untouched; only named code/docs staged. No original/derived/real-image JSON/screenshots in repo.
-- [x] M09-R1-V02 Run real-image local build/links/assets/intrinsic/metadata/keyboard/reflow/axe/budget checks, inspect actual screenshots and validate actual production/release remains empty/BLOCKED_CONTENT; note colour and missing-fact limitations honestly.
-  Source: DERIVED. Dependencies: D03. Actual commands/environment/results verified below.
-  Evidence: Final targeted pilot regression4/4 and Astro check0errors/warnings/hints pass. Real run review-2026-10-03T20-04-53-923Z-fd6f4e54 passes169inputs/10items/69decoded captures,0axe/0reflow,source169/169unchanged, plus local assertion-omission audit. Added direct real-source keyboard full-image/return, classified archive count/reset and no-JS browsing evidence to the refresh command so relevant real interaction checks are explicit (not inherited synthetic claims). Final refreshed report must be inspected before owner gate.
-  Final evidence: review command exit0; accepted current local run /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-03T20-13-49-968Z-546dd887, exact snapshotSHA unchanged,169inputs/10representatives/69decoded captures,0axe/0reflow,0unapproved artist/rights/offer assertions. Real keyboard/fullimage/back and archive count/reset pass at360/768/1440; no-JS actual-image browsing passes. Four real lab paths3runs: medianLCP500–1012ms,CLS0,initialtransfer29004–169754bytes on documented mobile profile.169/169source unchanged. Final summary/private record table/report and representative source/screenshot images inspected; colour comparison only relative to digital exports, not physical-art/owner approval. Actual release:check exits1 BLOCKED_CONTENT with same8missing-content issues; no gate changes.
-- [x] M09-R1-V03 Reconcile docs/state, inspect intended code-only/documentation diff and protected refs, commit/push permitted pilot checkpoint with no assets/private input/metadata, and stop for owner review (not final M09 closeout).
-  Source: DERIVED. Dependencies: V01,V02,P01,P02.
-  Evidence: docs/ canonical rules reconciled; intended tracked/new code/docs reviewed and git diff --check exit0. Source metadata/classification plan/pilot images remain outside checkout. Pilot checkpoint cdcb339 committed/pushed; git status/log/show/ls-remote exit0 confirm clean checkout/matching cdcb339b5ef1086ece7111e74e0f64d9162faebf and22code/docs-only committed files. Master755df7f/backup3bc95c7 unchanged; no surviving preview writer. Milestone remains ACTIVE/HUMAN_VERIFICATION, never final COMPLETE/closeout.
 - [H] M09-R1-H01 Owner reviews provisional classifications/ambiguities/date proxies, candidate visual groups/composition and actual reproduction quality; confirms or revises next pilot/selection/metadata steps.
-  Source: DERIVED from USER stop condition. Dependencies: completed authorized pilot implementation/checks. No acceptance inferred from automation.
-- [?] M09-R1-H02 Final M09 actual public-source/rights/metadata/content/manifest/visual/business/contact approval and remaining human checks require a later explicit grant/input; this local-only pilot cannot complete M09 or authorize M10.
-  Source: DERIVED from contract and USER restrictions. Dependencies: later owner decisions; not a blocker to the currently authorized local pilot.
+  Source: DERIVED from USER stop condition; preserved stable ID.
+  Covers:
+    - M09-R1-09
+  Gate: HUMAN
+  Verification:
+    - Owner explicitly accepts or revises the provisional classifications/groups/date proxies/reproduction quality. Automation cannot substitute.
 
-No superseded IDs. No final M09 closeout while human/content gates remain unresolved. Authorized pilot implementation/automated work is finished; waiting at the genuine owner-review gate. Further feedback creates M09-R2 before coding. Snapshot, review summaries and registry are local artefacts referenced by path/evidence only, not competing public project state. Preserve/back up /tmp/opencode/jordannesbitt-m09/id-registry.json and the frozen snapshot before clearing temporary outputs; registry loss must not silently reassign neutral IDs.
+- [ ] M09-R1-10 Final M09 public-source, rights, factual metadata, content, manifest, visual, business and contact approval requires explicit owner input before closeout or M10.
+  Source: DERIVED from preserved M09-R1-H02 and active milestone contract; schema-2 formalization only.
+  Requirement: Final public-source/rights/metadata/content/manifest/business/contact approval remains a human gate.
+  Verified-By:
+    - M09-R1-H02
 
-## M09-R2 — Owner-rejected scale and gallery/inspection redesign
+- [H] M09-R1-H02 Final M09 actual public-source/rights/metadata/content/manifest/visual/business/contact approval and remaining human checks require explicit owner input; local-only work cannot complete M09 or authorize M10.
+  Source: DERIVED from contract and USER restrictions; preserved stable ID. Marker normalized from BLOCKED to AWAITING_HUMAN because the preserved text explicitly said it was not a blocker to authorized local work.
+  Covers:
+    - M09-R1-10
+  Gate: HUMAN
+  Verification:
+    - Owner explicitly approves the exact public source/rights/factual content/manifest/business/contact set.
 
-Source: USER, 2026-10-05. Owner visual review rejects current presentation: artwork is so oversized that even approximately20% Firefox zoom at1440px does not support usable browsing; same-tab full-image inspection failed. Explicit presentation-only follow-up authorizes generic component/CSS/inspection/review-code and documentation checkpoints on redesign/astro-foundation, using the **same frozen169-image snapshot** and unchanged private metadata/plan. No new permanent metadata, source editing, public assets, publishing/manifest/final selection/deployment/real services. Stop for owner visual acceptance, not M09 completion.
+## M09-R5 — Remaining persistent-review owner gates
 
-Reconstruction:4491ff0 origin/development/protected refs match; no tracked changes. Unfamiliar empty untracked `jordannesbitt-art@0.1.0` inspected and preserved/not staged. Preserve M09-R1-H01 (classification/date/identity/group/colour choices remain unaccepted) and H02 (final public/content/rights/business gate); new H01 below is revised-presentation acceptance. HUMAN_VERIFICATION→FOLLOW_UP recorded before code, then IMPLEMENTATION→AUTOMATED_VERIFICATION→HUMAN_VERIFICATION. No requirement IDs silently replaced or human checks bypassed; historical simple-link technical tests do not constitute visual approval.
+- [ ] M09-R5-05 Owner reviews the regenerated persistent provisional classifications/groups/pilot/colour and retained presentation before those review artifacts are accepted.
+  Source: DERIVED from preserved M09-R5-H01.
+  Requirement: Persistent review-package content/artistry/colour remains subject to owner review.
+  Verified-By:
+    - M09-R5-H01
 
-- [x] M09-R2-01 Study primary behavioral/visual references https://www.davidzwirner.com/artists/amy-sillman and https://www.davidzwirner.com/artworks/lisa-yuskavage-in-the-company-of-models-bf6f5, with https://www.kentridge.studio/william-kentridge-projects/ secondary sequencing reference. Emulate hierarchy/restraint/scale/density/whitespace and overview-object separation only, never copy markup/CSS/branding/type/assets/prose/proprietary behavior.
-  Source: USER. Evidence: supplied pages and linked Sillman survey fetched/read-only viewed at1440×900/DPR1/visualViewport.scale1; local reference screenshots and dimension/hierarchy observations /tmp/opencode/jordannesbitt-reference-study. Contained work plane/subordinate modest object metadata, separated survey/context, quiet headers and authored project context observed. Their literal two-column survey, cookie/newsletter/gallery branding not imported; adapt requested3-column index behavior, not copy. No artwork/code/branding/prose added to app.
-- [x] M09-R2-02 Rework Archive/medium/browse as contained visual indexes: roughly3works across1440px,2intermediate/1narrow, concise subordinate metadata, deliberate density/whitespace and viewport/absolute caps. Several neighboring works visible at normal zoom; explicit editorial treatment for exceptional proportions only, no automatic crop/column-fill.
-  Source: USER.
-- [x] M09-R2-03 Selected Work is an ordered curated mode, larger than index but not homogeneous grid/oversized slideshow; intentional paired/varied rhythm and whitespace, neighbors perceptible, portraits bounded to useful viewport.
-  Source: USER. Preserve supplied sequence/selection; no new curation facts.
-- [x] M09-R2-04 Project/group pages preserve exact ordered/cross-medium members/context with restrained title/context and intentional larger moments alternating with smaller paired/grouped works; no invented series names/claims.
-  Source: USER.
-- [x] M09-R2-05 Individual object page initially shows complete primary work comfortably in viewport, normally about70–75vh accounting for header/context; contained intrinsic image, isolated inspection, compact subordinate separated metadata and useful additional views.
-  Source: USER. Only supplied actual metadata displayed; private review labels remain neutral disclosure, never permanent title.
-- [x] M09-R2-06 Replace failed same-tab inspection with deliberate accessible restrained lightbox/modal or demonstrably better separated inspection mode: explicit click/tap, complete natural ratio, larger-than-viewport inspection when useful, keyboard/touch, Escape close/focus return; optional direct derivative link remains. No zoom/cursor/animation spectacle, autoplay or browser-zoom conflict.
-  Source: USER.
-- [x] M09-R2-07 Rework homepage at100% around one dominant but bounded genuine work, concise existing identity/practice text, restrained project/selection introductions/whitespace and supported paths. Preserve paper/ink/oxide, serif+restrained sans/severe editorial identity; no Zwirner branding or gallery-only nav, SaaS cards/rounded panels/dashboard/ecommerce effects.
-  Source: USER.
-- [x] M09-R2-08 Regenerate private real-image review at **100% browser zoom** for1440/768/360, each covering home/drawing-medium/archive/Selected Work/allprovisionalgroup samples/portrait/landscape/square object and opened inspection. Screenshots must demonstrate ordinary scale, not compensation by zoom-out.
-  Source: USER. Exact frozen snapshot checksum2abd063c70708d9b2ce9cf9b5c858de1cd735baf7be0d8ae88beb81a9efeb57e and existing private visual-plan metadata unchanged. Record CSSpx viewport/deviceScaleFactor/visualViewport scale; Firefox100% evidence if available, no host installation/configuration changes.
-- [x] M09-R2-09 Re-run full/relevant real pilot checks: no crop/distortion, keyboard/Escape/focus restoration/touch, archive filters/reset, no-JS basic browsing, privacy/publication isolation and reflow; release:check remains BLOCKED_CONTENT without gate relaxation.
-  Source: USER.
-- [x] M09-R2-10 Return ACTIVE/HUMAN_VERIFICATION with new exact local package/screenshots, before/after sizing/layout architecture summary, remaining presentation ambiguities and observed test results; confirm code/docs-only Git checkpoint with no real assets/private metadata. Do not mark M09 complete.
-  Source: USER.
-- [x] M09-R2-P01 Preserve original/export aspect ratio/full edges, no destructive crop/distortion/automatic white-balance/perspective/retouch/room views. Square export framing does not imply physical artwork shape.
-  Source: USER.
-- [x] M09-R2-P02 Presentation only: leave provisional dates/classifications/permanent titles/physicaldimensions/edition/prices/availability/group names/member order/publication/manifest/rights/biography/CV/recipient unchanged. Provisional groups never promoted. Preserve identity config/predicate/major/master/backup/hosting/DNS/external-effect/private-source boundaries and existing unfamiliar file.
-  Source: USER and DERIVED.
-- [x] M09-R2-D01 Implement presentation-mode components/CSS size tokens, dense browse grid, editorial sequence/project rhythm, compact object/header/metadata and restrained home; generic explicit display variants, not private data mutation.
-  Source: DERIVED. Dependencies:01 reference study/requirement capture.
-  Evidence: shared natural-ratio CatalogueImage,3/2/1browse planes, responsive archive/native filter disclosure, separate editorial slots and compact primary/additional/home planes. Home/narrow-object intrinsic-height refinement verified in final V01/V02; metadata/member order unchanged. Not owner aesthetic acceptance.
-- [x] M09-R2-D02 Implement reusable native-dialog inspection controls/fit-versus-larger view, accessible fallback and precise focus/keyboard/touch/reduced-motion lifecycle; keep production static-first/minimal JS.
-  Source: DERIVED. Dependencies:05,06.
-  Evidence: native fit/pixel-scroll/Close/Escape/Tab-boundary/focus/scroll restoration and direct/noJS fallback verified by targeted7/7presentation tests and final full/real checks. Temporary local Firefox155.0 available/verified, no host configuration changes. Initial lifecycle/driver failures and corrections retained in records/M09-R2-presentation-checkpoint.md.
-- [x] M09-R2-D03 Update synthetic/full and real-pilot verification/capture to assert normal100% scale/density/object bounds/inspection lifecycle and capture opened modal; freeze same snapshot/plan, store all real artifacts locally.
-  Source: DERIVED. Dependencies:D01,D02.
-  Evidence: shared bounds/lifecycle checker, synthetic shapes/long titles, real viewport/fullpage/fit/pixel captures and same-snapshot/private-fact comparator verified. Lossless long-page tile capture preserves viewport/zoom/pixels; explicit browser availability/limits. Coverage routes never alter pilot/group metadata.
-- [x] M09-R2-V01 Run relevant/full automated checks and deliberate inspection/navigation/layout regressions; record commands/runtime/exit/failures, never fake tool/browser passes.
-  Source: DERIVED. Dependencies:D01–D03.
-  Final evidence: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run verify'` exits0;71/71pass,0fail/skip/diagnostics. Linux/Astro5.18.2/Chromium153.0.8010.12/axe4.13.0/loopback/DPR1. Includes shapes/long-title/containment/inspection/archive/metadata/private-boundary/cache/release/budgets;40000px capture endpoints/tile pixels/unchanged viewport and no-excess-empty-plane regression. Actual empty13pages/109localreferences/0artworkimages/maxJS2049bytesgzip. Initial failures/intermediate reruns retained in checkpoint record; no field/full-WCAG/human claim.
-- [x] M09-R2-V02 Generate/inspect real100%-zoom viewport and fullpage screenshots plus modal states for allrequested classes, no artist/rights/offer assertions or image mutation, unchanged snapshot/plan/source dates/classifications; preserve production empty/BLOCKED_CONTENT and report before/after actual pixel bounds.
-  Source: DERIVED. Dependencies:V01.
-  Failed Firefox-height run/intermediate mobile-plane review and corrections are retained in the checkpoint record; neither constitutes final passing evidence.
-  Final evidence: same exact review command with `--baseline /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-03T20-13-49-968Z-546dd887` exits0; current /tmp/opencode/jordannesbitt-m09/reviews/review-2026-10-05T15-35-15-731Z-8bc9cae4.169inputs/10unchangedrepresentatives/312PNGs/138pagechecks/18openedfit+pixelinspections;bothbrowsers/all3viewports scale1/DPR1;0axeviolations/0reflow/0unapprovedassertions across188HTMLpages. Snapshot/plan checksums unchanged; exact private facts digest e1e80ae43465082759971ac7805e2b26fed39b3c51a28d8a772ea21b92f09faa matches before package;169/169sourcebytes+mtimepreserved. Actual final home/mobile object/768selection/1440archive/all5fullgroupsequences/squareobject/portrait+landscapefit and pixel states inspected alongside earlier Chromium views.1440drawing max image1152→306px,selection1152→432px;primary72svhcap and whole-image viewport fit verified. Real keyboard/tap/Tab/Escape/Close/focus/scroll, facets/reset and noJS direct-image/back pass. Three-run realmobile mediansLCP460–920ms/CLS0/initialtransfer17835–90916bytes; not field/physicalcolour/owner approval. Final owner-summary capture-count wording corrected to312; MJSsyntax check exits0; final actual release exits1/BLOCKED_CONTENT/same8issues. No aesthetic acceptance inferred.
-- [x] M09-R2-V03 Reconcile design/quality docs and state, inspect/stage only intended code/docs (not unfamiliar file/realdata), commit/push verified intermediate checkpoint on development branch, stop at new H01 with olderH checks retained.
-  Source: DERIVED. Dependencies:V01,V02,P01,P02.
-  Pre-checkpoint evidence: design/quality reconciled and intermediate records/M09-R2-presentation-checkpoint.md added (not closeout). Intended runtime/review/test diff and allnewfiles inspected; git diff --check exits0. Actual arrays/identity/media/manifest/package major/predicate/release guards unchanged. Origin4491ff0/master755df7f/backup3bc95c7 rechecked; unfamiliar empty file remains untracked/unstaged. Only named code/docs will be staged; verified checkpoint transport and synchronized human phase next.
-  Transport evidence: named26code/docs paths staged/reviewed; git diff --cached --check exits0; commit/push exits0 for96241ff1ba91a1f249f9d47a0b4f8d7069b4dee8 on redesign/astro-foundation. Git show/status/ls-remote exits0, matching development head; master755df7f/backup3bc95c7 unchanged; only unfamiliar empty file remains untracked. No real assets/private metadata/actualcontent staged. Final canonical headers now ACTIVE/HUMAN_VERIFICATION; intermediate record explicitly not closeout. Stop at owner visual gate; further feedback creates M09-R3 before implementation.
-- [-] M09-R2-H01 Owner accepts/revises professional normal-scale presentation, index density/editorial rhythm/object fit/inspection and recognizable identity against reference; automation cannot declare aesthetic acceptance.
-  Source: USER acceptance/DERIVED human gate. Dependencies: completed presentation implementation/checks/local review.
-  SUPERSEDED for baseline decision only by latest USER provisional M09-R2 acceptance. Superseded-By: M09-R6-01 and M09-R6-H02. This is not final real-public-content/M09 visual acceptance; original requirement meaning preserved, actual public review remains required.
+- [H] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current presentation; automation does not approve content/artistry or close M09.
+  Source: DERIVED from USER review boundary; preserved stable ID.
+  Covers:
+    - M09-R5-05
+  Gate: HUMAN
+  Verification:
+    - Owner explicitly accepts or revises the persistent visual-review content.
 
-M09 remains ACTIVE, not COMPLETE. M09-R1 human/content gates persist. Final source/rights/manifest/business approval and M10/M11 authority remain absent. This group replaces the rejected presentation behavior, not its preserved metadata or historical requirement meanings.
+- [ ] M09-R5-06 The unresolved mobile opened-inspection colour-contrast cases require manual resolution before claiming that review surface fully accepted.
+  Source: DERIVED from preserved M09-R5-H02.
+  Requirement: Inconclusive automated contrast observations remain inconclusive until human/manual resolution.
+  Verified-By:
+    - M09-R5-H02
 
-## M09-R3 — Project-wide model effort default
+- [H] M09-R5-H02 Manually resolve the preserved mobile opened-inspection colour-contrast INCONCLUSIVE cases; absence of automated violations is not a pass.
+  Source: DERIVED from observed review; preserved stable ID.
+  Covers:
+    - M09-R5-06
+  Gate: HUMAN
+  Verification:
+    - Human/manual review resolves the recorded contrast cases.
 
-Source: USER, 2026-10-05. This is an operating-policy change, not website implementation or M09 visual/content acceptance.
+## M09-R6 — Remaining Studio and final-public owner gates
 
-- [x] M09-R3-01 Default all project agent work to GPT-6.1 Sol LOW and do not routinely ask the owner to choose an effort level.
-  Source: USER.
-- [x] M09-R3-02 Escalate only when the next specific task has unusually high numerical/physics, architectural, concurrency, security, destructive-data, or difficult-debugging risk, and interrupt with exactly: `MODEL LEVEL: HIGH — <one-sentence reason>`.
-  Source: USER.
-- [x] M09-R3-03 After that high-risk section is complete, explicitly say exactly: `MODEL LEVEL: LOW — safe to return to default.`, then resume LOW by default.
-  Source: USER.
-- [x] M09-R3-P01 Model-effort escalation never enlarges authorization for Git, publication, destructive actions, external effects, or human approval gates.
-  Source: DERIVED from existing project policy.
-- [x] M09-R3-V01 Persist the policy in AGENTS.md without changing the active M09-R2 HUMAN_VERIFICATION gate or historical M01 model-verification evidence.
-  Evidence: AGENTS.md contains the project-wide model effort policy; STATUS.md remains M09 / ACTIVE / HUMAN_VERIFICATION / M09-R2.
+- [ ] M09-R6-19 Owner accepts practical local authoring usability across intake/edit/media identity/projects/curation/preview/review/export preparation.
+  Source: DERIVED from preserved M09-R6-H01.
+  Requirement: Studio workflow usability remains a human judgment after automated implementation evidence.
+  Verified-By:
+    - M09-R6-H01
 
-## M09-R4 — Persist private pilot state outside /tmp
+- [H] M09-R6-H01 Owner tests practical local intake/edit/media identity/project+Selected ordering/lead/preview/review/explicit export usability and readable polish.
+  Source: USER/DERIVED human gate; preserved stable ID.
+  Covers:
+    - M09-R6-19
+  Gate: HUMAN
+  Verification:
+    - Owner explicitly accepts the practical Studio workflow; automated demos do not approve real rights/content/export.
 
-Source: USER, 2026-10-05. The disposable /tmp review state was lost before owner review. Change the M09 private-pilot default so snapshots, ID registry, derivatives, private classifications/plans, review sites, screenshots and reports persist outside /tmp and outside public Git.
+- [ ] M09-R6-20 Owner explicitly approves the actual public-source records/media/rights/professional/contact/availability/curation/launch manifest and final real-public visual/reproduction/content result.
+  Source: DERIVED from preserved M09-R6-H02 and active milestone contract.
+  Requirement: Final real-public content and launch-manifest approval remains separate from technical Studio success.
+  Verified-By:
+    - M09-R6-H02
 
-- [x] M09-R4-01 Default durable private-pilot state to a per-user persistent data directory, not /tmp.
-  Source: USER.
-  Requirement: Use the owner's persistent user data area outside the repository; preserve an explicit configuration override for a different approved persistent root.
-- [x] M09-R4-02 Keep transient caches/test scratch disposable where appropriate, while durable M09 review state survives ordinary /tmp cleanup/reboot.
-  Source: USER.
-- [x] M09-R4-P01 Private pilot artifacts remain outside public Git and retain existing privacy/publication boundaries; do not move real artwork data into the repository.
-  Source: USER and existing M09 policy.
-- [x] M09-R4-D01 Update pilot path policy/defaults and canonical documentation without changing presentation, metadata, publication, or release behavior.
-  Source: DERIVED.
-- [x] M09-R4-V01 Run targeted/full tests proving the persistent default, allowed test scratch, and unchanged release/privacy behavior.
-  Source: DERIVED.
-  Evidence: GitHub Actions run 37392445611 passed Node 22 `npm ci` and `npm run build`. Owner-local Node 22 verification on 2026-10-05 installed the disposable Playwright Chromium cache and then `npm run verify` passed 72/72 tests with 0 failures/skips and 0 Astro diagnostics. The suite includes the persistent-root test, publication/privacy isolation, browser interaction/accessibility/reflow, and the strict real-content checker, which continued to reject the intentionally empty launch rather than weakening the release gate.
-- [x] M09-R4-V02 Commit/push only intended code/tests/docs/state, then return to the unresolved M09-R2 owner visual-review gate.
-  Source: DERIVED.
-  Evidence: implementation/docs checkpoints 8278668 and 1953829 were already pushed on redesign/astro-foundation; this state-only checkpoint records successful owner-local verification and restores ACTIVE / HUMAN_VERIFICATION / M09-R2. No real artwork/private pilot assets were committed.
+- [H] M09-R6-H02 Owner approves actual public-source records/media/rights/professional/contact/availability/curation/launch manifest and final real-public visual/reproduction/content acceptance separately.
+  Source: USER and active milestone contract; preserved stable ID.
+  Covers:
+    - M09-R6-20
+  Gate: HUMAN
+  Verification:
+    - Explicit owner approval of the exact final public content/rights/curation/business/launch set.
 
-Persistent replacement snapshot: owner-local run `run-2026-10-06T00-12-39-275Z-bd2ed33a` captured 169/169 supported images, 0 exclusions and 1 ignored non-image at `~/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json`, SHA256 `60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c`. The durable `id-registry.json` now exists under the persistent root. This request does not accept M09-R2 visuals or any older M09 content/rights/manifest gate.
+## M09-R7 — Remaining simplified-Studio and manual-contrast gates
 
-## M09-R5 — Regenerate the persistent private visual review
+- [ ] M09-R7-12 Owner accepts the image-first Studio workflow, visual authoring controls, preview/public-preparation clarity and expert disclosure.
+  Source: DERIVED from preserved M09-R7-H01.
+  Requirement: Simplified Studio usability remains a human gate.
+  Verified-By:
+    - M09-R7-H01
 
-Source: USER, latest exact-snapshot regeneration request. Bounded permission to inspect frozen images, recreate provisional private classifications/groups/approximately-ten-image selection/lead and generate/verify a persistent local review using the current M09-R2 presentation. Necessary generic private-output plumbing/state/docs are within this work; no presentation redesign, permanent facts, publication or private-data Git commits. Earlier tmp paths are historical evidence only. No new source inventory or restoration of lost classifications from conversation as fact.
+- [H] M09-R7-H01 Owner tests image-first normal intake/editor/library/project/selection/home/preview/public-preparation usability and expert disclosure.
+  Source: USER/DERIVED human gate; preserved stable ID.
+  Covers:
+    - M09-R7-12
+  Gate: HUMAN
+  Verification:
+    - Owner explicitly accepts the image-first Studio workflow and disclosure.
 
-Reconstruction: inspected remote6f42507 contains only owner-local R4 verification/state evidence; fast-forwarded existing checkout from1953829, preserving unfamiliar untracked empty file. R4 verified72tests is historical owner evidence; this regeneration runs its own checks. Snapshot/registry/contact sheets present in approved persistent root. Real-pilot's isolated build still defaults to /tmp and must be redirected before real data is rendered. Preserve M09-R1-H01/H02 and M09-R2-H01; none is approved by regeneration.
+- [ ] M09-R7-13 The preserved 360px Studio colour-contrast inconclusive case requires manual resolution before claiming acceptance.
+  Source: DERIVED from preserved M09-R7-H02.
+  Requirement: The inconclusive contrast case remains unresolved rather than being inferred passing.
+  Verified-By:
+    - M09-R7-H02
 
-- [x] M09-R5-01 Use only `/home/jordan/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json`, exact SHA256 `60d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c`; verify frozen copies/registry/date provenance.169supported readable,0exclusions,SQLite ignored unopened; no new source snapshot.
-  Source: USER. Dependencies: reconstruction/approved root.
-  Evidence: Node22.23.3 persistent verify-regeneration utility exits0;169copyhashes/registryIDs/Torontocalendardates/unknownownerfacts validated,169/169sourcebytes+mtimeunchanged;1SQLite ignored unopened.87portrait/4landscape/78square export ratios;169untaggedICC. Manifest/registry byte hashes saved only in persistent private preflight report. All8contact sheets freshly inspected; selected originals/plan next.
-- [x] M09-R5-02 Inspect actual frozen images and recreate a private visual-review-plan: America/Toronto filesystem-mtime provisional creation dates, absent physical measurements, provisional medium/category/technique/orientation with uncertainty, useful provisional visual groups, approximately10pilot images and local homepage candidate.
-  Source: USER. Dependencies:01. Neutral review labels only; no old-plan approval inferred.
-  Evidence: all8contact sheets/9originals freshly inspected; exact snapshot-bound persistent visual-review-plan.json validates all169classifications/5provisionalgroups/10distinctrepresentatives/lead, with confidence/ambiguities/colour/framing/source versus physical-shape warnings. PlanSHA2566f89bc8fc37d80e040686988c863715015bd1fbe376d1d4895da105cd1b4336b. No permanent metadata/owner acceptance inferred; private detail stays outside Git.
-- [x] M09-R5-03 Keep all real private registry/snapshot/plan/derivatives/screenshots/reports/review site and build staging under `/home/jordan/.local/share/jordannesbitt-art/m09`, never /tmp or public Git. Synthetic tests/npm/Playwright caches may remain temporary.
-  Source: USER. Dependencies:01; historical/test tmp allowance does not authorize new real-data staging.
-- [x] M09-R5-04 Generate a fresh persistent local review package with current M09-R2 presentation, relevant automated/image/interaction/privacy checks and release:check still BLOCKED_CONTENT; return exact package path and working loopback serve command.
-  Source: USER. Dependencies:02,03.
-- [x] M09-R5-P01 Preserve source bytes/mtime, neutral registry IDs, unknown permanent titles/series/physical sizes/prices/availability/editions/rights/biography/publication/manifest; no real Git assets/private source metadata, external messages/services/deployment or M09 COMPLETE.
-  Source: USER and existing domain rules.
-- [x] M09-R5-P02 Preserve current M09-R2 components/CSS/client presentation and canonical publication/release logic; regeneration is not redesign or older human acceptance.
-  Source: USER.
-- [x] M09-R5-D01 Verify snapshot/registry, inspect sheets/originals and save bound provisional plan with concise private evidence.
-  Source: DERIVED. Dependencies:01,02.
-- [x] M09-R5-D02 Redirect real-pilot isolated build staging to persistent root; preserve synthetic /tmp test scratch and default behavior. Reconcile relevant storage docs and verify plumbing.
-  Source: DERIVED. Dependencies:03. No real private data is copied to /tmp even transiently.
-  Evidence: privatePilotSite uses approved snapshot/builds parent; isolatedProject accepts explicit parent while synthetic defaults remain /tmp/opencode. Existing private-adapter regression now asserts supplied build-root containment; full72/72tests pass. Catalogue/quality storage rules reconciled; src/ presentation and public catalogue unchanged.
-- [x] M09-R5-V01 Run full/relevant tests, generate persistent review and inspect actual screenshots/report, verify original/registry/snapshot/plan hashes and public-output isolation; record actual browser/tool results and limitations.
-  Source: DERIVED. Dependencies:D01,D02.
-  Evidence so far: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run verify'` exits0,72tests/0fail/skip/diagnostics; actual13pages/0artworkimages/2049bytesmaxJSgzip. Independent persistent preflight/derive command exits0,169newverifiedderivative sets created,allsourcebytes/mtime/registry/manifest preserved and planSHA unchanged. Synthetic lab ran concurrently with encoding, not accepted real-performance evidence; dedicated actual-image review next. Firefox155.0 downloaded only into allowed disposable Playwright cache.
-  Final evidence: explicit persistent-root `npm run pilot -- review --snapshot <exact01path>` exits0, current package `/home/jordan/.local/share/jordannesbitt-art/m09/reviews/review-2026-10-06T00-55-36-730Z-0f6e9c43`.169inputs/10pilotitems/5groups/312PNGs/138pagechecks/18openedinspections;Chromium153.0.8010.12+Firefox155.0,360/768/1440×900,DPR1/scale1,0violations/0reflow.4mobile color-contrast incomplete findings remain INCONCLUSIVE/manual, tracked in H02 and private audit, never counted passing. All5groupsequences/home/drawing/selection/object/inspection screenshots inspected. Independent persistent verify-package exits0: allPNGmetadata/private188HTML/assertion omission/frozen169copies/registry/manifest/plan/date/unknownfacts/persistentpaths verified;own realbuild workspace cleaned aftercopy. Actual serve CLI/loopback HTML and exactmedia bytes pass;server stopped. Actual source169/169bytes+mtime unchanged;source presentation diff empty.3-run dedicated realmobile mediansLCP508–1000ms/CLS0/maxinitialtransfer17891–90956bytes;not field/fullWCAG/physicalcolour approval. Strict release exits1/BLOCKED_CONTENT/same8issues. Private audit first failed on stale sharp internal import path before checking; switched to package API resolution and successful rerun, no site/source changes.
-- [x] M09-R5-V02 Record concise evidence, synchronize ACTIVE/HUMAN_VERIFICATION with exact persistent artifact/serve paths, retain old human gates and stop for owner review.
-  Source: DERIVED. Dependencies:V01,P01,P02.
-  Evidence: storage/domain docs and M00 scope reconciled; records/M09-R5-persistent-regeneration-checkpoint.md is intermediate evidence, not final closeout. Gitdiff/source preservation/staged9pathinventory/diff--check/log/protectedrefs inspected; generic code/docs checkpointc4157d48d48cf691ace543e7f980991bda99379e committed/pushed with matching origin. No assets/private source metadata/productioncontent/presentation changes; master755df7f/backup3bc95c7/emptyuntrackedfile preserved. Current package/owner summary/private audits/SERVE.txt persist at04path; serve command tested,root127.0.0.1 only. Headers synchronized ACTIVE/HUMAN_VERIFICATION; H01/H02 and older R1/R2 gates unresolved. No further implementation or M09 completion inferred; owner feedback creates next request group.
-- [H] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current R2 layout; automation does not approve content/artistry or close M09.
-  Source: DERIVED from USER review boundary. Dependencies:verified regenerated package.
-- [H] M09-R5-H02 Manually resolve four mobile opened-inspection colour-contrast INCONCLUSIVE axe cases; no automated pass inferred from absence of violations.
-  Source: DERIVED from observed current review. Dependencies:V01. Private audit records exact Chromium portrait/square and Firefox landscape/square360px cases; presentation preserved per USER.
+- [H] M09-R7-H02 Manually resolve the preserved 360px Studio artwork colour-contrast INCONCLUSIVE case.
+  Source: DERIVED from final demo report; preserved stable ID.
+  Covers:
+    - M09-R7-13
+  Gate: HUMAN
+  Verification:
+    - Human/manual review resolves the exact recorded contrast case.
 
-## M09-R6 — Local artist authoring and real-site polish
+## M09-R13 — Current editable multi-tab Studio owner gate
 
-Source: USER, latest detailed A–L follow-up. Implement restrained polish and a practical loopback-only local browser authoring/media/curation tool over the existing authoritative catalogue/ingestion pipeline, with persistent private draft→local review→explicit public-source approval→versioned export. This is a bounded implementation/test/local-demonstration grant, not authority to put any current real artwork/metadata into public source without its separate explicit approval. Preserve existing generic code/docs checkpoint authority on redesign/astro-foundation; no deployment/master/DNS/hosting/email/services/payments/analytics/Search Console/checkout/launch-manifest approval or M09 COMPLETE.
+Historical technical requirements M09-R13-01 through M09-R13-14 and their V01/V02 evidence remain preserved in `records/M09-R13-editable-multitab-checkpoint.md` and the pre-schema-2 ledger snapshot. They are not duplicated into the bounded live ledger.
 
-Reconstruction: existing checkout/origin5b973f7 match; master755df7f/backup3bc95c7 preserved, only unfamiliar empty untracked file present. Read active contract and catalogue/design/acquisition/quality/operations rules. Current production content remains empty/release BLOCKED_CONTENT. Canonical marked schema projection/intake/media/release algorithms remain authoritative. M09-R2 visual direction is provisionally accepted baseline only; supersession above preserves a new actual-public-content human gate. M09-R1/R5 classification/colour/content/rights/business and incomplete contrast checks remain unresolved. No automatic permanent catalogue/group/curation conversion of169images.
+- [ ] M09-R13-15 Owner accepts the current editable same/different-artwork multi-tab workflow, advisory/no-metadata-copy behavior, CAS conflict retention/review/confirmed reload, URL/history behavior and preserved validation/preview behavior.
+  Source: DERIVED from preserved M09-R13-H01; no semantic change.
+  Requirement: Current R13 Studio behavior requires explicit owner usability acceptance.
+  Verified-By:
+    - M09-R13-H01
 
-- [x] M09-R6-01 Treat M09-R2 as provisionally accepted baseline: preserve paper/ink/oxide, restrained reference-like identity,3/2/1browse density, Selected Work rhythm, bounded natural-ratio object pages and accessible inspection. No theme/copying/giant imagery/ecommerce cards/SaaS public styling/decorative animation/masonry/carousels/scroll hijacking/marketing CTAs.
-  Source: USER. Acceptance is provisional design direction, not final M09/public content approval.
-- [x] M09-R6-02 Refine only useful public polish: comfortably readable small captions/metadata, subordinate hierarchy/negative space/natural ratios, hide empty unsupported sections/categories/counts; concise authored project context and no construction/test/pilot copy on actual approved production paths, while private review retains draft disclosure.
-  Source: USER. Dependencies:01; no invented professional copy or source metadata.
-- [x] M09-R6-03 Provide a simple local browser authoring command (npm run studio or equivalent), bound only127.0.0.1; not deployed/public CMS/database/remote admin/login/cloud or SPA replacement. Reuse existing schemas/validators/intake/derivatives, no second metadata model.
-  Source: USER.
-- [x] M09-R6-04 Explicit single/multiple local-file selection and preview, existing non-destructive intake, derivative progress/errors, original hash preservation and private/unpublished defaults; no arbitrary recursive home scans or automatic similarity merge.
-  Source: USER. Dependencies:03.
-- [x] M09-R6-05 Edit canonical artwork fields: title; exact/circa/unknown date; medium; technique/process; materials; separate image/sheet/framed/object dimensions; alt; optional short context; public/unpublished intent; Selected Work/order; homepage lead; availability; optional price/currency; edition/signature/numbering; framing/status/condition; project membership. Optional fields remain optional and supplied facts only.
-  Source: USER. Dependencies:03,04.
-- [x] M09-R6-06 Explicit media identity: separate artwork or ordered alternate/detail/framed/installation/documentation/process reproductions of owner-selected artwork; private process/reference files need not become artwork/public records. Multiple ordered reproductions per work, no silent merging or inferred identity.
-  Source: USER. Dependencies:04,05. Existing role/model semantics reused or explicitly reconciled before changing invariants.
-- [x] M09-R6-07 Edit projects/series: title, optional date range, concise context, ordered membership with clear sequencing and publication intent. Never auto-promote provisional visual buckets.
-  Source: USER. Dependencies:05.
-- [x] M09-R6-08 Understandable curation: round-trip Selected Work/project sequences, unique homepage lead and public/unpublished state; clearly distinguish Draft/private, Public, Selected, Available and Homepage lead in local UI only.
-  Source: USER. Dependencies:05,07.
-- [x] M09-R6-09 Authoritative private draft working state under ~/.local/share/jordannesbitt-art/m09, outside public Git and /tmp; preserve neutral-ID registry/continuity. Unapproved metadata/rights/private notes/images never go in Git just because unpublished; transient caches may be temporary.
-  Source: USER.
-- [x] M09-R6-10 Clear lifecycle PRIVATE LOCAL DRAFT→REVIEWED LOCALLY→EXPLICITLY APPROVED FOR PUBLIC SOURCE→COPY/EXPORT INTO VERSIONED PUBLIC CATALOGUE. No accidental one-click publication or schema-validity approval.
-  Source: USER. Dependencies:09.
-- [x] M09-R6-11 Deliberate public export: validate canonical records/assets first, exact public metadata/derivatives/Git-visible created/changed paths and missing facts shown, default dry-run, explicit owner-local confirmation/write authorization before writes. Preserve branch/master/release boundaries; no automatic owner launch manifest or inferred source approval.
-  Source: USER. Dependencies:05–10. Actual current real-content export remains unauthorized until explicit individual approval; ordinary verification uses synthetic isolated repository exports.
-- [x] M09-R6-12 UI-driven local-only/noindex disclosed drafts through current production components: artwork/project/Selected Work/home/archive/medium previews. No normal JSON/shell assembly required; no private data reaches actual production build/search/sitemap.
-  Source: USER. Dependencies:03–09.
-- [x] M09-R6-13 Use only a small explicitly selected subset of the persistent169-image snapshot as authoring test input, exactSHA25660d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c at /home/jordan/.local/share/jordannesbitt-art/m09/snapshots/run-2026-10-06T00-12-39-275Z-bd2ed33a/snapshot.json. PreserveIDs; provisional media/groups/pilot/lead are not final curation and all169must not be auto-catalogued/published.
-  Source: USER. Existing persistent reviews remain private and preserved.
-- [x] M09-R6-14 Support final Work/Projects/Archive/About/Available/Contact navigation when approved content supports it; Film/Studio/Journal only with real support. Selected Work=curated sequence, Projects=authored relationships, Archive=all public work, Available=same-catalogue offered subset. Object canonical URLs/sold-unavailable archive URLs persist; no sales duplicate catalogue.
-  Source: USER. Dependencies:02,08; empty features remain hidden.
-- [x] M09-R6-15 Quiet approved acquisition facts on object: availability/price+currency/edition/signature-numbering/separate sizes/framing/enquiry; no scarcity/countdowns/stock guesses/investment/reviews/aggressiveBUY/badges over art. Available derives from canonical public records; M11checkout excluded.
-  Source: USER. Dependencies:05,14.
-- [x] M09-R6-16 Preserve inexpensive discovery baseline: stable URLs,unique real-data titles/descriptions,canonical/crawlable links/alt/sitemap/OG/responsive images/performance/semantic facts. No filler/largeSEO subsystem/ranking claims; document later richer schema/licensing/image sitemap/SearchConsole/genuinejournal/earned references as stretch only.
-  Source: USER.
-- [x] M09-R6-17 Automated coverage: original preservation/private-outsideGit/no production-search-sitemap leaks/clear validation/duplicateIDs-slugs/mediaattachment/project+Selectedordering/leaduniqueness/dryrununchanged/exactapprovedexport/no accidental publication/loopback/traversal-symlink/corrupt images/interrupted intake falsely-complete prevention; run full existing suite, release stays BLOCKED_CONTENT.
-  Source: USER. Dependencies:03–12.
-- [x] M09-R6-18 Persistent small-corpus demo showing complete add/edit/preview lifecycle, exact studio start command/private draft location/explicit export explanation, screenshots of UI/current-component previews and precise remaining real-public-content approval. Return ACTIVE/HUMAN_VERIFICATION, never COMPLETE.
-  Source: USER. Dependencies:17.
-- [x] M09-R6-P01 Preserve static Astro/major/authoritative schema/intake/public projection/media/release algorithms, registry IDs/source bytes/mtime, original art/ratios/colour, private data and protected refs; marked-region references/invariants read before any edit.
-  Source: USER and domain rules.
-- [x] M09-R6-P02 No public CMS/cloud/database/login/external effect/deployment/master/DNS/hosting/realemail/forms/analytics/SearchConsole/payment/checkout/guessedprices/biography/rights/final selection/launchapproval/M09COMPLETE. Default LOW; exact next high-risk criteria alone justify effort escalation.
-  Source: USER.
-- [x] M09-R6-D01 Define private state/ID/media and loopback security/export authorization/concurrency boundaries over canonical models; capture accepted domain rules and minimal interface/API contract before implementation.
-  Source: DERIVED. Dependencies:reconstruction/requirement capture. Security-sensitive next section qualifies for the specific AGENTS.md HIGH interruption; client effort capability must be reported accurately.
-  Evidence: exact HIGH interruption issued for loopback/file/export security; runtime exposes no effort-control/verification tool and limitation reported, then USER confirms HIGH enabled in client. HIGH applies only this section. docs/studio.md captures canonical model+sidecar/private root/registry/exact source selection/host-origin-token/path/serialized-state/approval digest/dryrun/explicit runtime write gate/staged-checksum export and preview boundaries. No website/public-content/rights authority expanded.
-  Initial security/core implementation and synthetic tests exposed a missing method separator, test-cleanup lock unlink after scratch removal, and Node fetch rewriting forged Host headers; corrected parser/cleanup and raw-HTTP test driver. First run did not pass and timed out during cleanup; explicit connection shutdown/request draining added. Targeted rerun required before this high-risk section is considered verified.
-  Verified security-section rerun: Node22.23.3 targeted `node --test tests/studio.test.mjs` exits0,5/5pass,covering canonical private round-trip/media identity/order/lead,actual component preview/production-search-sitemap isolation,explicit approval+runtimewritegrant/dryrun/exactsyntheticexport/ownrollback/concurrenttarget/master/symlink checks and loopbackHost-Origin-token/traversal/corrupt/interrupted cases. Owner HIGH section concluded with exact LOW return announcement. Broader workflow/UI/full suite and real demo remain; no actual-checkout content approval/write.
-- [x] M09-R6-D02 Implement private studio storage, existing-pipeline intake/media relationships, schema editing/curation/project sequence and practical local UI.
-  Source: DERIVED. Dependencies:D01,03–10.
-  Evidence: canonical state/ID/media/job/store+loopbackAPI and ordinary HTML/CSS/JS local UI implemented. Targeted5core tests pass; additional browser workflow first exposed embedded-option accessible select names, explicit names corrected. Browser-only rerun exits0 proving nativefile selection,progress,edit,project,curation,actualcomponent preview,localreview/explicitapproval/dryrun withwritebuttondisabled and unchangedoriginal/production. No framework/cloud/secondmetadata model. Full suite and real demo next.
-- [x] M09-R6-D03 Implement current-component private preview build/serve and staged owner-approved dry-run/export, then restrained public polish/discovery verification.
-  Source: DERIVED. Dependencies:D01,D02,02,11,12,14–16.
-  Evidence: persistent isolated current-component previews/default-no-write staged export implemented; public captions/index metadata modestly raised,emptyarchive counts/filters and unknown acquisition/recipient placeholders omitted,Work navigation content-backed. R2 caps/grid/rhythm/inspection unchanged; canonicalroles extended only for requested truthful views. Cheap existing discovery stays; later stretch documented in quality. Fullverification next.
-- [x] M09-R6-V01 Verify authoring/ingestion/security/private isolation/export failure and exact-success cases, full suite and strict release; record actual commands/environment/results/limits.
-  Source: DERIVED. Dependencies:D02,D03,17.
-  First full `npm run verify` exits1:76/79tests pass;3failures are older public-placeholder expectations and raw-JS-string rather than rendered-DOM count test. Updated meaningful expectations for approved quiet absence without weakening recipient/release guards; removed1unusedimporthint. New7studio tests, other existing layout/security/schema/intake/privacy/release cases passed. Full rerun required; no passing full result claimed.
-  Verified full rerun: identical Node22.23.3/npm10.9.9 `npm run verify` exits0;79/79tests,0fail/skip,0Astrodiagnostics. Includes allnew7studio cases and existing canonical/intake/privacy/route/browser/axe/reflow/budget/release tests. Actualempty13pages/0artworkimages/2049bytesmaxJSgzip; no Studio admin route or private input emitted. Persistent realdemo next; tests do not approve art/rights/finalsource.
-  Initial persistent demo stopped before intake at its first audit because Studio's intentional CSP blocks addScriptTag inline injection. CSP remains unchanged; added explicit DevTools-only axe evaluation option for this captured interface, ordinary audit default unchanged. No passing realdemo yet; persistent failed output/state retained,registry/source unchanged.
-  Next demo executed native media-only intake successfully, then driver attempted collapsed frozen-image controls and timed out; driver now explicitly opens native disclosure. No actual artwork/publication approval occurred; retained private media/state and unchanged registry/source. Resume current demo from explicit small subset only.
-  Completed first38-capture realdemo preserves169sources/registry/R2geometry and0reflow, but4axe violations identify scrollable canonical-disclosure pre blocks lacking keyboardfocus. Added explicit labelled focusable regions, retained CSP, and made demo continuation preserve owner drafts/reuse only marked demonstration project/curation. Not a passing realdemo until refreshed checks; no real source approval/export.
-  Final verification: post-refinement full identical `npm run verify` exits0,79/79pass,0fail/skip/diagnostics. Strict `npm run release:check` exits1/BLOCKED_CONTENT/same8owner-content issues. Actual13pages/0images/2049bytesmaxJSgzip and empty search arrays,Studio assets excluded from deployment. Latest persistent demo exits0 with38UI/componentcaptures/0axeviolations/0incomplete/0reflow across1440/768/360×900/DPR1/scale1; unchanged R2 bounds/rhythm. Independent handoff audit exits0: actual studio CLI127.0.0.1/start/defaultwriteDisabled/tokenrequired/3privatedrafts/no source approvals/emptyactualcatalogue+search/all169sourcebytesmtime/registry continuity. No further implementation or automated failures remain.
-- [x] M09-R6-V02 Produce/inspect persistent small-real-input UI demonstration/screenshots/preview, reconcile docs/IDs/evidence and intended code/docs-only checkpoint; synchronize human-review state and exact commands.
-  Source: DERIVED. Dependencies:V01,18,P01,P02.
-  Verified realdemo: current `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/demo-2026-10-06T03-41-38-903Z-e8cf03d7`,38UI/current-componentcaptures,0axeviolations/incomplete/reflow,169/169sourcebytes+mtime and registrydigest preserved. Three explicit existingIDs become private demonstration drafts; no automatic169catalogue or sourceapproval. Actualworkingroot ~/.local/share/jordannesbitt-art/m09/studio,previewsite understudio/previews. Independent handoff verification passes actualCLI127/defaultno-write/token/3drafts/emptyactualcatalogue-search/no approvedprivateworkflow/allsourcepreservation. Screenshot UI editor/curation/home inspected; README/current-component screenshots and reportprivate. Fullpostrefinement79tests/0diagnostics and releaseBLOCKED verified. Docs/source review/code-only checkpoint and synchronizedhumanstate next.
-  Transport evidence: intended existing/new code/tests/docs/staged31pathinventory reviewed;gitdiff--check/cachedcheck/status/log/remote/protectedrefs pass. Commit/push exits0 for64f9e445d2fca4524cd40fe80f4b40267c3b845f on redesign/astro-foundation; matching origin,master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. No actualcontent/media/private notes/drafts/demo screenshots/rightsapprovals staged; no release or real export. Canonical state now ACTIVE/HUMAN_VERIFICATION; scoped HIGH ended explicitly and LOW resumed. Docs/studio.md and studio/README.md explain exact startup/private storage/review-source approval-dryrun-runtimewritegrant-confirmation flow. Stop for H01/H02; final M09 closeout prohibited.
-- [H] M09-R6-H01 Owner tests practical local intake/edit/media identity/project+Selectedordering/lead/preview/review/explicit export usability and readable polish. Automated demo does not approve real rights/content/export.
-  Source: USER/DERIVED human gate. Dependencies:V02.
-- [H] M09-R6-H02 Owner approves actual public-source records/media/rights/professional/contact/availability/curation/launchmanifest and final real-public visual/reproduction/content acceptance separately; provisional R2 baseline does not close M09.
-  Source: USER and active milestone contract. Older unresolved R1/R5 gates remain preserved.
+- [H] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview.
+  Source: USER/DERIVED; preserved stable ID.
+  Covers:
+    - M09-R13-15
+  Gate: HUMAN
+  Verification:
+    - Owner repeats the R13 A/B conflict workflow plus history/Year/preview checks and explicitly accepts or reports a defect.
+  Limitations:
+    - R12 preview behavior remains human-unaccepted until the owner actually accepts the preserved preview path.
 
-## M09-R7 — Artist-facing Studio UX simplification
+## M09-R14 — Versioned framework 1.1.0 / schema-2 migration
 
-Source: USER, latest owner review. Studio is functionally promising but confusing; this is UX/information architecture refinement, not major feature work or public-site redesign. Preserve authoritative catalogue/schema/intake/private persistence/publication-repository gates/validation/safety and accepted M09-R2 presentation. Normal use must be image-first/task-oriented without knowing internal IDs; technical/infrequent controls remain Advanced. Bounded UI/tests/docs/private-demo implementation on development branch under existing code/docs checkpoint authority, never actual public-source/rights/launch approval.
+Source: USER, 2026-10-09. Update this repository to conform to the current `durable-state-machine` experimental branch without clobbering project-owned durable state. Preserve the old ledger/history and make current state conform in place.
 
-Reconstruction: origin/checkout73a8aca match; master755df7f/backup3bc95c7 unchanged;only unfamiliar empty untracked file preserved. Read PROJECT/STATUS/TASKS/active contract/studio boundary and guide/design rules/current UI/store capabilities/tests/demo. Existing backend can attach alternate views then update a primary through validated canonical save; no new role model or weakened gate needed. R6-H01 and older unresolved human checks remain; owner feedback does not imply final acceptance. LOW is appropriate for this UI-only section; do not alter security/export design.
+- [~] M09-R14-01 Install and integrate the versioned experience-augmented framework 1.1.0 / schema 2 from experimental commit 7dd83b11600ebb16af784026ed66845278c9c1f0.
+  Source: USER
+  Requirement: Use the managed `.durable-state/MANIFEST` + `.durable-state/framework/` distribution and project-owned root integration wrappers.
+  Verified-By:
+    - M09-R14-V01
+    - M09-R14-V02
 
-- [-] M09-R7-01 After explicit one/multiple image selection make primary choice obvious: New artwork; Another view/detail of existing artwork; Process/reference image (not standalone public artwork). Hide conceptual IDs/enums/predicates/derivative internals initially; safe private defaults, prominent image and immediately open pending/new draft editor without falsely complete intake/publication.
-  Source: USER.
-  SUPERSEDED pending-editor timing only by M09-R8-04; original implemented requirement/evidence preserved. R8-04 requires resolving preparation questions and complete image before opening editor; R7 image-first identity choices remain preserved constraints,not final owner acceptance.
-- [x] M09-R7-02 Another view/detail chooses target by clicking artwork thumbnails/title/date, then human-readable primary/detail/alternate/framed-installation/process-documentation use. Preserve internal roles and expert reverse/specific role distinctions; no silent identity merges.
-  Source: USER. Dependencies:01.
-- [x] M09-R7-03 Simple image-led editor with Title/date exact-circa-unknown/medium/process/materials/optional dimensions/alt/project-series/availability/conditional price-currency. Visual ordered image management and obvious actual-component Preview. Edition/separate typed sizes/framing-condition/detailed acquisition/technical-provenance under expandable sections; optional fields not required.
-  Source: USER. Dependencies:01.
-- [x] M09-R7-04 Thumbnail media library replaces repeated per-card dropdown forms: click/multi-select,clear unattached/attached/reference-only states,obvious visual attachment target; reliable accessible click workflow instead of unnecessary drag/drop. IDs/hashes in details only.
-  Source: USER. Dependencies:02.
-- [x] M09-R7-05 Visual project title/context/membership thumbnails/add-remove/direct sequence editing/Preview Project; no normal raw member-ID lists.
-  Source: USER.
-- [x] M09-R7-06 Visual ordered Selected Work with thumbnails/direct reorder/add-remove/preview; clear current homepage image and thumbnail choice/immediate preview. No ordinary database-flag editing.
-  Source: USER.
-- [x] M09-R7-07 Plain artist-facing language: Draft,On public site,Prepare for public site,What is this image?,How should this image be used? Concise ordinary PRIVATE DRAFT/Nothing here is public; technical wording/details deferred and accurate actual-public/private distinction retained.
-  Source: USER.
-- [x] M09-R7-08 Keep full safety near public preparation: dry-run first/exact public path+metadata+derivative disclosure/rights/owner approval/--allow-public-export/typed EXPORT token/no auto commit-deploy-manifest. Normal simplification must never hide or bypass deliberate final gates.
-  Source: USER and existing studio contract.
-- [x] M09-R7-09 Improve tool hierarchy/readable type/spacing/grouping/active-selection/thumb sizes/primary actions; avoid narrow empty form columns/repeated explanatory paragraphs/dropdown density/raw state dumps in ordinary views. Keep every expert capability in Advanced/Technical/Export details.
-  Source: USER.
-- [x] M09-R7-10 Persistent small-private demo: Anew artwork,Bexplicit second alternate/detailphoto,Cprocess-reference only,Dnormalmetadata,ESelectedorder,Fhomepagelead,Gcreate-projectorder,Hactualcomponentpreviews,IdryrunPrepareforpublicsite without actual export. Normal desktop/video-friendly screenshots; no new artistic facts/owner approval.
-  Source: USER. Dependencies:01–09.
-- [x] M09-R7-11 Preserve prior tests/add simplified UI interactions; verify no model/safety/capability regressions,private persistence,no IDs required,correct media attachment,reference not artwork,project/selectionorder,edited previews,gated export,full npm run verify and strict BLOCKED_CONTENT. Return HUMAN_VERIFICATION,not M09 COMPLETE/public redesign.
-  Source: USER. Dependencies:10.
-- [x] M09-R7-P01 Preserve src/ public presentation/canonical models and scripts/lib/studio backend/security/export/intake/storage semantics; persistent neutral IDs/source bytes/mtime/owner working drafts/private data/protected refs/unknown untracked file. Only UI orchestration over existing validated endpoints,tests/demo/docs/state.
-  Source: USER and DERIVED. Public-source real data and older human/rights/content gates remain unapproved.
-- [x] M09-R7-P02 Do not remove optional/technical capabilities or infer primary/source/identity/rights approval; do not add major features/new dependencies/public CMS/deployment/master/DNS/services/manifest/checkout/M09complete. Existing gates remain and LOW remains default.
-  Source: USER.
-- [x] M09-R7-D01 Refactor Studio HTML/CSS/JS into visual task flow and progressive disclosure using existing APIs; preserve unsaved edits during refresh/job polling,ensure explicit image identity/primary transitions remain validated.
-  Source: DERIVED. Dependencies:captured requirements/current capabilities.
-  Evidence: Studio-only HTML/CSS/JS refactor delivers pending/image-led editor,thumbnail target/library/member/selection/lead controls,plain labels,progressive rare/technical fields and exact final approval/export disclosure. Primary changes use unchanged attach-alternate then canonical save; current primary retained as alternate. Polling preserves unsaved form fields; no public/CMS/backend redesign.
-- [x] M09-R7-D02 Update prior browser selectors/assertions,add visual workflow interaction coverage and refresh persistent A–I demo without raw IDs in ordinary UI; preserve real owner drafts.
-  Source: DERIVED. Dependencies:D01.
-  Evidence: all7prior Studio cases preserved (browser controls/selectors updated for names/thumbnail actions),new image-first interaction case covers newdraft/noIDs/intended attachment/primary/referenceonly/visualorderedproject-selected/home/reload/actual preview. Initial broad-name selector conflicts corrected with scope; targeted newcase passes. Fresh A–I demo driver uses isolated persistent workspace/registry copy,never overwrites current owner drafts or authoritative ID allocations. Full/real verification pending.
-- [x] M09-R7-V01 Run relevant/full verification,exact backend/public-presentation preservation diff and strict release checks; inspect actual demo/screenshots/axes/reflow/data permanence/safety results.
-  Source: DERIVED. Dependencies:D01,D02,11.
-  Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,80/80tests,0fail/skip/diagnostics; allprior79checks retained withnewvisualinteraction. Actual13pages/0images/2049bytesmaxJSgzip. Exact `git diff --exit-code HEAD -- src scripts/lib/studio-*.mjs scripts/lib/ingestion.mjs` preservation check exits0; public presentation/schema/backend/safety untouched. Real persistent demo/release checks next.
-  First real UXdemo exits0:43captures/0violations/0reflow,169sources andauthoritative registry/Studio state untouched. Screenshot review finds existing editor should be concealed while choosing an attachment target and active-item wording should not be confused with Selected Work; minorUI clarification added,refresh pending. One360pxStudio color-contrast automated rule remains INCONCLUSIVE/manual,not a passing check. Strict release stillBLOCKED_CONTENT. No backend/public presentation changes.
-  Final evidence: fullpostclarification `npm run verify` exits0,80/80tests/0fail-skip-diagnostics. Fresh UXdemo `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/ux-demo-2026-10-06T05-47-31-290Z-0f3a8a89` exits0,43UI/A–I/componentcaptures/0violations/0reflow at1440/768/360×900,DPR1/normalzoom. One360Studioartworks color-contrastINCONCLUSIVE rule retained forH02; no fullconformance claim. Two isolated private demo artworks,alternatephoto,reference-onlymedia,visualproject/Selectedorder/lead/editedpreviews and blockedunapproveddryrun pass; successfulapproveddryrun/exports tested onlysynthetically. Authoritativeownerstate+registry bytehashes unchanged;169/169sourcebytes+mtime preserved. Source/backend/pipeline preservation diff exits0 and actualrelease exits1/BLOCKED_CONTENT/same8issues. Final desktop intake-target/home/initialeditor/project screenshots inspected; not owner usability/art acceptance.
-- [x] M09-R7-V02 Reconcile docs/evidence/IDs;verified intended code/docs-only checkpoint and return ACTIVE/HUMAN_VERIFICATION with exact start/demo paths and genuine remaining approvals.
-  Source: DERIVED. Dependencies:V01.
-  Evidence: docs/studio.md andstudio/README guide updated;intermediate records/M09-R7-studio-ux-checkpoint.md,not finalcloseout. Intended11UI-tests-docs-demo-statepaths reviewed/staged,gitdiffcheck/cachedcheck/status/log/origin/protectedrefs pass. Commit/push exits0 for74ff6746ae54362df9b9e85049010b4b7fe2272c withmatchingorigin;master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. No publicsrc/backend/models/intake/security/gates/actualcontent/privateimages-notes-drafts-screenshots changed/staged. State now ACTIVE/HUMAN_VERIFICATION with exact defaultstartup andisolateddemo paths;H01/H02/oldercontent-rights-source checks unresolved,no M09complete.
-- [H] M09-R7-H01 Owner tests image-first normal intake/editor/library/project/selection/home/preview/public-preparation usability and expert disclosure; automation cannot approve usability or real content.
-  Source: USER/DERIVED human gate. Dependencies:V02. R6/R1/R5 factual/rights/final-content gates persist.
-- [H] M09-R7-H02 Manually resolve one current360pxStudioartworks color-contrast INCONCLUSIVE automated rule; preserve older R5 manual/source-colour gates and do not count incomplete as a passing rule.
-  Source: DERIVED from final demo report. Dependencies:V01. Details in persistent report; no confirmed violation or public-presentation change.
+- [~] M09-R14-P01 Preserve existing project truth and provenance while migrating: product roadmap, M09 identity, stable IDs/meanings, unresolved human gates, historical evidence/failures/supersession, canonical docs, records, experiences, Git/privacy/publication/model-effort rules and application behavior.
+  Source: USER
+  Requirement: Do not overwrite old state with bootstrap/template values; archive the pre-schema-2 live ledger verbatim and keep all still-relevant human gates live.
+  Verified-By:
+    - M09-R14-V01
+    - M09-R14-V02
 
-## M09-R8 — Explicit colour decision and ready-editor intake flow
+- [~] M09-R14-P02 Do not use the framework migration to authorize or change website behavior, real content/rights, deployment, protected refs, external services, M09 completion, M10 release or M11 commerce.
+  Source: USER
+  Requirement: Migration changes durable-state ownership/schema only.
+  Verified-By:
+    - M09-R14-V02
 
-Source: USER,latest blocking owner intake review. Ordinary untagged images repeatedly show missingICC/CLIflag errors; a half-failed or buried editor appears unavailable. This is workflow/UX correction only. Preserve canonical schemas/ingestion/colour conversion/private persistence/publication/export/R2 presentation. LOW section; no architecture/security/colour invariant redesign or new global colour assumption. Existing code/docs checkpoint grant on development branch and all genuine source/content/rights/launch boundaries remain.
+- [x] M09-R14-D01 Perform a preservation-aware semantic migration rather than reinstalling a starter template.
+  Source: DERIVED
+  Requires:
+    - M09-R14-01
+    - M09-R14-P01
+    - M09-R14-P02
+  Conclusion: The safe migration is to vendor the framework-owned release, convert root AGENTS/RUN_PROMPT into project-specific wrappers, archive the full schema-1 live ledger, keep only still-relevant unresolved gates in bounded schema-2 TASKS, and add explicit coverage for new migration requirements.
+  Conclusion-Status: DERIVED
+  Conclusion-Scope: Durable-state policy/state only at project head 03ceb7ee175b74d327b8b7699b66efb2e5759307 plus framework source commit 7dd83b11600ebb16af784026ed66845278c9c1f0; no application behavior migration.
+  Conclusion-Evidence:
+    - records/M09-schema1-ledger-snapshot-2026-10-09.md
+    - .durable-state/MANIFEST
+    - .durable-state/framework/SCHEMAS.md
+  Conclusion-Limitations:
+    - Automated schema validation has not yet established the migration checkpoint.
+    - Historical application evidence remains historical and is not relabelled as current schema-2 evidence.
+  Conclusion-Recheck-On:
+    - Framework/schema version change
+    - Validator diagnostic
+    - Missing preserved stable ID/human gate
+    - Any application/material file change introduced by the migration
 
-Reconstruction: origin/HEADc975952 match;master755df7f/backup3bc95c7/unknownemptyuntrackedfile preserved. Read active state/contract/current UI/store/server and studio/catalogue/ingestion rules. Existing canonical ingest must keep missingICC explicit decision. Current UI launches jobs before resolving colour and opens a disabled pending form; job-history renderer repeats developer error. Plan a bounded authenticated readonly metadata inspection (existing sharp limits/guarded body) with no files/jobs/drafts,then pass only owner-approved per-selection assumeSrgb into unchanged ingest. No arbitrary filesystem access/colour defaults or modified export authority.
+- [~] M09-R14-V01 Validate target schema, manifest/framework integration, live-ledger coverage and repository-specific durable invariants.
+  Source: DERIVED
+  Covers:
+    - M09-R14-01
+    - M09-R14-P01
+  Gate: INVARIANT
+  Command: npm run state:check
+  Oracle: property-or-invariant
+  Expected: Framework schema-2 strict validation and project-specific state checks both exit 0 with the managed framework hash/markers and live state consistent.
+  Limitations:
+    - Structural validation does not prove website behavior, artistic quality, rights, factual content or human acceptance.
 
-- [x] M09-R8-01 Normal UI says “This image has no embedded colour profile. Most web exports use sRGB.” with explicit Use sRGB for this image / Choose another image and optional concise explanation. Never show --assume-srgb in ordinary Studio/error progress.
-  Source: USER.
-- [x] M09-R8-02 Explicit owner decision stays required; no silent arbitrary-image sRGB assumption. Accepted choice passes existing assumeSrgb flag into existing authoritative ingestion/colour conversion,not a replacement decoder/pipeline/model.
-  Source: USER. Dependencies:01.
-- [x] M09-R8-03 Multiple selections can explicitly apply to all currently selected untagged images,clear scope/count; no global/session-future unrelated import memory. Reset decisions on new file selection,cancel,or batch completion; tagged files need no unnecessary question.
-  Source: USER. Dependencies:01,02.
-- [x] M09-R8-04 Resolve preparation questions→prepare successfully→open complete private editor immediately. No half-failed/disabled pending editor or falsely complete item. Decline creates no draft.
-  Source: USER. Supersedes pending timing in M09-R7-01,whose other image-first behavior remains preserved.
-- [x] M09-R8-05 Ready editor is first/current viewport,receives focus/scroll and needs no traversal of old photo-error history.
-  Source: USER. Dependencies:04.
-- [x] M09-R8-06 Concise Preparing… / Ready / Failed — human reason; no accumulating identical repeated errors. Retain private technical evidence/history without exposing CLI terms as ordinary actionable guidance.
-  Source: USER.
-- [x] M09-R8-07 Common Title/date/medium/process/materials/optional dimensions/alt/project/availability fields immediately visible/editable without Advanced.
-  Source: USER. Dependencies:04,05.
-- [-] M09-R8-08 Save draft/Preview clearly enabled/disabled; exact missing requirement adjacent when disabled; optional metadata never needed just to save a private draft. Existing schema required-value semantics and safe private UI placeholders remain,not public approval.
-  Source: USER.
-  SUPERSEDED primary-action invalid-field UX by M09-R10-01/04/05. Historical implementation/evidence retained; factual validation/private optional-unknown support remain preservation constraints. Owner explicitly rejects grey/inert validation communication,not catalogue semantics.
-- [x] M09-R8-09 Interaction tests: untagged→explicit sRGB→readyeditor;decline→nodraft;tagged→noquestion;multipleuntagged→scopedchoice;no duplicateerrorlog;focus/scroll;commonfieldedits/persistence afterSave/restart;full existing verification green.
-  Source: USER. Dependencies:01–08.
-- [x] M09-R8-10 Actual authorized private untagged corpus image demo/screenshot orshortscreencast sequence: Select→UsesRGB→editor→editTitle/Medium/Alt→Save→restart/reopen persisted. No real source data/assets/metadata in Git;return ACTIVE/HUMAN_VERIFICATION,neverCOMPLETE.
-  Source: USER. Dependencies:09.
-  Handoff evidence: existing V01/records/M09-R8-colour-intake-checkpoint.md and persistent README/report support all6steps/12screenshots/restart persistence; source approvals/writes remain false. Returned ACTIVE/HUMAN_VERIFICATION for H01,not owner acceptance or milestone completion.
-- [x] M09-R8-P01 Preserve src/public design/catalogue,canonical ingestion/colour handling/EXIF/aspect/sourcebytes,private root/IDs/current owner drafts,validation/security/export/release/protectedrefs/unknownuntrackedfile. Bounded readonly profile adapter inherits existing request guards and limits; no arbitrary path endpoint/new write authority.
-  Source: USER and DERIVED.
-- [x] M09-R8-P02 No global sRGB memory,no rights/source/launch/artistry approval inferred,no public data/Git private assets/deployment/master/services/checkout/M09complete. R7/older human checks remain unaccepted except explicit timing supersession above.
-  Source: USER and existing policy.
-- [x] M09-R8-D01 Implement readonly profile inspection and explicit per-file/scoped batch colour-question UI over existing ingestion,then ready-only editor/focus/progress/control UX.
-  Source: DERIVED. Dependencies:captured requirements/current canonical rules.
-  Evidence: authenticated bounded readonly selected-byte inspection + profile flag on advancedsnapshot choices; no writes/jobs/defaults during inspection. Existing assumeSrgb option only explicit accepted batchitems;no pipeline/schema/export changes. Pending editor removed,preparedform first/focused,concisecurrent progress groups,old CLIhumanreasons hidden,Save/Preview readiness explained besideboth controls. Tagged and untagged colour semantics unchanged.
-- [x] M09-R8-D02 Preserve/update prior interactions,add actual tagged/untagged/decline/scoped-future-selection/duplicates/focus/control/readiness/restart tests and isolated persistent real-image sequence.
-  Source: DERIVED. Dependencies:D01.
-  Evidence: prior8Studio cases retained/updated for explicitbutton and conciseprogress;3newcases verify readonlyprofile/noallocation,untaggedapproval→focusedcompleteeditor/optionalSave/date-disabledreason/realrestartpersisted,decline/tagged/multiple-scoped/future-no-memory/duplicates. Node22 targeted `node --test tests/studio.test.mjs` exits0,11/11pass. New persistent real intake-sequence driver and old UXdriver updated; full/demo verification pending.
-- [x] M09-R8-V01 Run relevant/full tests,strictrelease and exact public/ingestion/colour/export preservation checks;inspect actual sequence/private data/restart/registry/source hashes and record limits.
-  Source: DERIVED. Dependencies:D01,D02.
-  Full evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0,83/83tests/0fail-skip-diagnostics. Previous80checks retained with3newcolour-readiness-restart cases;actual13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/canonicalingest/colour/export/path/preview/release preservation diff exits0;only readonlyadapter and UIworkflow added. Real untaged-corpus sequence and strictrelease check next.
-  Actual sequence: `npm run studio:intake-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/intake-demo-2026-10-06T07-58-30-335Z-326c6270`,6steps/12viewport-fullPNGs/0axeviolations-incomplete-reflow,1440×900/DPR1/normalzoom. Actual untagedauthorisedimage has0draft/jobsbeforeexplicitchoice;private manifest explicit-sRGBprofile;readyeditor titlefocus/currentviewport/enabledcontrols;Title/Medium/Alt edit+Save/realserverstop-start/reopenvaluespersisted. Source169/169bytes+mtime/ownerState+authoritativeregistrybytes unchanged. Screenshotcolourquestion/readyform/restart inspected. No actualcontent/sourceapproval/export;strictrelease exits1/BLOCKED_CONTENT/same8issues. Full-WCAG/physicalcolour/human acceptance not inferred.
-- [x] M09-R8-V02 Reconcile docs/evidence/IDs,verify intended code/docs-only checkpoint and synchronized human state,return exact studio/demo paths and remaining real owner approvals.
-  Source: DERIVED. Dependencies:V01.
-  Latest USER resume scope: finish only this handoff and supported R8-10; no new request group or reopening completed R9. Reconstructed AGENTS/RUN_PROMPT/PROJECT/STATUS/contract/TASKS; inspected clean development HEAD/origind0fc8a2 and protectedrefs. R8 docs/studio guide/IDs/supersession/private demo README/report remain consistent. Preservation diff b610adf..HEAD exits0 for Studio/public source/tests/ingestion/R8 evidence record; b610adf is an ancestor,so no concrete migration-induced application uncertainty. Existing83/83tests/real untaged demo/169sourcepreservation/strictBLOCKED_CONTENT evidence reused,not claimed freshly rerun. Node22.23.3/npm10.9.9 `npm run state:check` exits0 before handoff; final synchronized headers ACTIVE/HUMAN_VERIFICATION/M09-R8. Only STATUS/TASKS/R8 checkpoint evidence change under current explicit commit/push grant; no implementation/private assets/approval/launch/milestone closeout. Startup:checkout+Node22 `npm run studio`; pending owner test:untaggedimage→explicitUsesRGB→focusededitableform→Title/Medium/Alt→Save→Ctrl+C/restart/reopenpersistedvalues;alsodecline/batchscope reset checks. Older human gates preserved.
-- [H] M09-R8-H01 Owner repeats ordinary private untagged import/decision/editor/edit/save/restart and checks question scope,readiness/progress and actual public-content workflow usability. Automation does not accept colour/rights/content or close M09.
-  Source: USER/DERIVED. Dependencies:V02. Older human/final-content/manual checks preserved.
-  FAILED owner usability review,NOT ACCEPTED: owner screencast shows Date Exact with invalid/missing valid Year;existing “Enter a year for this date, or choose Unknown.” detection disables/greys both Save/Preview and reads as broken controls. Remediation: M09-R10; retain this unresolved owner result and prior R8 implementation/colour/intake evidence,never reinterpret as approval.
-
-## M09-R9 — Experience-augmented durable-state migration
-
-Source: USER, 2026-10-06. Migrate this repository's existing durable-state control plane in place to the current experimental experience-augmented architecture from HurlyBurly91/durable-state-machine at reference commit `6b3ebc329de5355f6a06c3725438001999786cc8`, using `DURABLE_STATE_MACHINE_EXPERIENCE_AUGMENTED.md` and `templates/experience-augmented/`. This is a state-machine migration only, not a website/product change. Owner explicitly confirmed HIGH for this persistent-architecture section.
-
-- [x] M09-R9-01 Refactor existing durable-state policy in place to the experience-augmented architecture without template-resetting the live project.
-  Source: USER.
-  Requirement: Preserve project-specific operating policy and merge overlapping rules rather than blindly appending duplicate policy sections.
-- [x] M09-R9-02 Preserve all project truth: PROJECT roadmap; milestone contracts; current M09 identity; unresolved M09-R8 and older human gates; stable request/requirement/task IDs; supersession links; blockers; verification evidence; records; docs; canonical source references; Git/privacy/publication/model-effort rules.
-  Source: USER.
-- [x] M09-R9-03 Add the optional advisory experience layer so baseline durable state remains sufficient when experience retrieval is disabled.
-  Source: USER.
-  Requirement: Experience precedent is subordinate to explicit requirements/current evidence and is not required for reconstruction, verification, human gates, milestone completion or closeout.
-- [x] M09-R9-04 Adopt bounded investigative-loop granularity: reuse an existing request/derived task for routine trials under one persisted question; do not allocate IDs, mutate STATUS, write record prose, retrieve precedent or checkpoint Git for every observation.
-  Source: USER.
-- [x] M09-R9-05 Checkpoint durable state only at semantic/reconstruction-cost boundaries; keep exhaustive frame/sample/measurement evidence in generated artifacts and only compact resume-critical conclusions in TASKS/records.
-  Source: USER.
-- [x] M09-R9-06 Preserve corrected human-verification re-entry and unresolved older human tasks while follow-up work is active.
-  Source: USER.
-- [x] M09-R9-07 Refactor RUN_PROMPT.txt to reconstruct state selectively, distinguish durable boundaries from inner-loop trials, use experiences only at strategic boundaries, preserve human gates and work correctly with experience retrieval disabled.
-  Source: USER.
-- [x] M09-R9-08 Preserve docs/ selective loading and all BEGIN/Reference/END canonical source-to-document relationships; do not change application behavior for this migration.
-  Source: USER.
-- [x] M09-R9-09 Validate migration against current live state and the reference architecture, including final diff review for accidental deletion/replacement of project-specific state.
-  Source: USER.
-  Evidence: compare b610adf..540ed67 changes only durable-state policy/index/experience/validation/CI/package files plus R9 state; PROJECT.md, all milestone contracts, project-specific canonical docs, application source/tests and historical records remain unchanged. Existing R8 and older unresolved tasks/IDs/evidence remain in TASKS/records.
-- [x] M09-R9-P01 Do not copy bootstrap values, renumber existing IDs, fictionalize completed history, infer human acceptance, discard evidence, alter public website behavior/content, publish/deploy, modify master/backup branches, or expose private material.
-  Source: USER.
-- [x] M09-R9-P02 Preserve M09-R8 implementation/evidence and its unresolved H01 exactly as live prior work; this infrastructure migration neither completes nor supersedes that owner review.
-  Source: DERIVED from current durable state.
-- [x] M09-R9-D01 Compare current durable files with the experimental reference and implement a coherent merged policy, experience store, bounded-resume prompt and optional validation tooling as needed.
-  Source: DERIVED.
-  Requires: M09-R9-01 through M09-R9-08, P01, P02.
-  Evidence: merged AGENTS/RUN_PROMPT policy uses reference commit 6b3ebc3 while retaining project authorization/model/privacy/release rules; empty optional experience store added without retroactive fabricated cases; records policy now distinguishes meaningful checkpoints from trial logs; state:check validates synchronized headers/active request/spec/experience JSONL/canonical references.
-- [x] M09-R9-V01 Verify durable-state invariants, experience files/schema, header synchronization, stable-ID/history preservation, canonical-reference preservation, baseline-without-experience operation, and application verification without changing product behavior.
-  Source: DERIVED.
-  Evidence: first CI state:check executed and exposed one validator false positive by treating the AGENTS markdown marker example as source; scanning was narrowed to implementation file types. GitHub Actions run 37511215522 then passed Node22 npm ci, npm run state:check and npm run build. state:check validates required durable files, STATUS/TASKS synchronization, active request/spec, experience JSONL and source canonical references. Experience files are empty by design and no execution path depends on retrieval. Pre-migration R8 evidence already records 83/83 application tests; migration changed no application source or tests.
-- [x] M09-R9-V02 Inspect intended diff and protected refs; commit/push only state-machine code/docs/validation files on redesign/astro-foundation, then restore the pre-migration M09-R8 ACTIVE/AUTOMATED_VERIFICATION state without marking M09 complete.
-  Source: DERIVED.
-  Evidence: implementation checkpoints 556aa99 and 540ed67 are state-machine-only; master 755df7f and backup 3bc95c7 remain unchanged. Final state restores the exact pre-migration M09/R8 State/Phase/Active-Request pointer while retaining this completed R9 request and migration record. No M09 human/content/rights/launch gate is completed by the migration.
-
-Current migration entry state: target head `b610adff909dd5e96f71fa9f0a0d05bc496b4256`; reference architecture commit `6b3ebc329de5355f6a06c3725438001999786cc8`. M09-R8 remains technically verified but awaiting owner H01; all older M09 human/content/rights/colour/launch gates remain unresolved.
-
-## M09-R10 — Actionable Save/Preview validation after failed owner review
-
-Source: USER,latest owner screencast/usability failure. This is a UI-validation communication correction,not permission to weaken factual truth or redesign public pages. Preserve R8 explicit colour/intake/persistence,experience-augmented durable state,canonical schemas/backend/ingestion/private storage/security/publication-repository gates/public M09-R2 presentation. Existing bounded implementation/tests/private-demo/code-docs checkpoint grant on development branch; no real source/rights/launch/publication or milestone completion approval. LOW UI section,no new security/data architecture.
-
-Reconstruction: clean HEAD/origin476a5ff match;master755df7f/backup3bc95c7 preserved. Current dateSchema exact/circa year integer1–9999,unknown no inferred year;unchanged server authoritative. Current client calculates requirement then disables actions,so owner cannot trigger focus/local-error feedback. Read studio/catalogue rules/UI/date schema/existing tests. Choose preferred Preview model: validate current edited draft; on success privately save current edits and build actual-component preview; on invalid current data focus/describe blocker and preserve all unsaved fields,no stale saved-state preview or silent certainty conversion. Completed R9 stays complete;older human/colour/content/rights/launch gates remain.
-
-- [x] M09-R10-01 Save draft remains visibly actionable for field-invalid input. Click validates;blocked attempt scrolls/focuses first invalid field with concise field-local accessible error and summary beside primary action,not silently grey/inert.
-  Source: USER.
-- [x] M09-R10-02 Date/Year relationship explicit adjacent: Exact and Circa require valid supported year;Unknown does not. Preserve integer1–9999/year-range/date-certainty truth;no contradictory Exact→Unknown conversion.
-  Source: USER and existing canonical semantics.
-- [x] M09-R10-03 Unknown optional dimensions/price/availability/edition/materials/process/project/rights/source approval do not prevent private draft save. Partially entered contradictions still validate honestly;unsaved values preserved after failed attempt.
-  Source: USER.
-- [x] M09-R10-04 Preview is coherently current-edits mode: invalid edited representation clearly blocks with relevant field/error/focus;valid edits privately save then actual-component preview. No inert grey action,no implicit stale-state preview.
-  Source: USER preferred model selected. Dependencies:01,02.
-- [x] M09-R10-05 On Save/Preview attempt mark first invalid field,scroll/focus,associate error text accessibly,preserve other unsaved edits. Correcting relevant error immediately permits action without unrelated edit/refresh. Genuine in-flight readiness may still be clear;disabled state alone never validation communication.
-  Source: USER.
-- [x] M09-R10-06 Interactions a–j: Exact blank/malformed/out-of-range click→Yearerror/focus;Unknownblank andoptionalblank Save;unsavededitpreservation;correctYearimmediateSave;documentedinvalidPreview;validsavedPreview;realrestartpersist;unchangedsource/publication/rights gates. Preserve prior tests/meaningful update of old disabled expectations.
-  Source: USER. Dependencies:01–05.
-- [x] M09-R10-07 Normaldesktop owner-flow reproduction: Exact invalidyear→Save→explicitlocalvalidation/focus→chooseUnknownORvalidYear→Save succeeds→Preview succeeds. Persistent private screenshots/sequence,not fabricated owner/factual source approval.
-  Source: USER. Dependencies:06.
-- [x] M09-R10-08 Run targeted/full verification asappropriate,statecheck/strictBLOCKED_CONTENT and exact backend/public/model preservation;return ACTIVE/HUMAN_VERIFICATION,noM09complete.
-  Source: USER. Dependencies:06,07.
-- [x] M09-R10-P01 Preserve src/public design/schema/catalogue truth and Studio backend/intake/colour/validation/safety/storage/IDs/gates/state-machine architecture,owner drafts/private assets/protected refs. Only Studio client feedback/orchestration/tests/private demonstration/docs/durable evidence change.
-  Source: USER and DERIVED.
-- [x] M09-R10-P02 R8-H01 FAILED remains unresolved/not accepted;keep R8 technical evidence and older unresolved human/content/rights/colour/launch gates. No M09closeout/sourceapproval/deploy/master/services/payment/manifest or optional-fact invention.
-  Source: USER.
-- [x] M09-R10-D01 Implement actionable current-form validation/errors/focus/date guidance and coherent current-edits preview over unchanged canonical save/build APIs;preserve unsaved state and cleared-error feedback.
-  Source: DERIVED. Dependencies:recorded failure/current domain rules.
-  Evidence: Studio-only attempt validation with labelled field-errors/aria-invalid/description,firstfieldfocus-scroll,action summaries,Date relation hint and actionable buttons;native suppression replaced by visible feedback while canonical endpoint untouched. Preferred current-edits Preview validates before popup/build and privately saves valid changes. In-flight operations alone disable actions with explanation;optionalUnknown facts preserved.
-- [x] M09-R10-D02 Preserve/update existing tests and add blank/malformed/bounds/Unknown/optional/unsaved/immediatecorrection/Preview/restart/gate interactions;capture isolated persistent real-image owner-flow proof.
-  Source: DERIVED. Dependencies:D01.
-  Targeted evidence: first12-case run10passed/2failed because unscoped Year locator also matched hidden Project Year;scoped artist-form tests,not weakened validation. RerunNode22 `node --test tests/studio.test.mjs` exits0,12/12pass,including prior11and newa–jblank/malformed/bounds/circa/Unknown/optional/unsaved/correctyear/currentpreview/restart/gate proof. New validation-flow option extends existing persistent intake driver without replacing R8 sequence;full/real checks pending.
-  Full84/84/statecheck/0diagnostics and first real22-frame ownerflow pass,0axe/reflow;exactinvalidSave/Preview→Yearfocus/error→UnknownSave→currentcomponentPreview/restart proven. Desktop screenshot inspection moves Year's associated error directly below the Year column;feedback-only CSS adjustment,refresh verification/demo required. R8-H01 FAILED remains unaccepted;no backend/source/public changes.
-- [x] M09-R10-V01 Run relevant/full/state/release checks,inspect actual error/focus/preview/restart/private/public-preservation proof;record results/limitations without human acceptance.
-  Source: DERIVED. Dependencies:D01,D02.
-  Final evidence: Node22.23.3/npm10.9.9 full `npm run verify` exits0,statecheckPASS,84/84tests/0fail-skip-diagnostics;previous83 retained plus a–j case. Actualempty13pages/0images/2049bytesmaxJSgzip. Exact publicsrc/backend/models/intake/colour/export/policyarchitecture preservation diff exits0. Final `npm run studio:validation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/validation-demo-2026-10-06T20-16-18-903Z-76a94b0d`,11steps/22PNGs,1440×900/DPR1/normalzoom,0axeviolations/incomplete/reflow;owner ExactinvalidSave and invalidPreview actionable/localYearerror-focus/unsavedpreservation→explicitUnknown→Save→actualcomponentPreview/restart pass. Authoritativeownerstate/registry bytes and169/169sourcebytesmtime unchanged;allrealdata private,no sourceapproval/actualexport. Strictrelease remains1/BLOCKED_CONTENT/same8issues. Initial desktop error-grid placement refined below Year before final full/demo reruns. R8-H01 FAILED/notaccepted;no owner usability/colour/public-content acceptance inferred.
-- [x] M09-R10-V02 Reconcile docs/IDs/evidence,review intended code-docs-only checkpoint/transport and return exact start/demo commands plus short owner test at human gate.
-  Source: DERIVED. Dependencies:V01.
-  Handoff: docs/studio/guide andintermediate records/M09-R10-actionable-validation-checkpoint.md reconciled;no finalcloseout. Source/state/protectedrefs/intenteddiff/staged12code-tests-docs-onlypaths/cachedcheck reviewed. Commit/push exits0 for57cfc83c654f4132caf26e7831ef62805d3a6530 withmatchingorigin;master755df7f/backup3bc95c7 preserved. No actualmedia/draft/private metadata/rights/sourcecontent staged;no publicsrc/backend/schema/intake/colour/security/state-architecture changes. Final ACTIVE/HUMAN_VERIFICATION/M09-R10 withOwnerH01pending andR8-H01explicitFAILED/unaccepted;startupNode22npmrunstudio,exactprivatevalidationdemo path inV01. OwnertestExactblank→clickSave/Preview→Yearlocalerror/focus→validYearORUnknown→Save→currentPreview/restart;no sourceexport/launchapproval.
-- [H] M09-R10-H01 Owner repeats screencast-invalidDate→Save/Preview actionableerror/focus→validYearORUnknown→Save/Preview/restart usability;review absence of unrelated mandatory optional fields. Automation is not acceptance;R8-H01/older factual/final-public gates stay unresolved.
-  Source: USER/DERIVED. Dependencies:V02.
-  FAILED overall owner review,NOT ACCEPTED. Latest video explicitly PASSES ExactblankYear→Save/Preview local/global error+Yearfocus,validYear removesblocker,unrelatedoptionalunknown facts do not blockprivate draft. Preserve these verified owner behaviors. New failures: draft opening has no pushState/popstate,Back fails toreturngrid;validPreview opens visiblyblank about:blank whilebuilding. Remediation M09-R11;no finalusability/content/rights approval and R8-H01 remainsits priorfailed/unaccepted gate.
-
-## M09-R11 — Browser navigation and visible preview preparation
-
-Source: USER,latest owner video from failed R10-H01. Bounded Studio client-navigation/progress correction over existing backend and canonical private/current-edits preview. Preserve accepted R10 validation/correction/private optional facts,all R8colour/intake/metadata/storage semantics,state-machine architecture,security/publication/export gates and public R2 presentation. Existing code/docs checkpoint grant remainsdevelopmentonly;no real source/rights/launch/deploy/M09complete authority. LOW UI section,no new privileged data/security/export architecture.
-
-Reconstruction: clean HEAD/origin2f06979 match;master755df7f/backup3bc95c7 unchanged. CurrentopenArtwork/showTab mutateDOMwithoutbrowserhistory;currentpreviewPage opensaboutblank synchronously thenawaitsprivatebuild. Reuse normal local fragment/history-state neutral identifiers only,with current-document unsaved form/photo caches (not source/historymetadata). Preserve savedrefresh/restart behavior;warn before actualdocumentexitdiscard where necessary. Popup synchronously receives minimal safeDOMpreparationtext/privateStudio stylesheet beforeawaiting,then samewindowactualroute or sanitizedfailure. Backend/public source/schema/gates unchanged.
-
-- [x] M09-R11-01 Openingdraftfromgrid pushesappropriateprivateStudiohistory;Back→grid,Forward→samedraft;repeatopen/back andtabnav produce noduplicate/loopentries;ordinarydirectstartup opensgrid/artworkview.
-  Source: USER.
-- [x] M09-R11-02 Navigation uses loopback/private fragment/query/internalneutralidentifier only,no titles/private artworkmetadata/publicexternalURLs or weakenedIDs/privacy rules.
-  Source: USER.
-- [x] M09-R11-03 Back/grid↔draft/otherdraft practical current-session unsavededits retention;explicitwarning before any actualdiscard. No silent loss;unchanged savedrefresh/restart persistence.
-  Source: USER. Dependencies:01.
-- [x] M09-R11-04 Popupblocker-safe synchronouslyopenonce,immediatelyshow restrainedlocal “Preparing artwork preview…” content/progress. Afterbuild navigate samepopupactualexpectedartworkroute;slowbuild never deadblank.
-  Source: USER.
-- [x] M09-R11-05 Failedbuild shows humanfailure inpopup+Studio,no privatepaths/stacktraces/emptytab. Invalidform preservesacceptedR10 validationandopensnone;oneclickneverduplicatetabs. OpeningaloneisnotPreviewpass.
-  Source: USER. Dependencies:04.
-- [x] M09-R11-06 Add browser interactions: grid/open/Back/Forward,repeatnohistorygrowth,unsavedBack retention,otherartwork/tabcoherence,directstartup;validpopupvisiblePreparing→realURL/content,controlledslowbuild,failure,invalidnoPopup,oneduplicateproof;retainfullpriorvalidation/safetytests.
-  Source: USER. Dependencies:01–05.
-- [x] M09-R11-07 Persistent normaldesktop private Agrid→draft→Back→grid→Forward→draft;Bvaliddraft→visiblepreparing→actualartwork;CExactblankSave/Previewacceptederrorfocus. Capture actualstates,private/sourcepreserved,no realmetadataGit.
-  Source: USER. Dependencies:06.
-- [x] M09-R11-08 Run relevant/full/state/release/private/publicpreservation checks,return ACTIVE/HUMAN_VERIFICATION with exactstartup/demo and honestownerremainingreview;no M09complete.
-  Source: USER. Dependencies:06,07.
-- [x] M09-R11-P01 Do notregressowner-PASS R10Exact/circaYearvalidation/actionability/focus/correction/Unknownoptional facts/current-edits preview semantics. Preserve R10-H01 overallFAILED/R8-H01historicalFAILED/older content-rights-colour-launch checks,without converting partialpasses into fullacceptance.
-  Source: USER.
-- [x] M09-R11-P02 No publicdesign/src/canonicalmodels/intake-colour/security/exportgates/backendprivatepersistence/statepolicy changes,new majorfeatures/services/master/deploy/manifest/checkout/privacy leak/falseapproval. Sessioncache lives only inStudio document,not publicGit or historymetadata;ownerworkingstate/registry/sourcebytes preserved.
-  Source: USER and DERIVED.
-- [x] M09-R11-D01 Implement explicit view/history semantics+sessioneditcache and preparing/failure popup flow over current validated functions/endpoints,avoid internalrerenderentries/races/duplicatewindow behavior.
-  Source: DERIVED. Dependencies:requirements/currentDOMfacts.
-  Evidence: neutral fragment/history state, push/pop/duplicate suppression, document-only form/photo caches, explicit document-exit warning, synchronous preparing popup and sanitized failure over unchanged APIs. Initial 13/14 targeted run exposed clean cached editors hiding newly attached backend photos; restore only dirty caches, reload clean canonical records. Corrected targeted14/14 and final full86/86 pass. Popup title follows head construction; modern beforeunload preventDefault preserves warning without deprecated-property diagnostics.
-- [x] M09-R11-D02 Preserve/add navigation/slow-failed-success-popup/actualURL/validation browser tests and persistent isolated A–C demonstration.
-  Source: DERIVED. Dependencies:D01.
-  Evidence: prior12 Studio cases retained plus history/session retention/privacy/no-loop/direct-known-unknown startup/actual exit-warning-dismissal and controlled slow-success-safe-failure/actual artwork content/invalid-no-popup cases. Exit-warning driver initially timed out waiting for dismissed reload, then auto-owned-page close canceled its context; concurrent dialog handling with location.reload verifies warning and retained fields. Final full suite passes; private A–C demo completed at V01 path.
-- [x] M09-R11-V01 Run relevant/full/state/release checks,inspect actualhistory/edit/popup/content/viewport/private-preservation proof and record limits.
-  Source: DERIVED. Dependencies:D01,D02.
-  Final evidence: Linux/Node22.23.3/npm10.9.9 `npm run verify` exits0, statecheck PASS,86/86 tests,0fail/skip/Astro diagnostics. Actual public13pages/0artimages/maxJS2049bytesgzip. `npm run studio:navigation-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/navigation-demo-2026-10-07T16-36-47-450Z-4abbee5a`:16steps/32PNGs,1440×900/DPR1/normalzoom,0observedaxe violations/incomplete/reflow. Inspected Back-grid/Forward-editor/preparing/actualartwork/Year-error frames; same popup succeeds after deliberately paused browser request and actual backend build. Real restart persists saved edits; authoritative owner state/registry bytes and169/169sourcebytes+mtime unchanged. Failure/path-stack sanitization uses synthetic intercepted failure,not a real owner build failure. Source/backend/intake/security/export/state-policy preservation diff exits0; actualrelease exits1/BLOCKED_CONTENT/same8issues. R10/R8 overall failed and older manual colour/final public gates remain unresolved; no human/usability/colour/public-source approval.
-- [x] M09-R11-V02 Reconcile docs/IDs/ownerpartialpass-failure evidence,reviewintendedcode-docsonlycheckpoint/transport andreturn humanstate/exactcommands.
-  Source: DERIVED. Dependencies:V01.
-  Handoff evidence: docs/studio, guide, M00 bounded grant and intermediate records/M09-R11-navigation-preview-checkpoint.md reconciled. Reviewed intended diff/staged10code-tests-docs-only paths/cached--check/recentlog/origin/protectedrefs; commit/push exits0 for5825d67e12bb4cafcf321c429c5a5ab1a5d23974, matching remote and clean tracked checkout. Master755df7f/backup3bc95c7 unchanged; no real assets/private records/source approval/launch metadata staged. Headers now ACTIVE/HUMAN_VERIFICATION/M09-R11; H01 awaits owner, R10/R8 overall failed/older gates retained. Node22 startup: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'`; isolated demo adds `JORDANNESBITT_M09_DATA=<V01artifact>/workspace`. Stop for actual A–C/unsaved retention/loading usability review; no M09complete.
-- [H] M09-R11-H01 Owner repeats A–C and testsBack/Forward/unsavedretention/visiblepreviewload-failure and acceptedYearinteraction;no fullusability/content/source/rights/M09acceptance inferredfromautomation.
-  Source: USER/DERIVED. Dependencies:V02. R10/R8overallfailed and allolder finalpublicgates remainunresolved.
-  FAILED / NOT ACCEPTED overall, latest owner video review. Explicit owner PASS: same-document grid→draft→Back/grid→Forward/same draft, unsaved current-document retention, visible preview preparation→actual artwork, R10 Exact/Circa Year validation and corrected-year normal Save/Preview. Remaining defects: second Studio tab silently shows persisted version while another holds newer unsaved edits; actual private-preview page has no explicit return to the existing Studio. Remediation M09-R12; no older gate or final M09 acceptance inferred.
-
-## M09-R12 — Cross-tab draft safety and private-preview return
-
-Source: USER, latest failed M09-R11-H01 owner review. Bounded local Studio coordination/conflict prevention and private-preview-only return affordance, tests and persistent normal-desktop A–D demonstration. Existing development code/docs checkpoint grant applies; preserve owner data and public/export/security boundaries. No public redesign, source/rights/manifest approval, deployment, services or M09 completion. This introduces concurrency and preview-return trust-boundary reasoning; escalate only that design/implementation section under the model policy before implementation.
-
-Reconstruction: clean HEAD/origin e113671a1fe19ece9c4d553512b75397c6ea1d69; master755df7f/backup3bc95c7 unchanged. STATUS/TASKS transition HUMAN_VERIFICATION→FOLLOW_UP/M09-R12 before implementation. R11 sessionEditors Map is document-local, so a separate tab cannot see dirty work. Preview opens a new protected tab with opener null; native Back cannot switch to the original Studio tab. Choose a bounded local coordination strategy with explicit same-artwork ownership/conflicts; do not assume asynchronous announcements alone prevent stale saves. Preview return may use an exact neutral loopback Studio link/fallback while preserving opener protection. Design and actual evidence remain pending.
-
-- [x] M09-R12-01 A second Studio tab never silently presents an older persisted artwork as current when another live Studio tab holds newer unsaved edits. On artwork opening query other live tabs using BroadcastChannel or equivalent local browser coordination and neutral artwork identity.
-  Source: USER.
-- [x] M09-R12-02 Implement deterministic safe current-session restoration or explicit warning “This artwork has unsaved edits open in another Studio tab.” with clear actions for continuing unsaved work, opening the saved version or returning to the other tab as appropriate. Prefer avoiding two independent writable copies; if simultaneous editing is unsupported, state it and prevent silent divergence.
-  Source: USER. Dependencies:01.
-- [x] M09-R12-03 Handle same/different artwork tabs, save versus older dirty snapshot, tab close, stale announcements and rapid open/close. No last-writer-wins silent overwrite; opening another tab does not permanently save changes.
-  Source: USER. Dependencies:01,02.
-- [x] M09-R12-04 Coordination is bounded to local browser session, not server publication state; unsaved metadata never enters public Git, URL/history or channel names. Titles/notes/alt/rights/source paths excluded from channel identity; neutral IDs allowed. Closing all Studio tabs may discard unsaved state; saved/restart persistence remains existing authoritative private store.
-  Source: USER.
-- [x] M09-R12-05 Add visible local/review-only “Return to Studio” in private preview banner on artwork/home/archive/project and all other private-preview routes. Prefer closing script-opened preview and focusing existing Studio safely when supported; otherwise exact loopback Studio URL with neutral view state provides a clear return fallback.
-  Source: USER.
-- [x] M09-R12-06 Preserve popup.opener=null/tabnabbing protection; do not weaken it merely to focus another tab. Any narrower same-loopback mechanism requires explicit justification and tests. No sensitive state/filesystem path in return URL; native Back is not represented as a cross-tab return mechanism.
-  Source: USER. Dependencies:05.
-- [x] M09-R12-07 Preview-site ordinary Back/Forward continues to work; return control absent from production/public output. Public website design remains preserved.
-  Source: USER. Dependencies:05,06.
-- [x] M09-R12-08 Browser tests 1–8: A dirty artwork→B same artwork→no silent stale representation; explicit deterministic chosen behavior; stale dirty cannot overwrite another tab's save; different artworks isolated; close/liveness correct; no private metadata in URL/history/channel identity. Include stale announcements/rapid lifecycle where needed to verify03.
-  Source: USER. Dependencies:01–04.
-- [x] M09-R12-09 Browser tests 9–14: valid Preview→Preparing→actual artwork; visible Return to Studio and working/clear fallback; artwork→Archive→another artwork→Back/Forward works; production contains no Studio return control; invalid form opens no popup and preserves R10 validation.
-  Source: USER. Dependencies:05–07.
-- [x] M09-R12-10 Persistent normaldesktop demonstration A: A opens artwork/types unsaved Title, B opens same artwork and shows safe explicit behavior. B: Studio Preview→Preparing→actual artwork→Return to Studio→usable Studio. C: preview artwork→Archive→another artwork→Back. D: Exact+blank Year validation retained. Real source/owner-state/registry preserved; private evidence stays outside Git.
-  Source: USER. Dependencies:08,09.
-- [x] M09-R12-11 Run applicable full/state/release/privacy/security checks, document chosen semantics and limitations, checkpoint only authorized code/docs, return ACTIVE/HUMAN_VERIFICATION for owner review; never mark M09 COMPLETE.
-  Source: USER. Dependencies:08–10.
-- [x] M09-R12-P01 Preserve owner-passed R11 single-document Back/Forward/same-draft/unsaved retention and visible Preparing→actual artwork; preserve R10 Exact/Circa Year validation, corrected-year Save/Preview, optional private facts and current-edits preview. No redesign/regression of passed behavior.
-  Source: USER.
-- [x] M09-R12-P02 R11-H01 remains FAILED/not accepted overall, R10/R8 historical failures and older unresolved content/rights/colour/launch gates persist. Preserve source bytes/mtime/neutral IDs, persistent private owner state, static architecture/canonical models/intake/colour, private/public/export/security boundaries and protected refs; no real publication/rights/source approval or external effects.
-  Source: USER.
-- [x] M09-R12-D01 Design cross-tab ownership/liveness/stale-save prevention and safe exact-loopback preview return; reconcile applicable domain invariants before implementation.
-  Source: DERIVED. Requirements persisted before implementation; owner explicitly confirms “model level high” for specific concurrency/security-return section. Runtime effort switching remains owner-client controlled.
-  Decision: use per-artwork origin-scoped Web Locks as single-writer authority, held while editing or caching dirty work; BroadcastChannel only queries/announces neutral ID+dirty/lifecycle flags, never private snapshots. Conflicting tab initially hides saved fields and warns; explicit saved view is read-only, Check again reacquires only genuinely released locks. Heartbeat/timeout never authorizes lock stealing; unavailable coordination fails closed. Atomic per-record+note expected-version comparison on existing private save prevents stale writes even after released ownership or other authoritative changes; no unsaved state moves to server/publication. Private-preview banner added only in isolated build; server supplies exact loopback neutral return href. Existing Studio keeps popup handle and random sessionStorage-only return nonce; after return navigation reaches Studio origin, BroadcastChannel handshake may focus original and close its tracked popup. No cross-origin channel/opener access; absent owner/blocked close falls back to usable Studio. No production src changes.
-- [x] M09-R12-D02 Implement bounded coordination and preview-only return with meaningful browser regressions over authoritative private store/components.
-  Source: DERIVED. Dependencies:D01.
-  Evidence: Web Locks single-writer + metadata-free BroadcastChannel, initially hidden conflicting editor/explicit read-only saved view, dirty-cache ownership and explicit recheck/focus guidance; atomic per-artwork+note saved-version CAS in serialized private store. Private-build banner/direct exact-loopback return links on every route, opener=null retained; Studio-origin return handshake closes original tracked popup, denied-close/original-gone fallback is explicit. Targeted new5/5 cases pass Chromium153.0.8010.12+Firefox155.0, including different artworks, stale announcements, close/rapid lifecycle, actual separate-context tab save vs older dirty editor, CAS collision/note-only changes, normal preview history, production exclusion and invalid form. Prior14 Studio cases passed after meaningful async-editor readiness waits. Initial browser run blocked by cleared disposable cache; browser caches restored only under /tmp/opencode. Firefox first exposed redirect return classified cross-site and rejected; direct links/origin-only referrer plus narrowly validated live-preview GET-document return fixed it without API/opener weakening. HIGH section completed and exact LOW return issued; full/demo verification remains pending.
-- [x] M09-R12-V01 Run targeted/full/state/release/production-isolation checks, generate/inspect persistent A–D demonstration and source/owner preservation evidence; record actual outcomes and limitations.
-  Source: DERIVED. Dependencies:D02.
-  Final evidence: Node22.23.3/npm10.9.9 `npm run verify` exits0; statecheck PASS,91/91tests,0fail/skip/Astro diagnostics. Prior86 retained plus Chromium/Firefox cross-tab and preview-return cases and atomic concurrency/note-version check. Both browsers close original tracked script-opened preview normally; denied-close and original-closed fallbacks verified, opener null before/after actual preview. API/session/unknown-referrer exceptions remain rejected; return admitted only for known live-preview document navigation. Actual public13pages/0images/2049bytesmaxJSgzip,production Studio-return exclusion proven; src/models/intake/colour/export/release/policy/lockfile preservation diff exits0. Strict release exits1/BLOCKED_CONTENT/same8issues. `npm run studio:coordination-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/coordination-demo-2026-10-07T19-29-54-514Z-de941e7a`:25steps/50PNGs,1440×900/DPR1/visualViewport.scale1,0observedaxe violations/incomplete/reflow. Actual A conflict/read-only/retained-title, B Preparing→actual artwork→return/original usable, C another artwork/Back, D Year-error frames inspected. Two explicitly selected frozen inputs,all real outputs persistent/private; ownerstate/registry bytes and169/169sourcebytes+mtime unchanged,real restart saves persist,all demo drafts/private-source-approval absent. Not owner usability/physical colour/full-WCAG/final-public acceptance; older incomplete colour gates unchanged.
-- [x] M09-R12-V02 Reconcile docs/state/provenance, review intended code/docs diff and protected refs, checkpoint under grant and return to owner gate.
-  Source: DERIVED. Dependencies:V01.
-  Handoff evidence: canonical Studio/guide/M00 scope and intermediate records/M09-R12-cross-tab-return-checkpoint.md reconciled; intended diff/log/origin/protectedrefs and staged15code-tests-docs-only paths reviewed, cached diff check passes. Commit/push exits0 for0c489df1668ee4160df15a614ebb8e52dd0b9f0c, matching development remote/clean checkout; master755df7f/backup3bc95c7 unchanged. No real assets/drafts/private metadata/source-rights approval/launchmanifest/public-src redesign committed. Headers ACTIVE/HUMAN_VERIFICATION/M09-R12, H01 pending; R11/R10/R8 failures and older gates retained. Node22 startup: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'`; isolated demo adds `JORDANNESBITT_M09_DATA=<V01artifact>/workspace`. Stop for owner A–D/cross-tab clarity/return/fallback review, never COMPLETE.
-- [H] M09-R12-H01 Owner reviews explicit multi-tab safety/close-save conflicts, Preview return and preview navigation plus preserved R11/R10 behaviors; automation is not acceptance.
-  Source: USER/DERIVED. Dependencies:V02. R11/R10/R8 overall failed and older final gates remain unresolved.
-  FAILED / NOT ACCEPTED, latest owner video. Exclusive Web Lock UX blocks the expected editable multi-tab workflow; artwork hash may change while grid remains visible. Owner explicitly replaces the exclusive browser-ownership strategy with multi-tab editable forms and authoritative save-time CAS plus advisory notices (M09-R13). Preserve R12 technical CAS/private persistence/preview preparation-return/opener/production-isolation behavior; no R12 preview human pass was supplied. Older R11/R10/R8 failures and passed sub-behaviors remain as recorded.
-
-## M09-R13 — Editable multi-tab Studio with CAS conflict review
-
-Source: USER, failed M09-R12-H01 video review and explicit replacement concurrency model. Existing bounded local Studio implementation/testing/private-demonstration/development code-docs checkpoint grant applies. Owner requests HIGH for concurrency reasoning. No public-site redesign, publication/rights/source/manifest approval, export/security weakening, deployment/external services or M09 completion. Implementation must not start before the specific effort gate is confirmed.
-
-Reconstruction: clean HEAD/origin cd33c109c124d12c12672f628d4eb1352c727b55; master755df7f/backup3bc95c7 unchanged. Current docs/studio and R12 decision describe exclusive per-artwork Web Locks with hidden conflicting forms; this owner-rejected strategy is superseded by R13-01/02/03/07 while historical IDs/evidence remain intact. Existing authoritative private-store saved-version/CAS and serialized writes remain mandatory, as do preview return and private/public boundaries. STATUS/TASKS transition HUMAN_VERIFICATION→FOLLOW_UP/M09-R13 before implementation. New canonical Studio concurrency rules must replace the exclusive rule under this explicit requirement; preserve preview rules except any proven regression.
-
-- [x] M09-R13-01 Any Studio tab can open and edit any artwork, including the same artwork in multiple tabs. Different artworks/tabs never block one another. No Web Lock prerequisite for form display/editing.
-  Source: USER.
-- [x] M09-R13-02 Each editor retains the authoritative saved version it loaded. Save succeeds only when current server version matches loaded version; otherwise authoritative CAS refuses, retains every unsaved field and explains newer saved work. No silent last-writer-wins or automatic merge.
-  Source: USER. Dependencies:01; existing R12 CAS preservation.
-- [x] M09-R13-03 BroadcastChannel coordination is advisory only: neutral artwork IDs and dirty/saved/closed/version-status flags. Another dirty tab yields a visible non-blocking notice explaining save-time conflict risk; editor remains usable. No private snapshots/metadata transfer.
-  Source: USER.
-- [x] M09-R13-04 When A and B loaded the same saved version and A saves, B becomes visibly stale immediately or at next interaction while retaining all edits. Offer Review newer saved version and Discard my unsaved edits and reload; no silent reload/discard. Future merge workflow remains separate.
-  Source: USER. Dependencies:02,03.
-- [x] M09-R13-05 Explicit independence case: A dirty w-0008, B opens/edits w-0025 normally. No global tab ownership or retained dirty editor may block another artwork.
-  Source: USER. Dependencies:01,07.
-- [x] M09-R13-06 Explicit same-artwork case: A opens w-0008/types unsaved Title A; B opens editable w-0008 from last-saved authoritative record, receives advisory and never receives A's private Title. CAS prevents the stale tab overwriting a newer save.
-  Source: USER. Dependencies:01–04.
-- [x] M09-R13-07 Remove/refactor exclusive writer Web Lock subsystem and prerequisite Open saved version(read-only)/Return to other tab/Check again UX. Retain only any genuinely necessary short-lived internal atomic storage lock, never browser-tab artwork ownership.
-  Source: USER. Replaces R12-D01 exclusive-browser strategy, not private-store atomicity/CAS.
-- [x] M09-R13-08 Location/history matches visible view: #artwork/<id> only when that usable artwork view is actually open; do not push/replace artwork entry before readiness. Grid has grid hash. Preserve R11 Back/Forward and same-document unsaved caches; handle asynchronous/rapid navigation consistently.
-  Source: USER.
-- [x] M09-R13-09 Actual conflict proof: A/B open same saved artwork, A Title→Save, B Medium→Save; B is authoritatively refused with stale feedback and Medium retained. Explicit confirmed reload displays A's saved Title and discards B's Medium only after confirmation; B can then edit/save new version.
-  Source: USER. Dependencies:02,04.
-- [x] M09-R13-10 Open/close/crash/rapid lifecycle leaves no permanent ownership/block; dirty advisory disappears appropriately. Browser reload retains existing unsaved-warning behavior; restart restores authoritative persisted state.
-  Source: USER. Dependencies:03,07.
-- [x] M09-R13-11 No private unsaved metadata in URL/history/channel name/messages/public Git/production. Neutral artwork IDs and version/status identifiers permitted; no titles/notes/alt/rights/source paths/form snapshots transmitted as coordination.
-  Source: USER.
-- [x] M09-R13-12 Preserve Preparing artwork preview→actual preview, Return to Studio/fallback, production exclusion/opener protection/ordinary preview history. Do not redesign unless a regression is proven. R12 preview remains human-unaccepted; no fabricated pass.
-  Source: USER.
-- [x] M09-R13-13 Chromium+Firefox tests A–N: dirty different artwork independence; same artwork editable in both; non-blocking advisory; no unsaved metadata transfer; A saves/B stale; authoritative CAS rejection; unsaved fields retained; explicit confirmed latest reload; no silent overwrite; close/crash lifecycle/no lock; URL-visible-view consistency; R11 Back/Forward; R10 Year; coordination/history/URL privacy.
-  Source: USER. Dependencies:01–12.
-- [x] M09-R13-14 Persistent normaldesktop exact video case: A w-0008 unsaved Title; B w-0025 editor normal→w-0008 editable/advisory/no A Title copy; A Save→B stale Save refusal/retained edits→explicit reload. Screenshots/report outside Git, isolated approved-input workspace/registry copy; preserve authoritative owner state and source bytes.
-  Source: USER. Dependencies:13. Use requested neutral identities without inventing owner facts or silently replacing this acceptance case.
-- [x] M09-R13-P01 Preserve owner-passed R11 same-document Back/Forward/unsaved retention and R10 Exact/Circa Year validation/correction/optional private facts/current-edits preview; preserve private saved/restart persistence, R12 atomic CAS, preview preparation-return, canonical schemas/intake/colour/public design and all publication/export/privacy/security gates.
-  Source: USER.
-- [x] M09-R13-P02 R12-H01 FAILED/not accepted, R12 preview human-unaccepted, R11/R10/R8 historical failures and older content/rights/colour/launch gates persist. Preserve unrelated work/protected refs/private roots/source identity and bytes/mtime; no M09 COMPLETE, public-content/rights approval, deployment or external effects.
-  Source: USER.
-- [x] M09-R13-D01 Reconcile canonical Studio concurrency rule with new advisory/CAS model; design liveness, retained stale edits/review/confirmed reload and async URL/readiness semantics.
-  Source: DERIVED. Owner explicitly confirms HIGH for concurrency section; effort remains owner-client controlled. Decision: delete browser Web Lock subsystem, make BroadcastChannel advisory with neutral document IDs/dirty/saved/closed flags, bounded sequence-filtered peer state and expiring liveness (never write authority). Keep each editor/cache's loaded version; peer Save/focus/interaction queries authoritative state to mark stale without replacing controls/baseline. Actual Save still reaches unchanged server CAS; stale form stays editable, explicit review reads newer saved data separately and confirmed reload alone replaces edits. Keep old usable view/hash during async new opens; commit only after rendering; Back/Forward restores known canonical/dirty-cache view synchronously and then checks saved version. Preserve same-origin preview return handshake independently of ownership. Exact-ID real demo uses an isolated checksum-bound subset of approved w-0008/w-0025 snapshot inputs and registry copy, not invented/renumbered owner IDs.
-- [x] M09-R13-D02 Remove exclusive browser ownership and implement advisory editable tabs/stale-save review/history consistency with Chromium/Firefox regressions; preserve R12 preview control path.
-  Source: DERIVED. Dependencies:D01.
-  Evidence: no Studio Web Lock requests or writer ownership; advisory dirty/closed/heartbeat messages only, lease expiration never affects write authority. Any editor remains usable, retains loaded version/all fields on CAS refusal, separate saved-record review and confirmed-only discard/reload. Async opens keep previous usable view/hash; valid render then history, out-of-order/failed requests add no entries; native Back/Forward/cache restoration synchronous. Initial targeted21/23: prior14 Studio cases, two lifecycle/history cases per engine, atomic backend and preview-return cases passed; two new main cases stopped on test-only artwork/project published-checkbox locator ambiguity. Scoped to artwork form; focused two-engine conflict cases2/2 pass, including actual server400/CAS and retained Medium/materials/alt/notes/checkbox/disclosure state, canceled/confirmed reload/new save, different-artwork cache independence, no payload metadata. Astro check0diagnostics. HIGH section completed with exact LOW return; full combined verification/private exact-ID demo next.
-- [x] M09-R13-V01 Run targeted/full/state/release/production/privacy/preservation checks and inspect persistent exact owner-case screenshots/report; record actual outcomes/limits and regressions honestly.
-  Source: DERIVED. Dependencies:D02.
-  Final evidence: Linux/Node22.23.3/npm10.9.9 `npm run verify` exits0,statecheck PASS,95/95tests/0fail-skip/Astro diagnostics. Six two-engine advisory/conflict/lifecycle/history cases replace two exclusive-ownership assertions and add four cases; all unrelated prior tests retained, including unchanged private-store atomic CAS/note-only collision and preview/security/public boundary checks. Native closes and crash-equivalent muted close/heartbeat loss tested (not actual engine-process kill); missing advisory/lock APIs still allow safe CAS editing. Final `npm run studio:multitab-demo` exits0 at `/home/jordan/.local/share/jordannesbitt-art/m09/studio/demonstrations/multitab-demo-2026-10-09T06-59-22-783Z-e6c6144c`:exact frozen w-0008/w-0025,22steps/44PNGs,1440×900/DPR1/scale1,0observedaxe violations/incomplete/reflow;actual A Save→B CAS400/refused/Medium-materials-retained→separate plain-language newer fields→canceled/confirmed discard/reload→new baseline Save. Preserved Back/Forward/Year/preparing/real artwork/return/ordinary preview history/private server restart also captured;ownerstate/registry/originalsnapshot bytes and169/169sourcebytesmtime unchanged,subset private/checksum-bound/not new owner inventory. First full94/95 had a test waiter accepting the previous usable editor; neutral target-ID waiter fixed it. First real preparation used30s instead of established180s allowance; bounded readiness wait corrected,not codec/gate weakening. Technical JSON review moved under disclosure after screenshot inspection; final full/demo rerun passes. Actual public13pages/0images/2049bytesmaxJSgzip;src/allbackend-CAS-preview-security/intake/export/policy/lockfile preservation diff exits0. Strictrelease exits1/BLOCKED_CONTENT/same8issues. No owner usability/colour/public-content/rights acceptance; R12 preview specifically remains human-unaccepted.
-- [x] M09-R13-V02 Reconcile docs/IDs/provenance, review intended code/docs/protected refs, checkpoint under grant and return ACTIVE/HUMAN_VERIFICATION with exact owner start/demo/review steps.
-  Source: DERIVED. Dependencies:V01.
-  Handoff evidence: docs/studio/guide/M00 bounded grant and intermediate records/M09-R13-editable-multitab-checkpoint.md reconciled;reviewed intended diff/log/origin/protectedrefs and staged13code-tests-docs-only paths,cached diffcheck PASS. Commit/push exits0 for3b382ff47797979a5cd183c3ca9f0645b2e2126d,matching development remote/clean checkout;master755df7f/backup3bc95c7 unchanged. No real media/drafts/source metadata/rights/source approval/publicsrc/manifest staged. Headers ACTIVE/HUMAN_VERIFICATION/M09-R13 with H01 pending,R12 failed/preview human-unaccepted and all older gates retained. Node22 startup: `npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'npm run studio'`;isolated exact-ID demo adds `JORDANNESBITT_M09_DATA=<V01artifact>/workspace`. Owner repeats exact A/B different→same art→A Save→B stale/refused/retained Medium→review/canceled+confirmed reload→new Save,plus history/Year/preview;stop for applicable human review,never COMPLETE.
-- [H] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview. No acceptance inferred from automation.
-  Source: USER/DERIVED. Dependencies:V02. All older failed/unresolved gates remain as recorded; R12 preview is not owner-approved.
+- [ ] M09-R14-V02 Verify the policy/schema migration did not alter application behavior or protected project boundaries.
+  Source: DERIVED
+  Covers:
+    - M09-R14-01
+    - M09-R14-P01
+    - M09-R14-P02
+  Gate: CONSTRAINT
+  Command: npm run build
+  Oracle: integration-or-end-to-end
+  Expected: Existing Astro build/check succeeds with no application-source changes; migration diff remains limited to durable-state/framework/project-policy files and historical snapshot/record.
+  Limitations:
+    - Build success is not public-content, usability, colour, rights or release approval.

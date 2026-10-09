@@ -1,22 +1,11 @@
 # Experience Store
 
-This directory is the optional experimental precedent-memory layer.
+This directory is the optional advisory precedent-memory layer.
 
-```text
-SCHEMA.md
-    field meanings and retention rules
+- `SCHEMA.md`: project-owned experience schema and applicability rules.
+- `experiences.jsonl`: selectively retained evaluated precedent.
+- `retrievals.jsonl`: diagnostic retrieval/usefulness telemetry.
 
-experiences.jsonl
-    selectively retained evaluated precedents
+Do not put active requirements or general project history here. Do not load the complete store by default. Baseline recovery from STATUS/TASKS/milestones/docs/records must remain sufficient when experience retrieval is disabled.
 
-retrievals.jsonl
-    minimal diagnostic telemetry about retrieval/usefulness
-```
-
-Do not put active requirements here.
-Do not put general project history here.
-Do not load the entire store into every session.
-
-The baseline project state in `STATUS.md`, `TASKS.md`, milestone specs, `docs/`, and `records/` must remain sufficient when this layer is disabled.
-
-This project migrated to the experience-augmented architecture on 2026-10-06. No pre-existing experience store existed, so the JSONL files intentionally begin empty rather than fabricating precedent from historical records.
+The store currently contains no retained experiences; do not fabricate historical cases during schema migration. Future code-dependent precedent must be bound to material repository state and revalidated before reuse.

@@ -1,17 +1,23 @@
 # Durable records
 
-`records/` preserves permanent provenance. It is not a running laboratory notebook and is not authoritative live execution state.
+`records/` preserves retrospective causal/provenance evidence. It is not the live task queue and not a trial-by-trial notebook.
 
-Meaningful intermediate checkpoint records are appropriate when losing the causal conclusion would be expensive to reconstruct, for example:
+Meaningful records may preserve milestone closeout, a major architecture/schema migration, an established cause, accepted/rejected strategy, blocker resolution, significant human-verification result, or another decision whose loss would be expensive to reconstruct.
 
-- cause established;
-- strategy or architecture accepted/rejected;
-- blocker discovered/resolved;
-- significant human-verification result;
-- major recovery/state-machine migration.
+Where material, preserve:
+- final request/requirement IDs and supersession/correction relations;
+- requirement-to-evidence coverage at the recorded checkpoint;
+- important implementation/domain decisions and bindings;
+- canonical docs/source/research relied upon;
+- repository revision/worktree identity;
+- automated commands/results/gate/oracle/limitations;
+- explicit human decisions and failed human observations spawning follow-up;
+- decisive measurements plus references to exhaustive external/private artifacts;
+- known limitations/remaining uncertainty;
+- retained experience IDs.
 
-Do not append prose for every failed experiment, capture, parameter value, or analyzer run. Keep exhaustive raw evidence in generated JSON/TSV/CSV/log/capture/analysis artifacts and preserve only the decisive conclusion/evidence reference/limitations needed for provenance.
+Historical test passes apply to the repository state they were recorded against; they are not automatically current after material changes.
 
-Final `records/Mxx-*.md` milestone closeout is written only after all required automated and human acceptance passes. Preserve final stable IDs, supersession links, important decisions, verification evidence, explicit human results, known limitations, and authorized checkpoint references.
+Treat completed records as append-only/immutable-ish. Later corrections are dated explicit errata rather than silent rewrites.
 
-Pending/current state belongs in `STATUS.md` and `TASKS.md`. Historical records are loaded selectively when provenance is needed, not by default.
+Schema migration snapshots may preserve a former live ledger verbatim when necessary to prove stable-ID/history preservation. Such a snapshot is historical provenance, never a competing live ledger.
