@@ -80,3 +80,7 @@ The evidence was not relabelled as current and its repository-state fields were 
 - `records/M09-schema2-ledger-pre-1.1.4-2026-10-09.md`
 
 This is the architecture's intended stale-evidence behavior, not an application failure. R16 remains in automated verification pending a clean strict rerun.
+
+## Header synchronization correction
+
+GitHub Actions run `38018608303` failed deterministically with E035 because STATUS had already advanced to `AUTOMATED_VERIFICATION` while the TASKS header still said `IMPLEMENTATION`. No framework/application semantic failure was reported. The TASKS header is synchronized to the actual automated-verification phase and validation is rerun.

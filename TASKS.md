@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
+Phase: AUTOMATED_VERIFICATION
 Active-Request: M09-R16
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
