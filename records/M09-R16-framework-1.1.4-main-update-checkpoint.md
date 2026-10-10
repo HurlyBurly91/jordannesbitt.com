@@ -63,3 +63,20 @@ The project checker is updated only to understand framework 1.1.4 identity, requ
 No application source, application tests, production content, PROJECT.md, milestone contract or private artwork data is changed in this implementation checkpoint.
 
 Strict validation/build/diff review remain pending before the project can return to R13 HUMAN_VERIFICATION.
+
+## First strict-run correction
+
+GitHub Actions run `38018550664` did not pass strict validation. Framework 1.1.4 reported only:
+
+```text
+W082 M09-R15-V01 evidence is stale
+W082 M09-R15-V02 evidence is stale
+```
+
+Those are correct repository-applicability warnings: the R15 V tasks recorded clean state at `8f2741c...`, while R16 intentionally changes project-owned `AGENTS.md` and the project state checker, both material under the framework fingerprint.
+
+The evidence was not relabelled as current and its repository-state fields were not rewritten. R15 is completed historical work, so its complete live-ledger representation is removed from the bounded current `TASKS.md` and remains preserved in:
+- `records/M09-R15-framework-1.1.2-update-checkpoint.md`
+- `records/M09-schema2-ledger-pre-1.1.4-2026-10-09.md`
+
+This is the architecture's intended stale-evidence behavior, not an application failure. R16 remains in automated verification pending a clean strict rerun.

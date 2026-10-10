@@ -150,84 +150,6 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
   Limitations:
     - R12 preview behavior remains human-unaccepted until the owner actually accepts the preserved preview path.
 
-## M09-R15 — Framework 1.1.2 same-schema compatibility update
-
-Source: USER, 2026-10-09. Update this repository again to conform to the latest `durable-state-machine` experimental branch, like the previous migration, without clobbering project-owned durable state. Upstream experimental commit: `a6a58d297e7233ee86850c39869958edd032b31f`; release 1.1.2, schema 2.
-
-- [x] M09-R15-01 Update the managed framework snapshot and manifest from 1.1.0/schema2 to 1.1.2/schema2, preserving updater ownership and payload-integrity checks.
-  Source: USER
-  Requirement: Same-schema update replaces framework-owned payload/manifest; project-owned compatibility edits must be narrow, reviewed and preservation-aware.
-  Verified-By:
-    - M09-R15-V01
-    - M09-R15-V02
-
-- [x] M09-R15-02 Conform the bounded live ledger to updated schema-2 compatibility semantics for inherited unresolved human gates and historical evidence without inventing replacement facts.
-  Source: USER
-  Requirement: Preserve original stable H IDs and archived requirement/evidence provenance; use Coverage-Source/HISTORICAL_RECORDED only where supported by actual archives. Do not manufacture commands, repository-state claims, acceptance, or duplicate historical request groups merely to satisfy validation.
-  Verified-By:
-    - M09-R15-V01
-
-- [x] M09-R15-P01 Preserve all project-specific product/Git/privacy/publication/model-effort policy, PROJECT/milestones/docs/records/experiences, current M09-R13 owner gate, older unresolved human gates, historical failures, stable IDs and application behavior.
-  Source: USER
-  Requirement: No bootstrap reset, no history loss, no inferred human acceptance, no public/release/external-effect authority expansion.
-  Verified-By:
-    - M09-R15-V01
-    - M09-R15-V02
-
-- [x] M09-R15-D01 Inspect the upstream delta and choose the least-destructive update path.
-  Source: DERIVED
-  Requires:
-    - M09-R15-01
-    - M09-R15-02
-    - M09-R15-P01
-  Conclusion: Upstream 1.1.2 remains schema 2, so the framework payload is a compatible managed update. Compatibility additions recognize letter-suffixed milestone IDs, nested follow-up IDs, inherited pending H gates through Coverage-Source archives, and HISTORICAL_RECORDED V evidence without fabricated commands/repository state. The previous synthetic live bridge requirements can be archived while original pending H IDs bind directly to exact archived requirements.
-  Conclusion-Status: VERIFIED
-  Conclusion-Scope: Durable-state policy/live-ledger representation only at project head ba5662cf148bdea0f5e585b110e7f96907276f20 and upstream experimental a6a58d297e7233ee86850c39869958edd032b31f; no application change.
-  Conclusion-Evidence:
-    - M09-R15-V01
-    - M09-R15-V02
-    - records/M09-schema2-ledger-pre-1.1.2-2026-10-09.md
-    - records/M09-schema1-ledger-snapshot-2026-10-09.md
-    - .durable-state/MANIFEST
-    - .durable-state/framework/SCHEMAS.md
-  Conclusion-Limitations:
-    - Final strict validation against framework 1.1.2 remains pending.
-    - Historical application verification remains historical and is not relabelled as current execution.
-  Conclusion-Recheck-On:
-    - Framework/schema version change
-    - Strict-validator diagnostic
-    - Missing archived coverage target
-    - Any application/material file introduced by the update
-
-- [x] M09-R15-V01 Validate framework 1.1.2 identity/hash/integration and strict schema-2 live-ledger compatibility after the update.
-  Source: DERIVED
-  Covers:
-    - M09-R15-01
-    - M09-R15-02
-    - M09-R15-P01
-  Gate: INVARIANT
-  Command: npm run state:check
-  Oracle: property-or-invariant
-  Expected: Strict framework validation and project-specific checks exit 0 with no warnings, and archived inherited-gate coverage resolves exactly.
-  Result: PASS GitHub Actions run 38002592227: framework validator reported VALID with 0 errors and 0 warnings; project checker reported PASS.
-  Repository-State: HEAD=8f2741c5437a7cf72d928265d83138df30cd4a0d; WORKTREE=CLEAN
-  Limitations:
-    - Structural validation does not prove website behavior or human acceptance.
-
-- [x] M09-R15-V02 Verify the same-schema framework update did not alter application behavior or protected project boundaries.
-  Source: DERIVED
-  Covers:
-    - M09-R15-01
-    - M09-R15-P01
-  Gate: CONSTRAINT
-  Command: npm run build
-  Oracle: integration-or-end-to-end
-  Expected: Astro build/check passes; diff contains only framework/manifest plus reviewed durable-state compatibility/provenance/validation files, not application source/tests/content.
-  Result: PASS GitHub Actions run 38002592227 completed npm run build after strict state validation. Diff from pre-update 15cc418 to implementation checkpoint 8f2741c contains only .durable-state framework/manifest and reviewed project durable-state policy/provenance/checker files; no src/, application tests, content catalogue or milestone contract changed.
-  Repository-State: HEAD=8f2741c5437a7cf72d928265d83138df30cd4a0d; WORKTREE=CLEAN
-  Limitations:
-    - Build success is not owner usability/content/rights/release approval.
-
 ## M09-R16 — Consolidated-main framework 1.1.4 update
 
 Source: USER, 2026-10-09. The durable-state framework is now consolidated on authoritative `main`; update this repository like the prior managed updates without clobbering project-owned state. Upstream main commit: `9011fe01630e951b0602dd2c02a8fd250f98a85c`; release 1.1.4, schema 2.
@@ -268,6 +190,7 @@ Source: USER, 2026-10-09. The durable-state framework is now consolidated on aut
     - upstream framework/experience-augmented/HUMAN_GATE_READINESS.md at 9011fe01630e951b0602dd2c02a8fd250f98a85c
   Conclusion-Limitations:
     - Final strict validation/build against framework 1.1.4 remain pending.
+    - First 1.1.4 strict run correctly marked the still-live completed R15 repository-state evidence stale after project-owned policy/checker changes. R15 is now retained only in its checkpoint record and the verbatim pre-1.1.4 ledger archive; no historical PASS or repository-state field was rewritten.
   Conclusion-Recheck-On:
     - Framework/schema version change
     - Human-gate readiness diagnostic
