@@ -4,7 +4,7 @@ Framework-Policy: .durable-state/framework/AGENTS.md
 
 Before substantive work, read and obey the versioned framework policy above. This root file is project-owned specialization for the **experience-augmented durable-state architecture**. Project rules may narrow or extend the framework but may not silently weaken its durability, provenance, verification, security, evidence, or human-acceptance invariants.
 
-Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.1.4 / schema 2 from authoritative `HurlyBurly91/durable-state-machine` main commit `9011fe01630e951b0602dd2c02a8fd250f98a85c`.
+Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.1.5 / schema 2 from authoritative `HurlyBurly91/durable-state-machine` main commit `6746415f645c6c56ce39794b6962364cb39ca1bc`.
 
 ## Repository and product scope
 
@@ -33,7 +33,7 @@ The public catalogue/release guards remain authoritative. `release:check` being 
 
 The owner requires explicit permission for repository modifications.
 
-The 2026-10-09 instruction authorizes this in-place durable-state framework/schema migration and verified checkpoint commits/pushes on `redesign/astro-foundation`. It does not authorize application behavior changes, public content approval, master/backup mutation, deployment, DNS/hosting changes, real messages, purchases, payments, or M10/M11 work.
+The 2026-10-09 owner instructions authorize the in-place durable-state migrations and managed same-schema framework updates through the current consolidated-main 1.1.5 update, including narrow compatibility/provenance/checker edits and verified checkpoint commits/pushes on `redesign/astro-foundation`. It does not authorize application behavior changes, public content approval, master/backup mutation, deployment, DNS/hosting changes, real messages, purchases, payments, or M10/M11 work.
 
 Historical bounded M09 implementation grants remain exactly as recorded; this migration does not expand them.
 
@@ -52,7 +52,9 @@ Primary commands:
 - `npm run release:check`: independent content/release gate.
 - `npm run studio`: loopback-only private authoring UI.
 
-Do not weaken or rewrite tests merely to satisfy the migration. For policy-only changes, use verification proportionate to the changed surface and preserve previous application evidence honestly.
+Do not weaken or rewrite tests merely to satisfy a framework update. For policy-only changes, use verification proportionate to the changed surface and preserve previous application evidence honestly.
+
+GitHub Actions is the normal external hosted-verification provider for this repository. When a required external run is still non-terminal after an immediate bounded status query and completion is not imminent, follow the framework's EXTERNAL_ASYNC contract: persist exact run/target/check identity, checkpoint, and yield rather than holding an idle polling loop. Pending external execution is never PASS evidence.
 
 ## Model effort policy
 

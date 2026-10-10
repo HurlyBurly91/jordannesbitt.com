@@ -7,6 +7,7 @@ const errors = [];
 const required = [
   ".durable-state/MANIFEST",
   ".durable-state/framework/AGENTS.md",
+  ".durable-state/framework/ASYNC_EXTERNAL_VERIFICATION.md",
   ".durable-state/framework/HUMAN_GATE_READINESS.md",
   ".durable-state/framework/RUN_PROMPT.txt",
   ".durable-state/framework/SCHEMAS.md",
@@ -102,10 +103,10 @@ if (errors.length === 0) {
   const expected={
     FORMAT_VERSION:"1",
     VARIANT:"experience-augmented",
-    FRAMEWORK_VERSION:"1.1.4",
+    FRAMEWORK_VERSION:"1.1.5",
     SCHEMA_VERSION:"2",
     SOURCE_REPOSITORY:"HurlyBurly91/durable-state-machine",
-    SOURCE_COMMIT:"9011fe01630e951b0602dd2c02a8fd250f98a85c",
+    SOURCE_COMMIT:"6746415f645c6c56ce39794b6962364cb39ca1bc",
   };
   for(const [key,value] of Object.entries(expected)) if(manifest[key]!==value) errors.push(`MANIFEST ${key}=${manifest[key]} expected ${value}`);
   if(!/^[0-9a-f]{64}$/.test(manifest.PAYLOAD_SHA256??"")) errors.push("MANIFEST PAYLOAD_SHA256 invalid");
