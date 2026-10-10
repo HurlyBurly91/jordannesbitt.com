@@ -54,3 +54,36 @@ Project-specific policy now identifies GitHub Actions as the normal hosted verif
 No application source, application tests, production content, PROJECT.md, milestone contract, canonical behavior document or private artwork state is changed in this implementation checkpoint.
 
 Strict state validation, build compatibility and final diff/protected-ref review remain pending before returning to R13 HUMAN_VERIFICATION.
+
+## Verification and final handoff
+
+Verified material checkpoint: `234c05a7c3b4787eed288e35cad8263377a56262`.
+
+GitHub Actions run `38021491894` passed:
+- `npm ci`;
+- `npm run state:check`;
+- framework validator: **VALID, 0 errors, 0 warnings**;
+- project checker: **PASS**;
+- `npm run build`.
+
+Diff review from pre-update `16f9340d68c78f4eb0bcc630384cdee13720829b` through the verified checkpoint contains only managed framework/manifest and reviewed durable-state policy/state/provenance/checker files. There are no application source, application-test, production-content, PROJECT.md or milestone-contract changes.
+
+Protected refs remain:
+- `master`: `755df7fee1a515388a035fce8e9e672070a1d2b4`
+- `backup/pre-astro-redesign`: `3bc95c75bbe85918ce10498af31a751e2cf58fc6`
+
+The live execution pointer returns to established human readiness:
+
+```yaml
+Milestone: M09
+State: ACTIVE
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R13
+Next-Gate: M09-R13-H01
+```
+
+The selected gate requires verified `M09-R17-V02`. No R13 pre-gate D/V work remains live. The human-test application target is the preserved R13 checkpoint behavior in `records/M09-R13-editable-multitab-checkpoint.md`; the intervening commits are durable-state-only changes.
+
+The new EXTERNAL_ASYNC contract is available for future genuinely long hosted verification. This update itself completed within a bounded immediate CI observation window, so no suspended external wait task was necessary.
+
+R17 does not infer R13 acceptance, complete M09, authorize M10, or begin M11.
