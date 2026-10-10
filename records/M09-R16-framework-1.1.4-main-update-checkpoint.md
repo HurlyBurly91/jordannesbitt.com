@@ -84,3 +84,34 @@ This is the architecture's intended stale-evidence behavior, not an application 
 ## Header synchronization correction
 
 GitHub Actions run `38018608303` failed deterministically with E035 because STATUS had already advanced to `AUTOMATED_VERIFICATION` while the TASKS header still said `IMPLEMENTATION`. No framework/application semantic failure was reported. The TASKS header is synchronized to the actual automated-verification phase and validation is rerun.
+
+## Final verification and established human-gate state
+
+Verified material checkpoint: `8bf2403cfa6aa841f15d4e766371d4711c4e7759`.
+
+GitHub Actions run `38018644966` passed:
+- `npm ci`;
+- `npm run state:check`;
+- framework validator: **VALID, 0 errors, 0 warnings**;
+- project checker: **PASS**;
+- `npm run build`.
+
+Diff review from pre-update `e96a5b790ea7a30eeb425c299ccbbe9346b17c97` through the verified checkpoint contains only managed framework/manifest plus reviewed durable-state policy/state/provenance/checker files. No application source, application tests, production content, PROJECT.md or milestone contract changed.
+
+Protected refs remain unchanged:
+- `master`: `755df7fee1a515388a035fce8e9e672070a1d2b4`
+- `backup/pre-astro-redesign`: `3bc95c75bbe85918ce10498af31a751e2cf58fc6`
+
+The live execution pointer now enters HUMAN_VERIFICATION under the new established-readiness rule:
+
+```yaml
+Milestone: M09
+State: ACTIVE
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R13
+Next-Gate: M09-R13-H01
+```
+
+The selected gate requires verified `M09-R16-V02`. All R16 machine work is terminal and no unresolved pre-gate R13 D/V work exists in the live ledger. The human-test target is the preserved R13 application behavior recorded at `records/M09-R13-editable-multitab-checkpoint.md`, with later commits limited to durable-state infrastructure.
+
+Older inherited human gates remain pending and are deliberately not selected. This update does not infer R13 acceptance, complete M09, authorize M10, or begin M11.
