@@ -1,9 +1,20 @@
+# M09 schema-2 live-ledger snapshot before framework 1.1.4
+
+This is a verbatim preservation of the project-owned `TASKS.md` after the 1.1.4 update request was recorded and before the live ledger was adapted to the consolidated-main human-gate-readiness semantics.
+
+It is historical provenance, not live execution state.
+
+Source project head: `8e47bd04cbf051f2180acb8d20e664efa0cebca1`.
+Upstream main update target: `9011fe01630e951b0602dd2c02a8fd250f98a85c`.
+
+<!-- BEGIN VERBATIM PRE-1.1.4 TASKS.md -->
+
 # Tasks
 
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
+Phase: FOLLOW_UP
 Active-Request: M09-R16
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
@@ -123,8 +134,6 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
 
 - [H] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview.
   Source: USER/DERIVED; preserved stable ID.
-  Requires:
-    - M09-R16-V02
   Covers:
     - M09-R13-01
     - M09-R13-02
@@ -143,10 +152,7 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
   Coverage-Source: records/M09-schema1-ledger-snapshot-2026-10-09.md
   Gate: HUMAN
   Verification:
-    - Human-test target is the current redesign/astro-foundation branch after M09-R16-V02 confirms the application surface remains the R13 checkpoint behavior and the branch is buildable.
-    - R13 application checkpoint provenance remains records/M09-R13-editable-multitab-checkpoint.md; later durable-state-only updates must not be treated as application changes.
-    - Start Studio with the Node 22 command recorded in the R13 checkpoint and repeat the editable multi-tab/CAS conflict workflow plus history/Year/preview checks.
-    - Owner explicitly accepts or reports a defect.
+    - Owner repeats the R13 editable multi-tab/CAS conflict workflow plus history/Year/preview checks and explicitly accepts or reports a defect.
   Limitations:
     - R12 preview behavior remains human-unaccepted until the owner actually accepts the preserved preview path.
 
@@ -300,3 +306,5 @@ Source: USER, 2026-10-09. The durable-state framework is now consolidated on aut
   Limitations:
     - Build/diff evidence does not constitute owner usability/content/rights/release acceptance.
 
+
+<!-- END VERBATIM PRE-1.1.4 TASKS.md -->

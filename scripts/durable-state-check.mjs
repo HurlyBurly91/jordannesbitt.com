@@ -7,9 +7,11 @@ const errors = [];
 const required = [
   ".durable-state/MANIFEST",
   ".durable-state/framework/AGENTS.md",
+  ".durable-state/framework/HUMAN_GATE_READINESS.md",
   ".durable-state/framework/RUN_PROMPT.txt",
   ".durable-state/framework/SCHEMAS.md",
   ".durable-state/framework/validator.py",
+  ".durable-state/framework/validator_core.py",
   "AGENTS.md", "PROJECT.md", "STATUS.md", "TASKS.md", "RUN_PROMPT.txt",
   "experiences/README.md", "experiences/SCHEMA.md",
   "experiences/experiences.jsonl", "experiences/retrievals.jsonl",
@@ -51,6 +53,8 @@ async function frameworkPayloadHash(directory) {
   async function files(dir) {
     const output=[];
     for (const entry of await readdir(resolve(root,dir),{withFileTypes:true})) {
+      if (entry.isDirectory() && entry.name === "__pycache__") continue;
+      if (entry.isFile() && entry.name.endsWith(".pyc")) continue;
       const path=relative(root,resolve(root,dir,entry.name));
       if(entry.isDirectory()) output.push(...await files(path)); else output.push(path);
     }
@@ -72,7 +76,7 @@ if (errors.length === 0) {
   const tasksText = await text("TASKS.md");
   const status = header(statusText, "STATUS.md");
   const tasks = header(tasksText, "TASKS.md");
-  for (const key of ["Milestone", "State", "Phase", "Active-Request", "Spec", "Ledger", "Experience-Retrieval"]) {
+  for (const key of ["Milestone", "State", "Phase", "Active-Request", "Next-Gate", "Spec", "Ledger", "Experience-Retrieval"]) {
     if ((status[key] ?? null) !== (tasks[key] ?? null)) errors.push(`STATUS/TASKS mismatch for ${key}: ${status[key]} vs ${tasks[key]}`);
   }
   if (!["NOT_STARTED", "ACTIVE", "BLOCKED", "COMPLETE"].includes(status.State)) errors.push(`Invalid milestone State: ${status.State}`);
@@ -98,10 +102,10 @@ if (errors.length === 0) {
   const expected={
     FORMAT_VERSION:"1",
     VARIANT:"experience-augmented",
-    FRAMEWORK_VERSION:"1.1.2",
+    FRAMEWORK_VERSION:"1.1.4",
     SCHEMA_VERSION:"2",
     SOURCE_REPOSITORY:"HurlyBurly91/durable-state-machine",
-    SOURCE_COMMIT:"a6a58d297e7233ee86850c39869958edd032b31f",
+    SOURCE_COMMIT:"9011fe01630e951b0602dd2c02a8fd250f98a85c",
   };
   for(const [key,value] of Object.entries(expected)) if(manifest[key]!==value) errors.push(`MANIFEST ${key}=${manifest[key]} expected ${value}`);
   if(!/^[0-9a-f]{64}$/.test(manifest.PAYLOAD_SHA256??"")) errors.push("MANIFEST PAYLOAD_SHA256 invalid");
