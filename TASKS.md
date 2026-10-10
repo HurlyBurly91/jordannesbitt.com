@@ -3,9 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
-Active-Request: M09-R13
-Next-Gate: M09-R13-H01
+Phase: FOLLOW_UP
+Active-Request: M09-R17
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -227,6 +226,76 @@ Source: USER, 2026-10-09. The durable-state framework is now consolidated on aut
   Expected: Astro build/check passes; diff since pre-update e96a5b contains only framework/manifest and reviewed durable-state policy/state/provenance/checker files, with no application source/tests/content change.
   Result: PASS GitHub Actions run 38018644966 completed npm run build after strict state validation. Diff from pre-update e96a5b790ea7a30eeb425c299ccbbe9346b17c97 through 8bf2403cfa6aa841f15d4e766371d4711c4e7759 contains only .durable-state payload/manifest, root durable-state policy/state, checker and R16 provenance; no src/, application tests, production content, PROJECT.md or milestone contract changed.
   Repository-State: HEAD=8bf2403cfa6aa841f15d4e766371d4711c4e7759; WORKTREE=CLEAN
+  Limitations:
+    - Build/diff evidence does not constitute owner usability/content/rights/release acceptance.
+
+## M09-R17 — Consolidated-main framework 1.1.5 update
+
+Source: USER, 2026-10-09. Update this repository again from the consolidated authoritative `durable-state-machine` main branch like the prior managed updates, without clobbering project-owned state. Upstream main commit: `6746415f645c6c56ce39794b6962364cb39ca1bc`; release 1.1.5, schema 2.
+
+- [~] M09-R17-01 Update the managed experience-augmented framework from 1.1.4/schema2 to 1.1.5/schema2 from authoritative main.
+  Source: USER
+  Requirement: Replace only framework-owned payload/manifest plus narrow reviewed project compatibility state; preserve updater ownership, payload-integrity checks and current project policy.
+  Verified-By:
+    - M09-R17-V01
+    - M09-R17-V02
+
+- [~] M09-R17-02 Adopt the new asynchronous external-verification contract without inventing a new phase/task state or changing current application behavior.
+  Source: USER
+  Requirement: Preserve ACTIVE/AUTOMATED_VERIFICATION plus V-task semantics. When a required external run is long-lived, persist exact provider/run/target/check identity, checkpoint, yield, and resume by exact identity rather than polling latest branch state or holding an idle agent. Do not fabricate PASS while pending.
+  Verified-By:
+    - M09-R17-V01
+
+- [~] M09-R17-P01 Preserve project-specific product/Git/privacy/publication/model-effort policy, PROJECT/milestones/docs/records/experiences, all inherited unresolved human gates, current M09-R13 owner gate, stable IDs/history and application behavior.
+  Source: USER
+  Requirement: No bootstrap reset, no lost history, no inferred human acceptance, no public/release/external-effect authority expansion and no application/content change.
+  Verified-By:
+    - M09-R17-V01
+    - M09-R17-V02
+
+- [x] M09-R17-D01 Inspect the consolidated-main 1.1.5 delta and choose the least-destructive compatibility path.
+  Source: DERIVED
+  Requires:
+    - M09-R17-01
+    - M09-R17-02
+    - M09-R17-P01
+  Conclusion: Upstream main remains schema 2 and publishes framework 1.1.5. The update is a same-schema managed payload refresh adding ASYNC_EXTERNAL_VERIFICATION.md and deterministic validation for EXTERNAL_ASYNC V-task wait contracts. The current R13 human gate is unaffected semantically, but after this material durable-policy update it must require the new R17 compatibility verification rather than stale completed R16 evidence before HUMAN_VERIFICATION resumes.
+  Conclusion-Status: DERIVED
+  Conclusion-Scope: Durable-state framework/policy/live-ledger representation only at project head 16f9340d68c78f4eb0bcc630384cdee13720829b and upstream main 6746415f645c6c56ce39794b6962364cb39ca1bc; no application/content migration.
+  Conclusion-Evidence:
+    - .durable-state/MANIFEST
+    - .durable-state/framework/HUMAN_GATE_READINESS.md
+    - upstream framework/experience-augmented/ASYNC_EXTERNAL_VERIFICATION.md at 6746415f645c6c56ce39794b6962364cb39ca1bc
+  Conclusion-Limitations:
+    - Final strict validation/build against framework 1.1.5 remain pending.
+  Conclusion-Recheck-On:
+    - Framework/schema version change
+    - External-verification validator diagnostic
+    - Human-gate readiness diagnostic
+    - Any application/material file change
+
+- [~] M09-R17-V01 Validate framework 1.1.5 identity/hash/integration, strict schema-2 semantics, human-gate readiness and asynchronous external-verification contract support.
+  Source: DERIVED
+  Covers:
+    - M09-R17-01
+    - M09-R17-02
+    - M09-R17-P01
+  Gate: INVARIANT
+  Command: npm run state:check
+  Oracle: property-or-invariant
+  Expected: Strict framework validation and project checker exit 0 with no warnings at the updated payload/live state; new ASYNC_EXTERNAL_VERIFICATION.md is installed and hash-protected.
+  Limitations:
+    - Structural validation does not prove website behavior or human acceptance.
+
+- [~] M09-R17-V02 Verify the same-schema framework update leaves the R13 application target unchanged and the branch buildable for owner review.
+  Source: DERIVED
+  Covers:
+    - M09-R17-01
+    - M09-R17-P01
+  Gate: INTEGRATION
+  Command: npm run build
+  Oracle: integration-or-end-to-end
+  Expected: Astro build/check passes; diff since pre-update 16f9340d68c78f4eb0bcc630384cdee13720829b contains only framework/manifest and reviewed durable-state policy/state/provenance/checker files, with no application source/tests/content change.
   Limitations:
     - Build/diff evidence does not constitute owner usability/content/rights/release acceptance.
 
