@@ -155,14 +155,14 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
 
 Source: USER, 2026-10-11. After exercising the real pilot, the owner reported four concrete Studio problems and explicitly requested: `implement those Studio fixes`.
 
-- [x] M09-R19-01 Fix the sole-member project removal dead end and add explicit safe deletion for private project drafts.
+- [~] M09-R19-01 Fix the sole-member project removal dead end and add explicit safe deletion for private project drafts.
   Source: USER
   Requirement: A project that would otherwise become empty must not silently resurrect its removed member. Studio must explain that projects require at least one artwork and provide an explicit `Delete project draft` path for private Studio-only projects. Repository-catalogue projects must remain protected.
   Verified-By:
     - M09-R19-V01
     - M09-R19-H01
 
-- [x] M09-R19-02 Add safe removal for Photos & references without deleting source files.
+- [~] M09-R19-02 Add safe removal for Photos & references without deleting source files.
   Source: USER
   Requirement: Selected unattached private media can be removed from the active Studio library with explicit confirmation. Attached media must identify the artwork relationship and refuse removal until detached through the artwork editor. Source uploads/private derivatives remain on disk and public catalogue/assets are untouched.
   Verified-By:
@@ -170,7 +170,7 @@ Source: USER, 2026-10-11. After exercising the real pilot, the owner reported fo
     - M09-R19-V02
     - M09-R19-H01
 
-- [x] M09-R19-03 Make new-artwork intake single-flight and interrupt accidental repeated use of the same source image.
+- [~] M09-R19-03 Make new-artwork intake single-flight and interrupt accidental repeated use of the same source image.
   Source: USER
   Requirement: While a selected image is being inspected/prepared, the create action clearly shows progress and cannot be submitted again. If the same source hash is already being prepared, refuse the duplicate pending request. If it already exists in Studio, interrupt before allocating another neutral ID and offer an explicit existing-item path or deliberate `Create another artwork anyway`; identical source bytes remain allowed only after deliberate override.
   Verified-By:
@@ -178,14 +178,14 @@ Source: USER, 2026-10-11. After exercising the real pilot, the owner reported fo
     - M09-R19-V02
     - M09-R19-H01
 
-- [x] M09-R19-04 Replace persistent top-of-page success text with a compact neutral transient Studio status bar while keeping errors conspicuous.
+- [~] M09-R19-04 Replace persistent top-of-page success text with a compact neutral transient Studio status bar while keeping errors conspicuous.
   Source: USER
   Requirement: Normal saved/ready/preview information uses a neutral status presentation and clears automatically after a bounded interval. Errors remain persistent, visually distinct and announced as alerts. In-progress messages may remain until replaced by completion/failure.
   Verified-By:
     - M09-R19-V01
     - M09-R19-H01
 
-- [x] M09-R19-P01 Preserve R13 multi-tab/CAS/navigation/preview behavior, R18 safe artwork deletion, private source/media bytes, public-export boundaries and all unresolved M09 content/rights/release gates.
+- [~] M09-R19-P01 Preserve R13 multi-tab/CAS/navigation/preview behavior, R18 safe artwork deletion, private source/media bytes, public-export boundaries and all unresolved M09 content/rights/release gates.
   Source: DERIVED
   Requirement: This is private Studio workflow cleanup only. No public export, source-file deletion, deployment, M09 completion or M10 authority is added.
   Verified-By:
