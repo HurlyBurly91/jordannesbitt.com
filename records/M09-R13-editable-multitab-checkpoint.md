@@ -41,3 +41,27 @@ Canonical Studio model/guide/M00 grant reconciled. `studio:multitab-demo` is the
 ## Verified checkpoint transport
 
 Intended diff/domain/state/ID evidence/recent log/origin/protected refs and staged13code/tests/docs-only paths reviewed;cached diff check exits0. Commit/push exits0 for **3b382ff47797979a5cd183c3ca9f0645b2e2126d**, `Allow multi-tab Studio editing with CAS conflict review`. Clean tracked checkout and matching development remote verified;master755df7f/backup3bc95c7 preserved. No actual media/draft/subset/screenshot/source metadata/public content/rights/source/manifest approval committed. R13-V02 VERIFIED; H01 AWAITING_HUMAN; final pointers ACTIVE / HUMAN_VERIFICATION / M09-R13. R12 failed and preview specifically human-unaccepted;older gates persist,never M09 COMPLETE.
+
+## Owner acceptance — 2026-10-11
+
+The owner submitted a real Studio screencast exercising the R13 human-review path. Review confirmed:
+
+- Tab A could hold an unsaved artwork edit.
+- Tab B could open and edit a different artwork without blocking.
+- Tab B could open the same artwork simultaneously and received only the non-blocking cross-tab advisory.
+- Unsaved metadata from Tab A was not copied into Tab B.
+- After Tab A saved a newer version, Tab B's stale Save was refused and its unsaved fields remained intact.
+- The explicit discard/reload path loaded the newer authoritative saved version.
+- Same-document Back/Forward remained consistent with the visible Studio state.
+- Exact-date Year validation rejected malformed input and allowed corrected input.
+- Preview showed the preparing state, loaded the real private preview, and Return to Studio restored a usable Studio editor.
+
+The optional read-only "Review newer saved version" panel was not separately clicked in that recording; this does not block the accepted R13 gate because the required stale-save safety, retained edits, explicit reload path and current preview/navigation regressions were directly exercised.
+
+The owner then explicitly stated:
+
+`we can mark it accepted`
+
+Accordingly, `M09-R13-H01` is **ACCEPTED**. This accepts the preserved preview/Return-to-Studio behavior as exercised through R13. It does not rewrite the historical overall FAILED result of R12-H01, and it does not approve any older M09 content, rights, colour, curation, business/contact or launch-manifest gate.
+
+R13 is therefore closed at the human boundary. M09 remains ACTIVE. The next substantive work should be a separately persisted real-content pilot/curation request; no additional Studio UX follow-up is created from this accepted review.

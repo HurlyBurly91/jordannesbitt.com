@@ -3,9 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
+Phase: FOLLOW_UP
 Active-Request: M09-R13
-Next-Gate: M09-R13-H01
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -122,7 +121,7 @@ The current schema-2 validator can bind inherited pending human gates directly t
 
 Historical R13 requirements and technical evidence remain in `records/M09-R13-editable-multitab-checkpoint.md` and the schema-1 ledger archive.
 
-- [H] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview.
+- [x] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview.
   Source: USER/DERIVED; preserved stable ID.
   Requires:
     - M09-R17-V02
@@ -148,8 +147,10 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
     - R13 application checkpoint provenance remains records/M09-R13-editable-multitab-checkpoint.md; later durable-state-only updates must not be treated as application changes.
     - Start Studio with the Node 22 command recorded in the R13 checkpoint and repeat the editable multi-tab/CAS conflict workflow plus history/Year/preview checks.
     - Owner explicitly accepts or reports a defect.
+  Human-Decision: ACCEPTED
+  Decision-Source: User, 2026-10-11, after review of the submitted Studio screencast: "we can mark it accepted"
   Limitations:
-    - R12 preview behavior remains human-unaccepted until the owner actually accepts the preserved preview path.
+    - Historical M09-R12-H01 remains FAILED overall. Its preserved preview/Return-to-Studio path was included in and accepted through this R13 human review; that does not retroactively convert the overall R12 gate into a pass.
 
 ## M09-R17 — Consolidated-main framework 1.1.5 update
 

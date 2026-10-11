@@ -3,12 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: HUMAN_VERIFICATION
+Phase: FOLLOW_UP
 Active-Request: M09-R13
-Next-Gate: M09-R13-H01
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-M09-R13-H01 is the selected next executable human gate. Its R17-V02 prerequisite is verified; the preserved R13 application checkpoint and Node22 Studio start path identify the human-test target. Framework 1.1.5/schema2 from consolidated authoritative main is installed with asynchronous external-verification semantics, strict validation/build pass, and no application changes. Older inherited human gates remain pending but are not selected. Release remains BLOCKED_CONTENT and M09 is not COMPLETE.
+M09-R13-H01 is explicitly ACCEPTED by the owner after review of the 2026-10-11 Studio screencast. The editable same/different-artwork multi-tab flow, advisory behavior, stale-save refusal/retention/reload, Back/Forward, Year validation, and preview/Return-to-Studio path are accepted for R13. M09 remains ACTIVE because older real-content/rights/colour/curation/business/launch human gates are unresolved. The next substantive step should be a new owner-authorized M09 real launch pilot/content-curation request rather than further Studio infrastructure work.
