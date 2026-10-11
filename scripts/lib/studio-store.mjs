@@ -27,10 +27,12 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   const statePath = resolve(root, "state.json");
   let state;
   try {
-    state = await exists(statePath) ? await jsonFile(root, statePath) : { version: 1, revision: 0, catalogue: clone(readCatalogue(repository)), assets: {}, media: [], workflow: {}, notes: {}, jobs: [], previews: [], exportPlans: {}, deletedDrafts: [] };
+    state = await exists(statePath) ? await jsonFile(root, statePath) : { version: 1, revision: 0, catalogue: clone(readCatalogue(repository)), assets: {}, media: [], workflow: {}, notes: {}, jobs: [], previews: [], exportPlans: {}, deletedDrafts: [], deletedProjects: [], deletedMedia: [] };
     if (state.version !== 1) throw new Error("Unsupported studio state version");
     state.deletedDrafts ??= [];
-    if (!Array.isArray(state.deletedDrafts)) throw new Error("Invalid deleted-draft history");
+    state.deletedProjects ??= [];
+    state.deletedMedia ??= [];
+    if (!Array.isArray(state.deletedDrafts) || !Array.isArray(state.deletedProjects) || !Array.isArray(state.deletedMedia)) throw new Error("Invalid deletion history");
     for (const work of state.catalogue.artworks) {
       state.workflow[work.id] ??= { titleProvided: true, reviewed: null, approved: null };
       for (const url of recordAssets(work)) if (!state.assets[url]) state.assets[url] = { path: mediaSource(repository, url), public: true, sha256: await fileHash(repository, mediaSource(repository, url)) };
@@ -81,6 +83,9 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   function artworkVersion(id, current = state) {
     return hashBytes(Buffer.from(JSON.stringify({ record: current.catalogue.artworks.find((work) => work.id === id), note: current.notes[id] ?? "" })));
   }
+  function projectVersion(id, current = state) {
+    return hashBytes(Buffer.from(JSON.stringify({ record: current.catalogue.projects.find((project) => project.id === id), note: current.notes[id] ?? "" })));
+  }
   async function allocate() {
     const unlock = await lock(base, "studio-registry.lock");
     try {
@@ -126,9 +131,12 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
     next.media.push(media);
     return { mediaId: media.id, artworkId: await attach(next, media, options, requestedId) };
   }
-  async function startJob(operation) {
+  async function startJob(operation, metadata = {}, guard) {
     const id = randomUUID();
-    await transact((next) => { next.jobs.push({ id, status: "running", started: new Date().toISOString() }); });
+    await transact((next) => {
+      guard?.(next);
+      next.jobs.push({ id, status: "running", started: new Date().toISOString(), ...metadata });
+    });
     const run = (async () => {
       try {
         const result = await operation();
@@ -142,7 +150,7 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   catch (error) { await releaseLock(); throw error; }
   const studio = {
     base, root, repository, allowPublicExport, snapshotPath,
-    state: () => clone(state), transact, digest, globalDigest, assetBytes, recordFor, artworkVersion,
+    state: () => clone(state), transact, digest, globalDigest, assetBytes, recordFor, artworkVersion, projectVersion,
     async close() { if (closed) return; closed = true; await Promise.all([...pending]); await queue; await releaseLock(); },
     async waitForJobs() { await Promise.all([...pending]); },
     async inspectImage(bytes, options = {}) {
@@ -152,22 +160,30 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
       if (options.sha256 && checksum(bytes) !== options.sha256) throw new Error("Selected-file hash does not match upload bytes");
       const metadata = await sharp(bytes, { failOn: "error", limitInputPixels: 100_000_000 }).metadata();
       if (!["jpeg", "png", "tiff", "webp", "heif", "avif"].includes(metadata.format) || metadata.pages > 1 || !metadata.width || !metadata.height) throw new Error("Choose a single supported photo export");
-      return { sourceSha256: checksum(bytes), hasEmbeddedProfile: Boolean(metadata.icc), needsColourDecision: !metadata.icc };
+      const sourceSha256 = checksum(bytes), matchingMedia = state.media.filter((entry) => entry.sourceSha256 === sourceSha256);
+      const existingArtworkIds = [...new Set(matchingMedia.flatMap((media) => state.catalogue.artworks.filter((work) => work.reproductions.some((image) => image.src === media.reproduction.src)).map((work) => work.id)))];
+      const pendingArtworkJobs = state.jobs.filter((job) => job.status === "running" && job.purpose === "artwork" && job.sourceSha256 === sourceSha256).map((job) => job.id);
+      return { sourceSha256, hasEmbeddedProfile: Boolean(metadata.icc), needsColourDecision: !metadata.icc, existingMediaIds: matchingMedia.map((entry) => entry.id), existingArtworkIds, pendingArtworkJobs };
     },
     async intake(bytes, options = {}) {
       if (!Buffer.isBuffer(bytes) || bytes.length === 0 || bytes.length > 30 * 1024 * 1024) throw new Error("Select an image up to30MiB");
       if (!options.name || basename(options.name) !== options.name || /[\\/\0]/.test(options.name)) throw new Error("Unsafe selected filename");
       if (!/\.(jpe?g|png|tiff?|webp|avif)$/i.test(options.name)) throw new Error("Choose a supported single-image export");
-      if (options.sha256 && checksum(bytes) !== options.sha256) throw new Error("Selected-file hash does not match upload bytes");
+      const sourceSha256 = checksum(bytes);
+      if (options.sha256 && sourceSha256 !== options.sha256) throw new Error("Selected-file hash does not match upload bytes");
       if (!["media", "artwork", "attach"].includes(options.purpose)) throw new Error("Choose media identity explicitly");
       const mediaId = `image-${randomUUID().replaceAll("-", "")}`;
       await mkdir(resolve(root, "uploads"), { recursive: true, mode: 0o700 });
       const input = await safeFile(root, resolve(root, "uploads", `${mediaId}${options.name.slice(options.name.lastIndexOf(".")).toLowerCase()}`), { missing: true });
-      await writeFile(input, bytes, { mode: 0o600, flag: "wx" });
       return startJob(async () => {
+        await writeFile(input, bytes, { mode: 0o600, flag: "wx" });
         const result = await ingest({ input, output: resolve(root, "derivatives"), id: mediaId, title: "Private selected image", medium: "unclassified", kind: "unclassified", alt: "Private selected image; alt text needs owner review", assumeSrgb: options.assumeSrgb === true }, ingestionDependencies);
-        if (await fileHash(root, input) !== checksum(bytes)) throw new Error("Private upload copy changed during intake");
-        return transact((next) => registerMedia(next, result, { name: options.name, sha256: checksum(bytes), lastModified: options.lastModified ?? null }, options));
+        if (await fileHash(root, input) !== sourceSha256) throw new Error("Private upload copy changed during intake");
+        return transact((next) => registerMedia(next, result, { name: options.name, sha256: sourceSha256, lastModified: options.lastModified ?? null }, options));
+      }, { sourceSha256, purpose: options.purpose, sourceName: options.name }, (next) => {
+        if (options.purpose !== "artwork") return;
+        if (next.jobs.some((job) => job.status === "running" && job.purpose === "artwork" && job.sourceSha256 === sourceSha256)) throw new Error("This photo is already being prepared as a new artwork. Wait for the current preparation to finish.");
+        if (options.allowDuplicateSource !== true && next.media.some((entry) => entry.sourceSha256 === sourceSha256)) throw new Error("This photo is already in Studio. Open the existing item or explicitly choose Create another artwork anyway.");
       });
     },
     async snapshotChoices() {
@@ -224,7 +240,7 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
         if (typeof expectedVersion !== "string" || expectedVersion !== artworkVersion(id, next)) throw new Error("Draft changed since you opened it. Deletion was refused so newer saved work is preserved.");
         const record = next.catalogue.artworks[at], projects = next.catalogue.projects.filter((project) => project.memberIds.includes(id));
         const emptyProjects = projects.filter((project) => project.memberIds.length === 1);
-        if (emptyProjects.length) throw new Error(`Delete or add another artwork to project "${emptyProjects[0].title}" before deleting its only member.`);
+        if (emptyProjects.length) throw new Error(`Project "${emptyProjects[0].title}" would become empty. Delete that private project draft, or add another artwork to it, before deleting this artwork.`);
         next.deletedDrafts ??= [];
         if (next.deletedDrafts.some((entry) => entry.id === id)) throw new Error("Deleted-draft history already contains this neutral identity; reconcile private state before continuing.");
         next.deletedDrafts.push({
@@ -263,6 +279,40 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
         invalidate(next, id);
         if (note !== undefined) next.notes[id] = String(note).slice(0,10000);
         return project;
+      });
+    },
+    async deleteProject(id, expectedVersion) {
+      return transact((next) => {
+        const at = next.catalogue.projects.findIndex((project) => project.id === id);
+        if (at < 0) throw new Error("This project draft no longer exists. Refresh Studio.");
+        if (readCatalogue(repository).projects.some((project) => project.id === id)) throw new Error("This project exists in the repository catalogue and cannot be deleted from private Studio.");
+        if (typeof expectedVersion !== "string" || expectedVersion !== projectVersion(id, next)) throw new Error("Project changed since you opened it. Deletion was refused so newer saved work is preserved.");
+        const project = next.catalogue.projects[at];
+        if (next.deletedProjects.some((entry) => entry.id === id)) throw new Error("Deleted-project history already contains this identity; reconcile private state before continuing.");
+        next.deletedProjects.push({ id, deletedAt: new Date().toISOString(), record: clone(project), workflow: clone(next.workflow[id] ?? null), note: next.notes[id] ?? "" });
+        next.catalogue.projects.splice(at, 1);
+        delete next.workflow[id];
+        delete next.notes[id];
+        return { id, title: project.title, preservedArtworkIds: [...project.memberIds] };
+      });
+    },
+    async deleteMedia(mediaIds) {
+      if (!Array.isArray(mediaIds) || !mediaIds.length || new Set(mediaIds).size !== mediaIds.length) throw new Error("Choose one or more unique photos to remove");
+      return transact((next) => {
+        const selected = mediaIds.map((id) => {
+          const media = next.media.find((entry) => entry.id === id);
+          if (!media) throw new Error("A selected private photo no longer exists. Refresh Studio.");
+          return media;
+        });
+        for (const media of selected) {
+          const attached = next.catalogue.artworks.filter((work) => work.reproductions.some((image) => image.src === media.reproduction.src));
+          if (attached.length) throw new Error(`"${media.name}" is attached to ${attached.map((work) => `"${work.title}"`).join(", ")}. Remove that photo in the artwork editor and save the draft before removing it from Photos & references.`);
+        }
+        for (const media of selected) {
+          next.deletedMedia.push({ id: media.id, deletedAt: new Date().toISOString(), record: clone(media) });
+          next.media.splice(next.media.findIndex((entry) => entry.id === media.id), 1);
+        }
+        return { mediaIds: selected.map((entry) => entry.id), preservedFiles: true };
       });
     },
     async curate({ selectedIds, homepageLeadId }) {

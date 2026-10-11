@@ -3,11 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
+Phase: AUTOMATED_VERIFICATION
 Active-Request: M09-R19
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-M09-R18 is closed and archived after full local verification (97/97 tests, strict state/build pass) and owner acceptance of both grid/editor artwork deletion. M09-R19 is the active real-pilot Studio cleanup: private project deletion/sole-member guidance, safe Photos & references removal, single-flight duplicate-aware artwork intake, and neutral transient informational status presentation. No public-source/export/release authority is added.
+M09-R19 implementation is complete and awaiting automated verification. The real-pilot cleanup adds explicit private-project deletion/empty-project guidance, safe selected Photos & references removal with attached-media refusal, source-hash single-flight/duplicate-intake interruption with deliberate override, and neutral transient informational status bars while errors remain persistent. Source files/private derivatives/public catalogue/export/release boundaries remain protected.

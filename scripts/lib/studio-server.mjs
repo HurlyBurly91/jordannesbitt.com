@@ -62,10 +62,13 @@ export async function startStudio(options = {}) {
       if (request.method === "GET" && path === "/api/state") {
         const state = studio.state(), repositoryCatalogue = readCatalogue(studio.repository);
         const artworkVersions = Object.fromEntries(state.catalogue.artworks.map((work) => [work.id, studio.artworkVersion(work.id, state)]));
+        const projectVersions = Object.fromEntries(state.catalogue.projects.map((project) => [project.id, studio.projectVersion(project.id, state)]));
         json(200, {
           ...state,
           artworkVersions,
+          projectVersions,
           repositoryArtworkIds: repositoryCatalogue.artworks.map((work) => work.id),
+          repositoryProjectIds: repositoryCatalogue.projects.map((project) => project.id),
           actualPublic: repositoryCatalogue.artworks.filter((work) => work.published && !work.fixture).map((work) => ({ id: work.id, slug: work.slug })),
           repositoryWritesEnabled: studio.allowPublicExport,
         }); return;
@@ -92,7 +95,12 @@ export async function startStudio(options = {}) {
         json(200, await studio.deleteArtwork(data.id, data.expectedVersion)); return;
       }
       if (path === "/api/project/save") { json(200, await studio.saveProject(data.record, data.note)); return; }
+      if (path === "/api/project/delete") {
+        if (typeof data.expectedVersion !== "string" || !/^[a-f0-9]{64}$/.test(data.expectedVersion)) throw new Error("Reload this project before deleting; a current saved-version check is required.");
+        json(200, await studio.deleteProject(data.id, data.expectedVersion)); return;
+      }
       if (path === "/api/media/attach") { json(200, { artworkId: await studio.attachMedia(data.mediaId, data) }); return; }
+      if (path === "/api/media/delete") { json(200, await studio.deleteMedia(data.mediaIds)); return; }
       if (path === "/api/curation") { await studio.curate(data); json(200, { saved: true }); return; }
       if (path === "/api/review") { await studio.markReviewed(data.id); json(200, { reviewedLocally: true, publicSourceApproved: false }); return; }
       if (path === "/api/approve") { await studio.approve(data.id, data); json(200, { publicSourceApproved: true, repositoryWritten: false }); return; }

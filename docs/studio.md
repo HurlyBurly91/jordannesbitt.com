@@ -24,6 +24,16 @@ Confirmed deletion removes the artwork from the active private catalogue and fro
 
 Public-source/repository catalogue records remain outside this destructive control. Deletion does not grant export/publication authority, delete public media or change M09/M10 release gates.
 
+## Real-pilot cleanup: projects, media, duplicate intake and status
+
+Private Studio-only projects can be deleted explicitly from the project editor. Project deletion is version-checked, refuses repository-catalogue projects, preserves every artwork/photo, and records a private tombstone. A project cannot be saved with zero members; when the owner removes the last member the editor explains that they must add an artwork or use `Delete project draft`. Artwork deletion keeps refusing to strand a sole-member project, but now points at this explicit project-delete path.
+
+Photos & references can be removed from the active Studio library in a selected batch. Removal is refused while any selected media is attached to an artwork; the owner must remove that reproduction in the artwork editor and save first. Confirmed media removal only removes the active private library record and records a private tombstone. Upload/source bytes, private derivatives and asset files are never unlinked or securely erased by this action, and repository/public catalogue content is untouched.
+
+New-artwork intake is single-flight by source hash. The job reservation records its source hash and purpose before processing begins, so a second request for the same image while the first is running is refused even across tabs. Read-only inspection reports existing active media/artwork matches before neutral-ID allocation. If an identical source already exists, the normal UI interrupts and offers Open/View existing, Cancel, or an explicit `Create another artwork anyway`. The override permits an intentional later duplicate identity but never bypasses the pending-job guard. Slow preparation keeps the create button disabled with a clear Creating/Preparing label until the current job reaches a terminal state.
+
+Routine saved/ready/preview feedback is a neutral Studio status bar and auto-clears after a bounded interval. Errors remain persistent, oxide-styled alerts. Long-running informational states can stay visible until a success/error replaces them.
+
 ## Lifecycle
 
 PRIVATE LOCAL DRAFT → successful current-component PREVIEW → owner marks REVIEWED LOCALLY → owner explicitly authorizes PUBLIC-SOURCE DISCLOSURE/RIGHTS for the exact shown record/media digest → deliberate EXPORT.

@@ -691,3 +691,124 @@ test("Studio exposes cancellable card/editor draft deletion and keeps source pho
   assert.equal(await page.locator(`#work-list [data-artwork-id="${second.artworkId}"]`).count(), 0);
 });
 
+test("private project deletion resolves sole-member dead end without deleting member artwork", async (t) => {
+  const { project, options } = await setup(t);
+  const studio = await openStudio(options); t.after(() => studio.close());
+  const { artworkId } = await add(studio); await edit(studio, artworkId);
+  const beforePublic = JSON.stringify(readCatalogue(project.root));
+  const projectRecord = await studio.saveProject({ title: "Disposable private project", memberIds: [artworkId], published: false });
+  const stale = studio.projectVersion(projectRecord.id);
+  await studio.saveProject({ ...projectRecord, description: "newer project state" }, "newer note");
+  await assert.rejects(studio.deleteProject(projectRecord.id, stale), /Project changed since/);
+  const result = await studio.deleteProject(projectRecord.id, studio.projectVersion(projectRecord.id));
+  assert.equal(result.id, projectRecord.id);
+  assert.equal(studio.state().catalogue.projects.some((entry) => entry.id === projectRecord.id), false);
+  assert.equal(studio.state().catalogue.artworks.some((entry) => entry.id === artworkId), true);
+  assert.equal(studio.state().deletedProjects.at(-1).record.id, projectRecord.id);
+  assert.equal(JSON.stringify(readCatalogue(project.root)), beforePublic);
+});
+
+test("Photos & references removal preserves files and refuses attached media until detached", async (t) => {
+  const { project, dataRoot, options } = await setup(t);
+  const studio = await openStudio(options); t.after(() => studio.close());
+  const reference = await add(studio, "reference-remove.png", "media");
+  const mediaBefore = studio.state().media.find((entry) => entry.id === reference.mediaId), assetBefore = structuredClone(studio.state().assets);
+  const publicBefore = JSON.stringify(readCatalogue(project.root));
+  await studio.deleteMedia([reference.mediaId]);
+  assert.equal(studio.state().media.some((entry) => entry.id === reference.mediaId), false);
+  assert.equal(studio.state().deletedMedia.at(-1).record.sourceSha256, mediaBefore.sourceSha256);
+  assert.deepEqual(studio.state().assets, assetBefore, "removal keeps derivative allowlist/files for private recovery");
+  assert.equal(JSON.stringify(readCatalogue(project.root)), publicBefore);
+
+  const art = await add(studio, "media-owner.png"); await edit(studio, art.artworkId);
+  const detail = await add(studio, "attached-remove.png", "attach", { artworkId: art.artworkId, role: "detail" });
+  await assert.rejects(studio.deleteMedia([detail.mediaId]), /attached to/);
+  const work = studio.state().catalogue.artworks.find((entry) => entry.id === art.artworkId);
+  await studio.saveArtwork(art.artworkId, { ...work, reproductions: work.reproductions.filter((image) => image.src !== studio.state().media.find((entry) => entry.id === detail.mediaId).reproduction.src) }, "", studio.artworkVersion(art.artworkId));
+  await studio.deleteMedia([detail.mediaId]);
+  assert.equal(studio.state().media.some((entry) => entry.id === detail.mediaId), false);
+  assert.deepEqual(studio.state().assets, { ...studio.state().assets }, "media removal performs no filesystem garbage collection");
+  assert.ok(JSON.parse(await readFile(resolve(dataRoot, "id-registry.json"))).next >= 2);
+});
+
+test("new-artwork intake blocks pending identical source and requires explicit override for an existing source", async (t) => {
+  let release;
+  const gate = new Promise((done) => { release = done; });
+  const gatedEncode = async (bytes, path, width, format) => {
+    await gate;
+    let image = sharp(bytes).resize({ width, withoutEnlargement: true });
+    if (format === "jpeg") image = image.jpeg({ quality: 92 });
+    if (format === "webp") image = image.webp({ quality: 90 });
+    if (format === "avif") image = image.avif({ quality: 65, effort: 1 });
+    const info = await image.toFile(path); return { width: info.width, height: info.height };
+  };
+  const { dataRoot, options } = await setup(t, { ingestionDependencies: { encode: gatedEncode } });
+  const studio = await openStudio(options); t.after(() => studio.close());
+  const bytes = await sharp({ create: { width: 64, height: 80, channels: 3, background: "#405060" } }).png().toBuffer();
+  const sha256 = checksum(bytes), settings = { name: "same-source.png", purpose: "artwork", assumeSrgb: true, sha256 };
+  const firstJob = await studio.intake(bytes, settings);
+  const inspectionWhilePending = await studio.inspectImage(bytes, { sha256 });
+  assert.ok(inspectionWhilePending.pendingArtworkJobs.includes(firstJob));
+  await assert.rejects(studio.intake(bytes, { ...settings, allowDuplicateSource: true }), /already being prepared/);
+  assert.equal(JSON.parse(await readFile(resolve(dataRoot, "id-registry.json"))).next, 1, "pending duplicate allocates no second neutral ID");
+  release(); await studio.waitForJobs();
+  assert.equal(studio.state().catalogue.artworks.length, 1);
+  const inspection = await studio.inspectImage(bytes, { sha256 });
+  assert.equal(inspection.existingArtworkIds.length, 1);
+  await assert.rejects(studio.intake(bytes, settings), /already in Studio/);
+  const duplicateJob = await studio.intake(bytes, { ...settings, allowDuplicateSource: true }); await studio.waitForJobs();
+  assert.equal(studio.state().jobs.find((job) => job.id === duplicateJob).status, "complete");
+  assert.equal(studio.state().catalogue.artworks.length, 2);
+  assert.equal(JSON.parse(await readFile(resolve(dataRoot, "id-registry.json"))).next, 3);
+});
+
+test("real-pilot cleanup UI exposes project/media removal, duplicate interruption and neutral transient status", async (t) => {
+  const { dataRoot, options } = await setup(t, { allowPublicExport: false });
+  const original = resolve(dataRoot, "cleanup-source.png");
+  await writeFile(original, await sharp({ create: { width: 64, height: 80, channels: 3, background: "#506070" } }).png().toBuffer());
+  const service = await startStudio(options); t.after(() => service.stop());
+  const artwork = await add(service.studio, "project-member.png"); await edit(service.studio, artwork.artworkId);
+  const projectRecord = await service.studio.saveProject({ title: "Demo project to delete", memberIds: [artwork.artworkId], published: false });
+  const reference = await add(service.studio, "loose-reference.png", "media");
+  const browser = await chromium.launch(); t.after(() => browser.close());
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(service.origin); await page.getByText(/Studio ready\./).waitFor();
+  assert.equal(await page.locator("#message").getAttribute("data-tone"), "info");
+
+  await page.getByRole("button", { name: "Projects", exact: true }).click();
+  await page.locator(`#project-list [data-project-id="${projectRecord.id}"]`).click();
+  await page.locator("#project-members").getByRole("button", { name: "Remove", exact: true }).click();
+  await page.getByText(/cannot be saved with no artworks/i).waitFor();
+  await page.getByRole("button", { name: "Save project", exact: true }).click();
+  await page.getByText(/use Delete project draft/i).waitFor();
+  assert.equal(await page.locator("#message").getAttribute("data-tone"), "error");
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), /artwork.*kept/i); await dialog.accept(); });
+  await page.getByRole("button", { name: "Delete project draft", exact: true }).click();
+  await page.getByText(/Deleted private project/).waitFor();
+  assert.equal(service.studio.state().catalogue.projects.some((entry) => entry.id === projectRecord.id), false);
+  assert.equal(service.studio.state().catalogue.artworks.some((entry) => entry.id === artwork.artworkId), true);
+
+  await page.getByRole("button", { name: "Photos & references", exact: true }).click();
+  await page.locator(`#media-library [data-media-id="${reference.mediaId}"]`).click();
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Source files|Original selected files/i); await dialog.accept(); });
+  await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
+  await page.getByText(/Source files were kept/).waitFor();
+  assert.equal(service.studio.state().media.some((entry) => entry.id === reference.mediaId), false);
+  assert.equal(await page.locator("#message").getAttribute("data-tone"), "info");
+
+  await page.getByRole("button", { name: "Artworks", exact: true }).click();
+  await page.getByRole("button", { name: "Add images", exact: true }).click();
+  await page.locator("#files").setInputFiles(original);
+  await page.getByRole("button", { name: "Create draft", exact: true }).click();
+  await page.getByRole("button", { name: "Use sRGB for this image", exact: true }).click();
+  await page.getByLabel("Title", { exact: true }).waitFor();
+  await page.getByRole("button", { name: "Artworks", exact: true }).click();
+  await page.getByRole("button", { name: "Add images", exact: true }).click();
+  await page.locator("#files").setInputFiles(original);
+  await page.getByRole("button", { name: "Create draft", exact: true }).click();
+  await page.getByText("This photo is already in Studio.", { exact: true }).waitFor();
+  assert.equal(await page.getByRole("button", { name: "Create another artwork anyway", exact: true }).isVisible(), true);
+  await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await page.getByText(/No new draft was created/).waitFor();
+});
+
