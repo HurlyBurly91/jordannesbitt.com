@@ -3,11 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: FOLLOW_UP
-Active-Request: M09-R13
+Phase: IMPLEMENTATION
+Active-Request: M09-R18
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-M09-R13-H01 is explicitly ACCEPTED by the owner after review of the 2026-10-11 Studio screencast. The editable same/different-artwork multi-tab flow, advisory behavior, stale-save refusal/retention/reload, Back/Forward, Year validation, and preview/Return-to-Studio path are accepted for R13. M09 remains ACTIVE because older real-content/rights/colour/curation/business/launch human gates are unresolved. The next substantive step should be a new owner-authorized M09 real launch pilot/content-curation request rather than further Studio infrastructure work.
+M09-R18 is the owner-requested safe private-draft deletion follow-up discovered during real pilot use. Implement card/editor deletion for private unpublished drafts with explicit confirmation, project/curation cleanup, CAS/concurrency protection, neutral-ID non-reuse and private tombstone provenance. Source media/public catalogue remain untouched; R13 acceptance and older M09 content/rights gates remain preserved.

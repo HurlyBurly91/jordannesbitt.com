@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: FOLLOW_UP
-Active-Request: M09-R13
+Phase: IMPLEMENTATION
+Active-Request: M09-R18
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -228,4 +228,102 @@ Source: USER, 2026-10-09. Update this repository again from the consolidated aut
   Repository-State: HEAD=234c05a7c3b4787eed288e35cad8263377a56262; WORKTREE=CLEAN
   Limitations:
     - Build/diff evidence does not constitute owner usability/content/rights/release acceptance.
+
+## M09-R18 — Safe private draft deletion
+
+Source: USER, 2026-10-11. During real Studio use the owner observed that accumulated drafts have no simple deletion control and explicitly requested: `add draft deletion`.
+
+- [~] M09-R18-01 Add a normal `Delete draft` action to each private artwork card in the Artworks grid and to the corresponding artwork editor.
+  Source: USER
+  Requirement: Deletion must be discoverable from both the collection view and the draft editor without exposing technical/internal controls as the primary path.
+  Verified-By:
+    - M09-R18-V01
+    - M09-R18-H01
+
+- [~] M09-R18-02 Make draft deletion destructive only to the private active draft record, never to source/original files or public catalogue records.
+  Source: USER
+  Requirement: Only private unpublished Studio drafts may be deleted. Source uploads/frozen snapshot inputs and public repository catalogue records/assets must remain untouched.
+  Verified-By:
+    - M09-R18-V01
+    - M09-R18-V02
+
+- [~] M09-R18-03 Require explicit confirmation and safely reconcile private references when deleting.
+  Source: DERIVED
+  Requirement: Confirmation names the draft and warns about Selected Work/homepage/project membership when present. Delete removes the active artwork from private catalogue/curation/project membership, invalidates associated workflow/note state from the active record, and must not silently delete unrelated photos/reference media.
+  Verified-By:
+    - M09-R18-V01
+    - M09-R18-H01
+
+- [~] M09-R18-P01 Preserve neutral identity and concurrent-edit safety.
+  Source: DERIVED
+  Requirement: Deleted neutral artwork IDs are never reused. A stale editor may not delete a newer saved draft; deletion must use the authoritative saved-version/CAS boundary and serialized private-state transaction.
+  Verified-By:
+    - M09-R18-V01
+    - M09-R18-V02
+
+- [~] M09-R18-P02 Preserve all accepted R13 navigation/multi-tab/preview behavior, public-export boundaries, release guards and current M09 content/rights gates.
+  Source: USER/DERIVED
+  Requirement: Draft deletion is a bounded Studio follow-up only; it does not authorize public export, source deletion, M09 completion or M10.
+  Verified-By:
+    - M09-R18-V01
+    - M09-R18-V02
+
+- [~] M09-R18-D01 Implement private deletion as an auditable tombstone rather than silent irreversible erasure.
+  Source: DERIVED
+  Requires:
+    - M09-R18-02
+    - M09-R18-03
+    - M09-R18-P01
+  Conclusion: Removing a draft from the active private catalogue while retaining a compact private tombstone of the deleted record/workflow/note and deletion time provides recovery provenance without keeping the draft visible or reusing its neutral ID. Media/source files remain untouched and may later be reused explicitly.
+  Conclusion-Status: DERIVED
+  Conclusion-Scope: Private Studio state only; no public catalogue or filesystem source deletion.
+  Conclusion-Evidence:
+    - docs/studio.md
+    - scripts/lib/studio-store.mjs
+  Conclusion-Limitations:
+    - No owner-facing undelete UI is required by this request.
+  Conclusion-Recheck-On:
+    - Owner requests permanent erasure or restore UI
+    - Public catalogue deletion is requested
+    - Media garbage collection is introduced
+
+- [~] M09-R18-V01 Run the full project verification after implementation.
+  Source: DERIVED
+  Covers:
+    - M09-R18-01
+    - M09-R18-02
+    - M09-R18-03
+    - M09-R18-P01
+    - M09-R18-P02
+  Gate: INTEGRATION
+  Command: npm run verify
+  Oracle: integration-or-end-to-end
+  Expected: state validation, Astro build and the complete project test suite pass with targeted draft-deletion coverage.
+  Limitations:
+    - Automated checks do not establish owner-facing usability.
+
+- [~] M09-R18-V02 Verify deletion cannot mutate public source/catalogue or reuse a neutral ID.
+  Source: DERIVED
+  Covers:
+    - M09-R18-02
+    - M09-R18-P01
+    - M09-R18-P02
+  Gate: CONSTRAINT
+  Command: targeted Studio deletion tests plus public-catalogue/source assertions
+  Oracle: property-or-invariant
+  Expected: private draft disappears from active state; public catalogue/source bytes remain unchanged; project memberships are reconciled; subsequent allocation does not reuse the deleted ID; stale-version deletion is refused.
+  Limitations:
+    - Filesystem secure-erasure semantics are explicitly out of scope.
+
+- [H] M09-R18-H01 Owner reviews draft deletion from both the artwork card and artwork editor.
+  Source: USER
+  Requires:
+    - M09-R18-V01
+    - M09-R18-V02
+  Covers:
+    - M09-R18-01
+    - M09-R18-03
+  Gate: HUMAN
+  Verification:
+    - Confirm the action is easy to find, warning text is understandable, cancel preserves the draft, confirmed deletion removes it from the active Studio view, and no unexpected source/media loss is observed.
 
