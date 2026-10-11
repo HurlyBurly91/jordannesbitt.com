@@ -39,3 +39,9 @@ The implementation includes targeted store/browser regression tests for:
 - editor delete with unsaved-edit warning.
 
 Full `npm run verify` remains pending; the normal hosted workflow only runs state validation and Astro build.
+
+## Live-ledger archival-reference correction
+
+After R17 was correctly archived out of the bounded live ledger, strict validation reported E060 because already-accepted `M09-R13-H01` still carried its former execution-time `Requires: M09-R17-V02` reference. That prerequisite had been satisfied before the owner's R13 acceptance and remains preserved in the R17/R13 records; it is no longer a live dependency after the human gate is terminal.
+
+The obsolete live `Requires` edge is removed and its historical satisfaction is recorded in the accepted H01 limitations. No acceptance, evidence result or implementation behavior is changed.

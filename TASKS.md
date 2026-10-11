@@ -123,8 +123,6 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
 
 - [x] M09-R13-H01 Owner reviews normal same/different-artwork editable tabs, advisory/no metadata copy, save conflict/retention/confirmed reload and consistent Back/Forward/URLs plus preserved validation/preview.
   Source: USER/DERIVED; preserved stable ID.
-  Requires:
-    - M09-R17-V02
   Covers:
     - M09-R13-01
     - M09-R13-02
@@ -150,6 +148,7 @@ Historical R13 requirements and technical evidence remain in `records/M09-R13-ed
   Human-Decision: ACCEPTED
   Decision-Source: User, 2026-10-11, after review of the submitted Studio screencast: "we can mark it accepted"
   Limitations:
+    - At the time of acceptance, M09-R17-V02 had verified the then-current durable-state-only branch changes; that completed prerequisite is preserved in records after R17 left the bounded live ledger.
     - Historical M09-R12-H01 remains FAILED overall. Its preserved preview/Return-to-Studio path was included in and accepted through this R13 human review; that does not retroactively convert the overall R12 gate into a pass.
 
 ## M09-R18 — Safe private draft deletion
