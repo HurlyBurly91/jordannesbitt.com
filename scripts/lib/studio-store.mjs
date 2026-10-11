@@ -27,8 +27,10 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
   const statePath = resolve(root, "state.json");
   let state;
   try {
-    state = await exists(statePath) ? await jsonFile(root, statePath) : { version: 1, revision: 0, catalogue: clone(readCatalogue(repository)), assets: {}, media: [], workflow: {}, notes: {}, jobs: [], previews: [], exportPlans: {} };
+    state = await exists(statePath) ? await jsonFile(root, statePath) : { version: 1, revision: 0, catalogue: clone(readCatalogue(repository)), assets: {}, media: [], workflow: {}, notes: {}, jobs: [], previews: [], exportPlans: {}, deletedDrafts: [] };
     if (state.version !== 1) throw new Error("Unsupported studio state version");
+    state.deletedDrafts ??= [];
+    if (!Array.isArray(state.deletedDrafts)) throw new Error("Invalid deleted-draft history");
     for (const work of state.catalogue.artworks) {
       state.workflow[work.id] ??= { titleProvided: true, reviewed: null, approved: null };
       for (const url of recordAssets(work)) if (!state.assets[url]) state.assets[url] = { path: mediaSource(repository, url), public: true, sha256: await fileHash(repository, mediaSource(repository, url)) };
@@ -212,6 +214,40 @@ export async function openStudio({ dataRoot = defaultDataRoot(), repository = re
         if (note !== undefined) next.notes[id] = String(note).slice(0, 10000);
         invalidate(next, id);
         return record;
+      });
+    },
+    async deleteArtwork(id, expectedVersion) {
+      return transact((next) => {
+        const at = next.catalogue.artworks.findIndex((work) => work.id === id);
+        if (at < 0) throw new Error("This draft no longer exists. Refresh Studio before making another change.");
+        if (readCatalogue(repository).artworks.some((work) => work.id === id)) throw new Error("This artwork exists in the repository catalogue and cannot be deleted from private Studio.");
+        if (typeof expectedVersion !== "string" || expectedVersion !== artworkVersion(id, next)) throw new Error("Draft changed since you opened it. Deletion was refused so newer saved work is preserved.");
+        const record = next.catalogue.artworks[at], projects = next.catalogue.projects.filter((project) => project.memberIds.includes(id));
+        const emptyProjects = projects.filter((project) => project.memberIds.length === 1);
+        if (emptyProjects.length) throw new Error(`Delete or add another artwork to project "${emptyProjects[0].title}" before deleting its only member.`);
+        next.deletedDrafts ??= [];
+        if (next.deletedDrafts.some((entry) => entry.id === id)) throw new Error("Deleted-draft history already contains this neutral identity; reconcile private state before continuing.");
+        next.deletedDrafts.push({
+          id,
+          deletedAt: new Date().toISOString(),
+          record: clone(record),
+          workflow: clone(next.workflow[id] ?? null),
+          note: next.notes[id] ?? "",
+          projectMemberships: projects.map((project) => project.id),
+        });
+        next.catalogue.artworks.splice(at, 1);
+        for (const project of projects) {
+          project.memberIds = project.memberIds.filter((member) => member !== id);
+          invalidate(next, project.id);
+        }
+        delete next.workflow[id];
+        delete next.notes[id];
+        return {
+          id,
+          title: record.title,
+          projectIds: projects.map((project) => project.id),
+          preservedMediaCount: record.reproductions.length,
+        };
       });
     },
     async saveProject(input, note) {

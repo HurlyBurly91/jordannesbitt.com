@@ -621,3 +621,73 @@ for (const engine of [chromium, firefox]) test(`private preview returns to origi
   const built=await project.build();assert.equal(built.code,0,built.output);for(const path of ["index.html","archive/index.html","about/index.html"])assert.doesNotMatch(await readFile(resolve(project.root,"dist",path),"utf8"),/data-studio-return|Return to Studio|studio-tabs-v1/);
   await context.close();
 });
+
+test("private draft deletion is version-checked, preserves media/public source and never reuses neutral IDs", async (t) => {
+  const { project, dataRoot, options } = await setup(t);
+  const studio = await openStudio(options); t.after(() => studio.close());
+  const one = await add(studio), two = await add(studio, "second.png");
+  await edit(studio, one.artworkId); await edit(studio, two.artworkId);
+  await studio.saveProject({ title: "Two-work private project", memberIds: [one.artworkId, two.artworkId], published: false });
+  await studio.curate({ selectedIds: [one.artworkId, two.artworkId], homepageLeadId: one.artworkId });
+  const beforeMedia = structuredClone(studio.state().media), beforeAssets = structuredClone(studio.state().assets);
+  const staleVersion = studio.artworkVersion(one.artworkId);
+  await edit(studio, one.artworkId, { materials: "newer saved materials" });
+  await assert.rejects(studio.deleteArtwork(one.artworkId, staleVersion), /Deletion was refused/);
+  const currentVersion = studio.artworkVersion(one.artworkId);
+  const result = await studio.deleteArtwork(one.artworkId, currentVersion);
+  assert.equal(result.id, one.artworkId);
+  const state = studio.state();
+  assert.equal(state.catalogue.artworks.some((work) => work.id === one.artworkId), false);
+  assert.deepEqual(state.catalogue.projects[0].memberIds, [two.artworkId]);
+  assert.equal(state.catalogue.artworks[0].homepageLead, false);
+  assert.deepEqual(state.media, beforeMedia, "private media/source entries survive draft deletion");
+  assert.deepEqual(state.assets, beforeAssets, "private derivative allowlist survives draft deletion");
+  const tombstone = state.deletedDrafts.find((entry) => entry.id === one.artworkId);
+  assert.equal(tombstone.record.id, one.artworkId);
+  assert.equal(tombstone.workflow.approved, null);
+  assert.deepEqual(tombstone.projectMemberships, [state.catalogue.projects[0].id]);
+  assert.deepEqual(readCatalogue(project.root).artworks, [], "private deletion cannot create or mutate public catalogue records");
+  assert.equal(JSON.parse(await readFile(resolve(dataRoot, "id-registry.json"))).next, 3);
+  const three = await add(studio, "third.png");
+  assert.equal(three.artworkId, "w-0003", "deleted neutral ID is not reused");
+  assert.notEqual(three.artworkId, one.artworkId);
+
+  const loneProject = await studio.saveProject({ title: "Single member", memberIds: [two.artworkId], published: false });
+  await assert.rejects(studio.deleteArtwork(two.artworkId, studio.artworkVersion(two.artworkId)), /only artwork in project/);
+  assert.ok(studio.state().catalogue.projects.some((entry) => entry.id === loneProject.id));
+});
+
+test("Studio exposes cancellable card/editor draft deletion and keeps source photos", async (t) => {
+  const { options } = await setup(t, { allowPublicExport: false });
+  const service = await startStudio(options); t.after(() => service.stop());
+  const first = await add(service.studio), second = await add(service.studio, "editor-delete.png");
+  await edit(service.studio, first.artworkId); await edit(service.studio, second.artworkId);
+  const browser = await chromium.launch(); t.after(() => browser.close());
+  const page = await browser.newPage();
+  await page.goto(service.origin); await page.getByText(/Studio ready\./).waitFor();
+
+  const firstTitle = service.studio.state().catalogue.artworks.find((work) => work.id === first.artworkId).title;
+  const firstDelete = page.getByRole("button", { name: `Delete draft ${firstTitle}`, exact: true });
+  assert.equal(await firstDelete.isVisible(), true);
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Original\/source photos and private media are kept/); await dialog.dismiss(); });
+  await firstDelete.click();
+  assert.equal(await page.locator(`#work-list [data-artwork-id="${first.artworkId}"]`).count(), 1, "cancel keeps draft");
+
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), new RegExp(first.artworkId)); await dialog.accept(); });
+  await firstDelete.click();
+  await page.getByText(/Deleted private draft/).waitFor();
+  assert.equal(await page.locator(`#work-list [data-artwork-id="${first.artworkId}"]`).count(), 0);
+  assert.ok(service.studio.state().media.length >= 2, "deleting draft does not delete private source/media entries");
+
+  const secondTitle = service.studio.state().catalogue.artworks.find((work) => work.id === second.artworkId).title;
+  await page.getByRole("button", { name: `Open ${secondTitle}`, exact: true }).click();
+  await editorReady(page, { artworkId: second.artworkId });
+  assert.equal(await page.getByRole("button", { name: "Delete draft", exact: true }).isVisible(), true);
+  await page.getByLabel("Title", { exact: true }).fill("Unsaved editor deletion");
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Unsaved edits in this tab will be discarded/); await dialog.accept(); });
+  await page.getByRole("button", { name: "Delete draft", exact: true }).click();
+  await page.getByText(/Deleted private draft/).waitFor();
+  assert.equal(await page.locator("#artwork-form").isVisible(), false);
+  assert.equal(await page.locator(`#work-list [data-artwork-id="${second.artworkId}"]`).count(), 0);
+});
+

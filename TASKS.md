@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: IMPLEMENTATION
+Phase: AUTOMATED_VERIFICATION
 Active-Request: M09-R18
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
@@ -268,7 +268,7 @@ Source: USER, 2026-10-11. During real Studio use the owner observed that accumul
     - M09-R18-V01
     - M09-R18-V02
 
-- [~] M09-R18-D01 Implement private deletion as an auditable tombstone rather than silent irreversible erasure.
+- [x] M09-R18-D01 Implement private deletion as an auditable tombstone rather than silent irreversible erasure.
   Source: DERIVED
   Requires:
     - M09-R18-02

@@ -14,6 +14,16 @@ The studio server binds127.0.0.1 only. Requests must use its exact loopback Host
 
 Bound request bodies and validate image bytes through existing intake. Missing ICC requires explicit local sRGB assumption. Upload copies are immutable private inputs with client/server digest verification; originals are only read. Reject traversal, symlinks and resolved paths outside approved roots; media serving uses stored derivative allowlists/checksums. Serial mutation/exclusive studio locks protect shared state/registry; atomic state files and pending/error/complete jobs prevent interrupted intake from appearing complete. Existing pipeline cache/collision/failure behavior is preserved.
 
+## Private draft deletion
+
+Studio exposes `Delete draft` from both the Artworks grid and the artwork editor. The action applies only to private Studio-only artwork records; any artwork identity already present in the repository catalogue is protected and cannot be deleted through Studio.
+
+Deletion requires an explicit named browser confirmation. The confirmation reports current Selected Work, homepage and project relationships, and warns when the current editor has unsaved changes. The request carries the draft's authoritative saved-version token and runs inside the existing serialized private-state transaction, so a stale tab cannot delete a newer saved draft.
+
+Confirmed deletion removes the artwork from the active private catalogue and from project memberships, invalidating affected project review/approval state. Deletion is refused when the artwork is the sole member of a project, because silently deleting that project would exceed the artwork-delete request. Original/source files, uploaded private media, derivatives and the neutral ID registry are never deleted or rewound. The neutral artwork ID is therefore never reused. A compact private tombstone retains the deleted record, workflow/note state, project-membership provenance and deletion time; there is no owner-facing restore UI yet.
+
+Public-source/repository catalogue records remain outside this destructive control. Deletion does not grant export/publication authority, delete public media or change M09/M10 release gates.
+
 ## Lifecycle
 
 PRIVATE LOCAL DRAFT → successful current-component PREVIEW → owner marks REVIEWED LOCALLY → owner explicitly authorizes PUBLIC-SOURCE DISCLOSURE/RIGHTS for the exact shown record/media digest → deliberate EXPORT.

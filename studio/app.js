@@ -9,7 +9,7 @@ let previewing = false, validationAttempted = false, validationIssues = [];
 let previewPopupBusy = false, navigationReady = false, studioView = {tab:"collection",artworkId:null};
 const sessionEditors = new Map();
 let editingVersion, openRevision = 0;
-const staleEditors = new Set(), versionChecks = new Map();
+const staleEditors = new Set(), deletedEditors = new Set(), versionChecks = new Map();
 const previewReturns = new Map();
 const tabs = coordinateArtworkTabs({
   isDirty: (id) => (editingArtwork === id && editorDirty) || sessionEditors.get(id)?.dirty,
@@ -23,18 +23,18 @@ const tabs = coordinateArtworkTabs({
     message("Returned from the private preview. Studio is ready.");
   },
 });
-function canEditArtwork() { return Boolean(editingArtwork && editingVersion && $("artwork-form").dataset.artworkId === editingArtwork); }
+function canEditArtwork() { return Boolean(editingArtwork && editingVersion && $("artwork-form").dataset.artworkId === editingArtwork && !deletedEditors.has(editingArtwork)); }
 function syncTabDrafts() {
   const ids = new Set([...sessionEditors].filter(([,draft])=>draft.dirty).map(([id])=>id));
   if(editingArtwork&&(editorDirty||studioView.artworkId===editingArtwork))ids.add(editingArtwork);
   tabs.sync(ids);
 }
 function renderCoordination() {
-  const stale=staleEditors.has(editingArtwork),dirty=tabs.hasDirty(editingArtwork),panel=$("artwork-coordination");
-  panel.hidden=studioView.artworkId!==editingArtwork||$("artwork-form").hidden||(!stale&&!dirty&&tabs.supported);
-  $("coordination-title").textContent=stale?"A newer saved version exists":dirty?"Edits in another Studio tab":"Tab notices unavailable";
-  $("coordination-message").textContent=stale?"Another tab saved a newer version. Your edits in this tab have not been lost. Review the newer saved version, or explicitly discard your edits and reload. Saving these stale edits will be refused.":dirty?"Another Studio tab also has unsaved edits for this artwork. You can continue here, but only one saved version can win. If the other tab saves first, this tab will require review before saving.":"This browser cannot show cross-tab notices. You can edit here; authoritative saved-version checks still protect every Save.";
-  $("coordination-review").hidden=!stale;$("coordination-reload").hidden=!stale;
+  const deleted=deletedEditors.has(editingArtwork),stale=staleEditors.has(editingArtwork),dirty=tabs.hasDirty(editingArtwork),panel=$("artwork-coordination");
+  panel.hidden=studioView.artworkId!==editingArtwork||$("artwork-form").hidden||(!deleted&&!stale&&!dirty&&tabs.supported);
+  $("coordination-title").textContent=deleted?"This private draft was deleted":stale?"A newer saved version exists":dirty?"Edits in another Studio tab":"Tab notices unavailable";
+  $("coordination-message").textContent=deleted?"Another Studio tab deleted this private draft. Any unsaved values still visible here have not been copied elsewhere, but this deleted neutral ID cannot be saved again. Return to Artworks and create or open another draft.":stale?"Another tab saved a newer version. Your edits in this tab have not been lost. Review the newer saved version, or explicitly discard your edits and reload. Saving these stale edits will be refused.":dirty?"Another Studio tab also has unsaved edits for this artwork. You can continue here, but only one saved version can win. If the other tab saves first, this tab will require review before saving.":"This browser cannot show cross-tab notices. You can edit here; authoritative saved-version checks still protect every Save.";
+  $("coordination-review").hidden=deleted||!stale;$("coordination-reload").hidden=deleted||!stale;
   $("collection").insertBefore(panel, $("artwork-form"));
   updateEditorActions();
 }
@@ -48,7 +48,8 @@ async function checkSavedVersion(id=editingArtwork) {
       const loaded=editingArtwork===id?editingVersion:null,cached=sessionEditors.get(id)?.version;
       if(!loaded&&!cached)break;
       const latest=await api("/api/state"),version=latest.artworkVersions[id];
-      if((loaded&&editingArtwork===id&&editingVersion===loaded&&loaded!==version)||(cached&&sessionEditors.get(id)?.version===cached&&cached!==version))staleEditors.add(id);
+      if(version===undefined){deletedEditors.add(id);staleEditors.delete(id);}
+      else if((loaded&&editingArtwork===id&&editingVersion===loaded&&loaded!==version)||(cached&&sessionEditors.get(id)?.version===cached&&cached!==version))staleEditors.add(id);
       renderCoordination();
     }while(check.again);
   })().catch(()=>{}).finally(()=>versionChecks.delete(id));
@@ -219,7 +220,11 @@ async function refresh({ editor = false } = {}) {
   state = await api("/api/state");
   $("write-mode").textContent = state.repositoryWritesEnabled ? "Repository writing is enabled for this run. Exact owner approval, dry-run and typed confirmation are still required." : "Repository writes are disabled. Start with --allow-public-export only after granting explicit public-source permission.";
   $("work-list").replaceChildren();
-  for (const work of state.catalogue.artworks) { const card = workCard(work, "Open", () => openArtwork(work.id), work.id === editingArtwork); card.append(node("small", phase(work))); $("work-list").append(card); }
+  for (const work of state.catalogue.artworks) {
+    const shell=node("div",undefined,"artwork-card-shell"),card = workCard(work, "Open", () => openArtwork(work.id), work.id === editingArtwork); card.append(node("small", phase(work))); shell.append(card);
+    if (!(state.repositoryArtworkIds||[]).includes(work.id)) { const remove=button("Delete draft",()=>deleteArtworkDraft(work.id));remove.className="danger-action";remove.setAttribute("aria-label",`Delete draft ${title(work)}`);shell.append(remove); }
+    $("work-list").append(shell);
+  }
   if (!state.catalogue.artworks.length) $("work-list").append(node("p", "Start by adding a photo.", "hint"));
   renderProgress();
   renderMedia(); renderProjects(); renderReview(); updateIntake();
@@ -363,6 +368,7 @@ async function openArtwork(id, { focus = true, force = false, historyMode = "pus
     const cached=!force&&sessionEditors.get(id)?.dirty?sessionEditors.get(id):null;
     state=latest;
     if(force)sessionEditors.delete(id);
+    deletedEditors.delete(id);
     renderArtwork(id,{focus:false,cached});
     if(cached&&cached.version!==state.artworkVersions[id])staleEditors.add(id);else staleEditors.delete(id);
   }
@@ -376,7 +382,7 @@ function renderArtwork(id,{focus=true,cached=null}={}) {
   editingArtwork = id; pendingEditorJob = null; editorDirty = false; editingVersion=state.artworkVersions[id];const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
   showTab("collection"); const form = $("artwork-form"); form.hidden = false; form.reset();
   for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = false;
-  $("editor-title").textContent = title(work); $("artwork-id").textContent = `Neutral identity: ${work.id}`; $("artwork-phase").textContent = phase(work);
+  $("editor-title").textContent = title(work); $("artwork-id").textContent = `Neutral identity: ${work.id}`; $("artwork-phase").textContent = phase(work);$("delete-draft-panel").hidden=(state.repositoryArtworkIds||[]).includes(work.id);
   for (const name of ["slug", "medium", "kind", "materials", "description", "framing", "condition", "published", "featured", "selectedOrder"]) formSet(form, name, work[name]);
   formSet(form, "title", state.workflow[id].titleProvided ? work.title : ""); formSet(form, "aliases", work.aliases.join("\n")); formSet(form, "techniques", work.techniques.join("\n"));
   for (const name of ["certainty", "year", "endYear"]) formSet(form, name, work.date[name]); formSet(form, "dateLabel", work.date.label);
@@ -429,6 +435,31 @@ function renderReproductions() {
   if(editorDirty)tabs.announce(editingArtwork);
 }
 function moveView(index, direction) { syncPrimaryAlt(); const other = index + direction; if (other < 0 || other >= editingImages.length) return; [editingImages[index], editingImages[other]] = [editingImages[other], editingImages[index]]; editorDirty = true; renderReproductions(); }
+async function deleteArtworkDraft(id) {
+  if(selectedDirty)throw new Error("Save or discard your unsaved Selected Work changes before deleting a draft.");
+  const work=state.catalogue.artworks.find((entry)=>entry.id===id);
+  if(!work)throw new Error("This draft is no longer available. Refresh Studio.");
+  if((state.repositoryArtworkIds||[]).includes(id))throw new Error("This artwork exists in the repository catalogue and cannot be deleted from private Studio.");
+  const projects=state.catalogue.projects.filter((project)=>project.memberIds.includes(id));
+  const sole=projects.filter((project)=>project.memberIds.length===1);
+  if(sole.length)throw new Error(`"${title(work)}" is the only artwork in project "${sole[0].title}". Add another member or remove the project relationship before deleting this draft.`);
+  const consequences=[];
+  if(work.featured)consequences.push("Selected Work");
+  if(work.homepageLead)consequences.push("the homepage image");
+  if(projects.length)consequences.push(`${projects.length} project${projects.length===1?"":"s"}: ${projects.map((project)=>project.title).join(", ")}`);
+  const unsaved=editingArtwork===id&&editorDirty;
+  const detail=consequences.length?`\n\nIt will also be removed from ${consequences.join(", ")}.`:"";
+  const dirty=unsaved?"\n\nUnsaved edits in this tab will be discarded.":"";
+  if(!confirm(`Delete private draft "${title(work)}"?${detail}${dirty}\n\nOriginal/source photos and private media are kept. Neutral ID ${id} will never be reused. Studio has no restore button for deleted drafts.`)){message("Draft deletion cancelled.");return;}
+  const expectedVersion=editingArtwork===id?editingVersion:state.artworkVersions[id];
+  const result=await api("/api/artwork/delete",{id,expectedVersion});
+  sessionEditors.delete(id);staleEditors.delete(id);deletedEditors.add(id);
+  if(editingArtwork===id){editingArtwork=null;editingVersion=null;editingImages=[];editorDirty=false;$("artwork-form").hidden=true;$("artwork-coordination").hidden=true;}
+  tabs.saved(id);syncTabDrafts();
+  await refresh();
+  updateLocation({tab:"collection",artworkId:null},{replace:true});
+  message(`Deleted private draft "${state.deletedDrafts?.find((entry)=>entry.id===id)?.record?.title||result.title||id}". Photos and source files were kept private and the neutral ID will not be reused.`);
+}
 async function saveArtwork({ actionName = "Save" } = {}) {
   if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
   if (!canEditArtwork()) throw new Error("Wait until this artwork editor is ready before saving");
@@ -456,6 +487,7 @@ async function saveArtwork({ actionName = "Save" } = {}) {
 $("artwork-form").addEventListener("input", () => { if(!canEditArtwork())return;editorDirty = true; updateSimpleFields();syncTabDrafts();checkSavedVersion(); });
 $("artwork-form").addEventListener("focusin",()=>checkSavedVersion());
 $("artwork-form").addEventListener("submit", action(() => saveArtwork()));
+$("delete-artwork").addEventListener("click", action(() => deleteArtworkDraft(editingArtwork)));
 for (const input of document.querySelectorAll('[name="purpose"]')) input.addEventListener("change", updateIntake);
 $("show-intake").addEventListener("click", () => showIntake()); $("media-add-images").addEventListener("click", () => showIntake("media")); $("close-intake").addEventListener("click", action(async () => { resetColourSelection({clearFiles:true}); $("intake-panel").hidden = true;if(editingArtwork)await openArtwork(editingArtwork,{currentState:true}); }));
 $("add-artwork-view").addEventListener("click", () => showIntake("attach", editingArtwork));

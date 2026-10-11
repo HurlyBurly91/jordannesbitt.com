@@ -60,9 +60,15 @@ export async function startStudio(options = {}) {
       const supplied = request.headers["x-studio-token"] ?? "";
       if (typeof supplied !== "string" || supplied.length !== token.length || !timingSafeEqual(Buffer.from(supplied), Buffer.from(token))) throw new Error("Forbidden: studio session token required");
       if (request.method === "GET" && path === "/api/state") {
-        const state = studio.state();
+        const state = studio.state(), repositoryCatalogue = readCatalogue(studio.repository);
         const artworkVersions = Object.fromEntries(state.catalogue.artworks.map((work) => [work.id, studio.artworkVersion(work.id, state)]));
-        json(200, { ...state, artworkVersions, actualPublic: readCatalogue(studio.repository).artworks.filter((work) => work.published && !work.fixture).map((work) => ({ id: work.id, slug: work.slug })), repositoryWritesEnabled: studio.allowPublicExport }); return;
+        json(200, {
+          ...state,
+          artworkVersions,
+          repositoryArtworkIds: repositoryCatalogue.artworks.map((work) => work.id),
+          actualPublic: repositoryCatalogue.artworks.filter((work) => work.published && !work.fixture).map((work) => ({ id: work.id, slug: work.slug })),
+          repositoryWritesEnabled: studio.allowPublicExport,
+        }); return;
       }
       if (request.method === "GET" && path === "/api/snapshot") { json(200, await studio.snapshotChoices()); return; }
       if (request.method !== "POST") { json(404, { error: "Studio route not found" }); return; }
@@ -80,6 +86,10 @@ export async function startStudio(options = {}) {
       if (path === "/api/artwork/save") {
         if (typeof data.expectedVersion !== "string" || !/^[a-f0-9]{64}$/.test(data.expectedVersion)) throw new Error("Reload this artwork before saving; a current saved-version check is required.");
         json(200, await studio.saveArtwork(data.id, data.record, data.note, data.expectedVersion)); return;
+      }
+      if (path === "/api/artwork/delete") {
+        if (typeof data.expectedVersion !== "string" || !/^[a-f0-9]{64}$/.test(data.expectedVersion)) throw new Error("Reload this artwork before deleting; a current saved-version check is required.");
+        json(200, await studio.deleteArtwork(data.id, data.expectedVersion)); return;
       }
       if (path === "/api/project/save") { json(200, await studio.saveProject(data.record, data.note)); return; }
       if (path === "/api/media/attach") { json(200, { artworkId: await studio.attachMedia(data.mediaId, data) }); return; }
