@@ -45,3 +45,30 @@ Full `npm run verify` remains pending; the normal hosted workflow only runs stat
 After R17 was correctly archived out of the bounded live ledger, strict validation reported E060 because already-accepted `M09-R13-H01` still carried its former execution-time `Requires: M09-R17-V02` reference. That prerequisite had been satisfied before the owner's R13 acceptance and remains preserved in the R17/R13 records; it is no longer a live dependency after the human gate is terminal.
 
 The obsolete live `Requires` edge is removed and its historical satisfaction is recorded in the accepted H01 limitations. No acceptance, evidence result or implementation behavior is changed.
+
+## Final verification and owner acceptance — 2026-10-11
+
+The owner installed the pinned Playwright Chromium/Firefox binaries and reran the full project verification on the R18 implementation. The supplied terminal transcript showed:
+
+- strict durable-state validation: `VALID: 0 error(s), 0 warning(s)`;
+- project state checker: `PASS`;
+- Astro diagnostics: 0 errors / 0 warnings / 0 hints;
+- static build complete: 13 pages;
+- full test suite: **97 tests, 97 pass, 0 fail**;
+- targeted `private draft deletion is version-checked, preserves media/public source and never reuses neutral IDs`: PASS;
+- targeted `Studio exposes cancellable card/editor draft deletion and keeps source photos`: PASS.
+
+The owner then exercised the real Studio deletion UI by screencast. Grid-level and editor-level `Delete draft` were both used, confirmations were accepted, deleted drafts disappeared from active Studio, and the owner stated `seems good`. The owner subsequently clarified that the editor-level delete control was clicked when the first video review overlooked it.
+
+Accordingly:
+
+- M09-R18-01: VERIFIED / owner accepted.
+- M09-R18-02: VERIFIED.
+- M09-R18-03: VERIFIED / owner accepted.
+- M09-R18-P01: VERIFIED.
+- M09-R18-P02: VERIFIED.
+- M09-R18-V01: PASS from owner-supplied full `npm run verify` transcript at development head `e45f6b4f358ec306669d9be9786774c7eaa804e3`.
+- M09-R18-V02: PASS through the targeted deletion tests included in that 97/97 run.
+- M09-R18-H01: **ACCEPTED** from owner screencast review and `seems good`.
+
+R18 is complete and leaves M09 ACTIVE. This acceptance does not approve public content, rights, colour fidelity, curation, business/contact facts, final launch manifest or M10.
