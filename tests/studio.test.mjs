@@ -653,7 +653,7 @@ test("private draft deletion is version-checked, preserves media/public source a
   assert.notEqual(three.artworkId, one.artworkId);
 
   const loneProject = await studio.saveProject({ title: "Single member", memberIds: [two.artworkId], published: false });
-  await assert.rejects(studio.deleteArtwork(two.artworkId, studio.artworkVersion(two.artworkId)), /only artwork in project/);
+  await assert.rejects(studio.deleteArtwork(two.artworkId, studio.artworkVersion(two.artworkId)), /only member/);
   assert.ok(studio.state().catalogue.projects.some((entry) => entry.id === loneProject.id));
 });
 
