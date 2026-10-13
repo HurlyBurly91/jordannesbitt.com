@@ -391,8 +391,8 @@ test("untagged colour choice leads to focused ready editor, optional draft save 
 test("decline creates nothing, tagged photos skip colour question, batch approval never applies to future selections or repeated errors", async (t) => {
   const { dataRoot, options }=await setup(t,{allowPublicExport:false});
   const files=[];
-  for(const [name,tagged]of [["decline.png",false],["tagged.png",true],["batch-one.png",false],["batch-two.png",false],["future.png",false]]){
-    const path=resolve(dataRoot,name);let image=sharp({create:{width:32,height:40,channels:3,background:"#507080"}});if(tagged)image=image.withIccProfile("srgb");await writeFile(path,await image.png().toBuffer());files.push(path);
+  for(const [name,tagged,background]of [["decline.png",false,"#507080"],["tagged.png",true,"#517181"],["batch-one.png",false,"#527282"],["batch-two.png",false,"#537383"],["future.png",false,"#547484"]]){
+    const path=resolve(dataRoot,name);let image=sharp({create:{width:32,height:40,channels:3,background}});if(tagged)image=image.withIccProfile("srgb");await writeFile(path,await image.png().toBuffer());files.push(path);
   }
   const service=await startStudio(options);t.after(()=>service.stop());
   await service.studio.transact((state)=>{for(let index=0;index<3;index++)state.jobs.push({id:`old-failure-${index}`,status:"error",error:"Missing ICC profile: choose --assume-srgb"});});
@@ -407,7 +407,9 @@ test("decline creates nothing, tagged photos skip colour question, batch approva
   await select([files[2],files[3]]);await page.getByText("This image has no embedded colour profile.",{exact:true}).waitFor();
   await page.getByLabel("Use sRGB for all 2 currently selected untagged images only",{exact:true}).check();
   await page.getByRole("button",{name:"Use sRGB for this image",exact:true}).click();
-  while(service.studio.state().jobs.length<6)await new Promise((done)=>setTimeout(done,25));await service.studio.waitForJobs();
+  for(let attempt=0;attempt<200&&service.studio.state().jobs.length<6;attempt++)await new Promise((done)=>setTimeout(done,25));
+  assert.equal(service.studio.state().jobs.length,6,"batch intake should reserve both distinct selected images within 5 seconds");
+  await service.studio.waitForJobs();
   await page.getByRole("button",{name:"Refresh",exact:true}).click();
   assert.equal(service.studio.state().catalogue.artworks.length,3);assert.equal(await page.locator("#colour-decision").isVisible(),false);
   assert.equal(await page.locator("#jobs p").count(),1,"equal Ready messages are concise/count-scoped, not duplicate history rows");

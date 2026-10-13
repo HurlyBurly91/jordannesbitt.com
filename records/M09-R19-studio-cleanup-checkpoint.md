@@ -56,3 +56,14 @@ The dedicated R19 duplicate-source invariant test passed independently under Nod
 The shared synthetic `add()` test helper is updated to pass `allowDuplicateSource: true` only for its intentional synthetic new-artwork path. The dedicated R19 guard test continues to call `studio.intake()` directly without that default, so it still verifies the production interruption behavior. The R18 sole-member deletion expectation is also updated to match the new R19 guidance wording (`would become empty` / `Delete that private project draft`) without changing production behavior.
 
 Full V01/V02 remain pending until Playwright browsers are reinstalled and the corrected suite passes.
+
+## Hang root cause and bounded-test correction — 2026-10-13
+
+After Playwright was reinstalled, the Studio suite progressed through the untagged-colour test and then appeared to hang. Inspection showed the next historical test generated `batch-one.png`, `batch-two.png` and `future.png` from identical synthetic pixels. Under R19, the second same-source new-artwork request in that batch is correctly refused, so the test's old unbounded `while (jobs.length < 6)` could never become true.
+
+This was a fixture/test-control defect, not a production intake deadlock. The test now:
+- generates distinct synthetic pixel content for the unrelated decline/tagged/batch/future images;
+- preserves the dedicated R19 duplicate-source test as the only intentional same-source guard exercise;
+- replaces the only unbounded wait loop in `tests/studio.test.mjs` with a 5-second bounded poll followed by an explicit assertion.
+
+The Studio test file contains no other unbounded `while`/infinite loops after this correction.
