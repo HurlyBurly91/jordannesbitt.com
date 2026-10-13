@@ -43,3 +43,16 @@ R13 multi-tab/CAS/navigation/preview semantics and R18 safe artwork deletion rem
 ## Verification
 
 Targeted tests were added for project deletion/stale version preservation, media removal/attachment refusal/file preservation, pending/existing duplicate intake and explicit override, plus the owner-facing cleanup controls. Full `npm run verify` is pending.
+
+## Verification correction — 2026-10-13
+
+The owner isolated `tests/studio.test.mjs` under the required Node 22.23.3 runtime. The run completed in ~12s rather than hanging and reported 29 tests: 9 pass / 20 fail. The failures separated into two causes:
+
+1. Browser tests could not launch because the configured Playwright binaries under `/tmp/opencode/jordannesbitt-browsers` had been cleared. This is an environment prerequisite, not application evidence.
+2. Several pre-R19 synthetic tests intentionally create independent artwork identities from identical generated pixels through the shared `add()` helper. R19 now correctly interrupts such identical-source artwork intake unless deliberate duplicate intent is explicit. Those historical fixtures therefore became invalid assumptions rather than product regressions.
+
+The dedicated R19 duplicate-source invariant test passed independently under Node 22: pending identical source refused, existing identical source refused without override, explicit later override accepted.
+
+The shared synthetic `add()` test helper is updated to pass `allowDuplicateSource: true` only for its intentional synthetic new-artwork path. The dedicated R19 guard test continues to call `studio.intake()` directly without that default, so it still verifies the production interruption behavior. The R18 sole-member deletion expectation is also updated to match the new R19 guidance wording (`would become empty` / `Delete that private project draft`) without changing production behavior.
+
+Full V01/V02 remain pending until Playwright browsers are reinstalled and the corrected suite passes.

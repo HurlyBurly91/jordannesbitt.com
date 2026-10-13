@@ -33,7 +33,10 @@ async function setup(t, options = {}) {
 }
 async function add(studio, name = "source.png", purpose = "artwork", extra = {}) {
   const bytes = await sharp({ create: { width: 64, height: 80, channels: 3, background: "#406070" } }).png().toBuffer();
-  const jobId = await studio.intake(bytes, { name, purpose, assumeSrgb: true, sha256: checksum(bytes), ...extra });
+  // Most synthetic tests intentionally reuse identical pixels for independent artwork identities.
+  // R19 requires that intent to be explicit; dedicated duplicate-guard tests call intake directly without this helper.
+  const deliberateDuplicate = purpose === "artwork" ? { allowDuplicateSource: true } : {};
+  const jobId = await studio.intake(bytes, { name, purpose, assumeSrgb: true, sha256: checksum(bytes), ...deliberateDuplicate, ...extra });
   await studio.waitForJobs();
   const job = studio.state().jobs.find((job) => job.id === jobId);
   assert.equal(job.status, "complete", job.error);
@@ -653,7 +656,7 @@ test("private draft deletion is version-checked, preserves media/public source a
   assert.notEqual(three.artworkId, one.artworkId);
 
   const loneProject = await studio.saveProject({ title: "Single member", memberIds: [two.artworkId], published: false });
-  await assert.rejects(studio.deleteArtwork(two.artworkId, studio.artworkVersion(two.artworkId)), /only member/);
+  await assert.rejects(studio.deleteArtwork(two.artworkId, studio.artworkVersion(two.artworkId)), /would become empty|Delete that private project draft/);
   assert.ok(studio.state().catalogue.projects.some((entry) => entry.id === loneProject.id));
 });
 
