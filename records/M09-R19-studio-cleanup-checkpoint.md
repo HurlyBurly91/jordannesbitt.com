@@ -67,3 +67,9 @@ This was a fixture/test-control defect, not a production intake deadlock. The te
 - replaces the only unbounded wait loop in `tests/studio.test.mjs` with a 5-second bounded poll followed by an explicit assertion.
 
 The Studio test file contains no other unbounded `while`/infinite loops after this correction.
+
+## Final targeted UI-test selector correction — 2026-10-13
+
+After the hang/fixture corrections, the owner reran the complete Studio test file with browsers installed. Result: **28/29 PASS**. The sole failure was not product behavior: the R19 cleanup UI correctly rendered both the inline empty-project guidance and the error status bar with overlapping text, while the test used an unscoped `getByText(/use Delete project draft/i)` locator and Playwright strict mode rejected the two valid matches.
+
+The assertion is narrowed to `#message`, because that step specifically verifies the persistent error status bar after attempting to save an empty project. No application behavior is changed by this correction.

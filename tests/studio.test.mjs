@@ -785,7 +785,7 @@ test("real-pilot cleanup UI exposes project/media removal, duplicate interruptio
   await page.locator("#project-members").getByRole("button", { name: "Remove", exact: true }).click();
   await page.getByText(/cannot be saved with no artworks/i).waitFor();
   await page.getByRole("button", { name: "Save project", exact: true }).click();
-  await page.getByText(/use Delete project draft/i).waitFor();
+  await page.locator("#message").getByText(/use Delete project draft/i).waitFor();
   assert.equal(await page.locator("#message").getAttribute("data-tone"), "error");
   page.once("dialog", async (dialog) => { assert.match(dialog.message(), /artwork.*kept/i); await dialog.accept(); });
   await page.getByRole("button", { name: "Delete project draft", exact: true }).click();
