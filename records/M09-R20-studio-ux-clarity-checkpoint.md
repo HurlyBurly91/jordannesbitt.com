@@ -41,3 +41,14 @@ Implementation and targeted browser coverage are committed. Full `npm run verify
 The first owner-run R20 targeted browser check reached the Photos & references screen and failed only because an intentionally broad Playwright text locator matched three valid UI elements containing the same state vocabulary: the explanatory hint, the live summary and the filter group. The product rendered the expected information.
 
 The test now scopes that assertion to `#media-summary`, which is the element whose count/state sentence the check is intended to verify. No application behavior changed. GitHub hosted state/build validation for the implementation revision `950f0af882fe5350ac9c688bba242b139fe35be0` completed successfully.
+
+## Full-suite compatibility correction — 2026-10-15
+
+The owner's first full R20 `npm run verify` completed strict state validation and Astro build successfully, and the new R20 targeted browser test passed. Six older Studio tests failed because they still encoded pre-R20 presentation assumptions rather than because the corresponding product actions failed:
+
+- public-source approval and preview-failure checks still required direct-action text in the global `#message` banner;
+- artwork-open failure history checks likewise waited for the global banner instead of the card-local alert;
+- the image-first media test still looked for the superseded label `Process / reference only` instead of the new explicit `Reference only`;
+- the second draft-deletion test could observe the previous still-visible deletion confirmation and race ahead of the second asynchronous deletion, so it now waits for the actual editor/card removal state.
+
+Those assertions are updated to the R20 contextual-feedback contract and current media terminology. No application behavior, source-retention rule, deletion semantics or public boundary is changed by this compatibility correction.

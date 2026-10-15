@@ -234,7 +234,7 @@ test("local browser add/edit/project/curation/preview/review/approval/dry-run wo
   await page.locator("#rights-confirmed").check();
   await page.locator("#approval-confirmation").fill("APPROVE PUBLIC SOURCE");
   await page.getByRole("button", { name: "Approve this exact record for public source", exact: true }).click();
-  await page.locator("#message").getByText(/Exact public-source approval recorded/).waitFor();
+  await page.locator("#approve-source + .action-feedback").getByText(/Exact public-source approval recorded/).waitFor();
   await page.locator(`#export-records input[value="${id}"]`).check();
   await page.getByRole("button", { name: "Prepare for public site (dry-run)", exact: true }).click();
   await page.getByText(/Dry-run prepared/).waitFor();
@@ -313,7 +313,7 @@ test("image-first Studio attaches photos visually, keeps references separate, pe
   await upload(paths[3],/^Process\/reference image/);
   assert.equal(service.studio.state().catalogue.artworks.length,2,"process/reference does not create a standalone artwork");
   await page.getByRole("button",{name:"Photos & references",exact:true}).click();
-  await page.locator("#media-library .thumbnail-card").filter({hasText:"Process / reference only"}).click();
+  await page.locator("#media-library .thumbnail-card").filter({hasText:"Reference only"}).click();
   assert.equal(await page.locator("#media-selection-count").innerText(),"1 photo selected");
   await page.getByRole("button",{name:"Clear selection",exact:true}).click();
   await page.getByRole("button",{name:"Projects",exact:true}).click();await page.getByRole("button",{name:"New project",exact:true}).click();await page.getByLabel("Project title",{exact:true}).fill("Visual project");
@@ -523,7 +523,7 @@ test("popup shows Preparing synchronously through a slow build, reaches actual a
   release();await popup.waitForURL(`http://127.0.0.1:*/artwork/${artworkId}/`);await popup.waitForLoadState();assert.equal(await popup.locator("h1").innerText(),service.studio.state().catalogue.artworks[0].title);assert.match(await popup.locator("[data-local-pilot]").innerText(),/PRIVATE LOCAL DRAFT/);await popup.close();
   await page.unroute("**/api/preview/build");await page.route("**/api/preview/build",(route)=>route.fulfill({status:400,contentType:"application/json",body:JSON.stringify({error:"Build failed /home/jordan/private/secret\n at technical-stack:12"})}));
   const failurePromise=context.waitForEvent("page");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();const failure=await failurePromise;
-  await failure.getByRole("heading",{name:"Preview could not be prepared",exact:true}).waitFor();await page.locator("#message").getByText(/preview could not be prepared/).waitFor();assert.doesNotMatch(await failure.locator("body").innerText(),/secret|\/home\/|technical-stack/);assert.doesNotMatch(await page.locator("#message").innerText(),/secret|\/home\/|technical-stack/);assert.equal(context.pages().length,2);await failure.close();
+  await failure.getByRole("heading",{name:"Preview could not be prepared",exact:true}).waitFor();const previewFeedback=page.locator("#preview-artwork + .action-feedback");await previewFeedback.getByText(/preview could not be prepared/).waitFor();assert.doesNotMatch(await failure.locator("body").innerText(),/secret|\/home\/|technical-stack/);assert.doesNotMatch(await previewFeedback.innerText(),/secret|\/home\/|technical-stack/);assert.equal(await page.locator("#message").getByText(/preview could not be prepared/).count(),0);assert.equal(context.pages().length,2);await failure.close();
   await page.getByLabel("Date",{exact:true}).selectOption("exact");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();assert.equal(context.pages().length,1);assert.equal(await page.locator("#artwork-year").getAttribute("aria-invalid"),"true");assert.ok(await page.locator("#artwork-year").evaluate((input)=>document.activeElement===input));
   assert.deepEqual(readCatalogue(service.studio.repository).artworks,[]);assert.equal(service.studio.state().workflow[artworkId].approved,null);await context.close();
 });
@@ -578,7 +578,7 @@ for (const engine of [chromium, firefox]) test(`artwork history commits only usa
   await page.route("**/api/state",async(route)=>{const index=count++;if(index===0)await first;if(index===1)await second;await route.continue();});
   await page.locator(`#work-list [data-artwork-id="${one.artworkId}"]`).click();assert.equal(new URL(page.url()).hash,"#artworks");assert.equal(await page.locator("#artwork-form").isVisible(),false);
   await page.locator(`#work-list [data-artwork-id="${two.artworkId}"]`).click();releaseTwo();await editorReady(page);assert.equal(new URL(page.url()).hash,`#artwork/${two.artworkId}`);releaseOne();await new Promise((done)=>setTimeout(done,100));assert.equal(await page.locator("#artwork-form").getAttribute("data-artwork-id"),two.artworkId);assert.equal(await page.evaluate(()=>history.length),originalLength+1);assert.ok(!(await page.evaluate(()=>window.artworkCommits)).includes(one.artworkId));
-  await page.unroute("**/api/state");await page.route("**/api/state",(route)=>route.abort());await page.locator(`#work-list [data-artwork-id="${one.artworkId}"]`).click();await page.waitForFunction(()=>document.querySelector("#message").getAttribute("role")==="alert");assert.equal(new URL(page.url()).hash,`#artwork/${two.artworkId}`);assert.equal(await page.locator("#artwork-form").getAttribute("data-artwork-id"),two.artworkId);await page.unroute("**/api/state");
+  await page.unroute("**/api/state");await page.route("**/api/state",(route)=>route.abort());await page.locator(`#work-list [data-artwork-id="${one.artworkId}"]`).click();await page.locator(`#work-list [data-artwork-id="${one.artworkId}"] + .action-feedback[role="alert"]`).waitFor();assert.equal(new URL(page.url()).hash,`#artwork/${two.artworkId}`);assert.equal(await page.locator("#artwork-form").getAttribute("data-artwork-id"),two.artworkId);await page.unroute("**/api/state");
   await page.getByLabel("Title",{exact:true}).fill("Current-document retained Title");await page.goBack();assert.equal(new URL(page.url()).hash,"#artworks");assert.equal(await page.locator("#artwork-form").isVisible(),false);await page.goForward();await editorReady(page);assert.equal(new URL(page.url()).hash,`#artwork/${two.artworkId}`);assert.equal(await page.getByLabel("Title",{exact:true}).inputValue(),"Current-document retained Title");
   await page.getByLabel("Date",{exact:true}).selectOption("exact");await page.getByRole("button",{name:"Save draft",exact:true}).first().click();assert.equal(await page.locator("#artwork-year").getAttribute("aria-invalid"),"true");assert.ok(await page.locator("#artwork-year").evaluate((input)=>input===document.activeElement));await page.getByLabel("Date",{exact:true}).selectOption("circa");await page.getByRole("button",{name:"Preview artwork",exact:true}).first().click();assert.equal(context.pages().length,1);assert.match(await page.locator("#editor-validation-summary").innerText(),/Circa dates require/);await page.locator("#artwork-year").fill("2001");assert.notEqual(await page.locator("#artwork-year").getAttribute("aria-invalid"),"true");
   const plain=await browser.newContext();await plain.addInitScript(()=>{Object.defineProperty(window,"BroadcastChannel",{value:undefined});Object.defineProperty(navigator,"locks",{value:undefined});});const independent=await plain.newPage();await independent.goto(`${service.origin}/#artwork/${one.artworkId}`);await independent.getByText(/Studio ready\./).waitFor();await editorReady(independent);await independent.getByLabel("Title",{exact:true}).fill("Editable without advisory API");await independent.getByRole("button",{name:"Save draft",exact:true}).first().click();await independent.getByText(/Draft saved\./).waitFor();await plain.close();await context.close();
@@ -691,7 +691,8 @@ test("Studio exposes cancellable card/editor draft deletion and keeps source pho
   await page.getByLabel("Title", { exact: true }).fill("Unsaved editor deletion");
   page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Unsaved edits in this tab will be discarded/); await dialog.accept(); });
   await page.getByRole("button", { name: "Delete draft", exact: true }).click();
-  await page.getByText(/Deleted private draft/).waitFor();
+  await page.locator("#artwork-form").waitFor({ state: "hidden" });
+  await page.locator(`#work-list [data-artwork-id="${second.artworkId}"]`).waitFor({ state: "detached" });
   assert.equal(await page.locator("#artwork-form").isVisible(), false);
   assert.equal(await page.locator(`#work-list [data-artwork-id="${second.artworkId}"]`).count(), 0);
 });
