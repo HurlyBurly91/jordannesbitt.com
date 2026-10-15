@@ -11,7 +11,8 @@ const sessionEditors = new Map();
 let editingVersion, openRevision = 0;
 const staleEditors = new Set(), deletedEditors = new Set(), versionChecks = new Map();
 const previewReturns = new Map();
-let messageTimer = null;
+let messageTimer = null, activeActionTarget = null, mediaFilter = "all";
+const localMessageTimers = new WeakMap();
 const tabs = coordinateArtworkTabs({
   isDirty: (id) => (editingArtwork === id && editorDirty) || sessionEditors.get(id)?.dirty,
   onStatus: () => renderCoordination(),
@@ -84,14 +85,38 @@ function humanReason(text) {
   if (/unsupported image format|Input buffer|Vips|corrupt|cannot be read/i.test(text)) return "This photo could not be read. Choose a supported JPEG, PNG, TIFF, WebP or AVIF export.";
   return String(text).replaceAll("--assume-srgb", "Use sRGB for this image");
 }
-function message(text, error = false, { persistent = false } = {}) {
-  const bar = $("message"), value = humanReason(text);
-  clearTimeout(messageTimer); messageTimer = null;
+function feedbackNode(target) {
+  const element = target instanceof Element ? target : null;
+  if (!element || !element.isConnected || element.closest("[hidden]")) return null;
+  const anchor = element.closest(".form-actions") || element;
+  let output = anchor.nextElementSibling;
+  if (!output?.classList?.contains("action-feedback")) {
+    output = node("div", "", "action-feedback");
+    output.setAttribute("aria-live", "polite");
+    anchor.insertAdjacentElement("afterend", output);
+  }
+  return output;
+}
+function writeMessage(bar, value, error, persistent) {
+  const global = bar === $("message"), previous = global ? messageTimer : localMessageTimers.get(bar);
+  clearTimeout(previous);
   bar.textContent = value; bar.hidden = !value; bar.dataset.tone = error ? "error" : "info"; bar.setAttribute("role", error ? "alert" : "status");
-  if (value && !error && !persistent) messageTimer = setTimeout(() => { if (bar.textContent === value) { bar.textContent = ""; bar.hidden = true; } }, 6000);
+  if (!value || error || persistent) { if (global) messageTimer = null; else localMessageTimers.delete(bar); return; }
+  const timer = setTimeout(() => { if (bar.textContent === value) { bar.textContent = ""; bar.hidden = true; } }, 6000);
+  if (global) messageTimer = timer; else localMessageTimers.set(bar, timer);
+}
+function message(text, error = false, { persistent = false, near = null, global = false } = {}) {
+  const value = humanReason(text), local = global ? null : feedbackNode(near || activeActionTarget);
+  writeMessage(local || $("message"), value, error, persistent);
 }
 function node(tag, text, className) { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; }
-function action(handler) { return async (event) => { event?.preventDefault(); try { await handler(event); } catch (error) { message(error.message, true); } }; }
+function action(handler) { return async (event) => {
+  event?.preventDefault();
+  const target = event?.submitter || event?.currentTarget, previous = activeActionTarget;
+  if (target instanceof Element) activeActionTarget = target;
+  try { await handler(event); } catch (error) { message(error.message, true, { near: target }); }
+  finally { if (activeActionTarget === target) activeActionTarget = previous; }
+}; }
 function button(text, handler) { const element = node("button", text); element.type = "button"; element.addEventListener("click", action(handler)); return element; }
 async function api(path, data, raw) {
   const headers = { "x-studio-token": token };
@@ -246,13 +271,13 @@ async function finishIncomingJobs() {
     const job = state.jobs.find((job) => job.id === id); if (!job || job.status === "running") continue;
     incomingJobs.delete(id);
     if (context.revision !== undefined && context.revision !== selectionRevision) continue;
-    if (job.status === "error") { if (pendingEditorJob === id) pendingEditorJob = null; message(`Failed — ${humanReason(job.error)}`, true); continue; }
+    if (job.status === "error") { if (pendingEditorJob === id) pendingEditorJob = null; message(`Failed — ${humanReason(job.error)}`, true, { near: $("intake-submit") }); continue; }
     if (context.primary && job.result.artworkId) {
       const media = state.media.find((entry) => entry.id === job.result.mediaId);
       await makePrimary(job.result.artworkId, media.reproduction.src); state = await api("/api/state");
     }
     if (id === pendingEditorJob || (context.purpose === "attach" && !editorDirty)) {
-      pendingEditorJob = null; await openArtwork(job.result.artworkId); $("intake-panel").hidden = true; message("Ready. Your draft is open and editable.");
+      pendingEditorJob = null; await openArtwork(job.result.artworkId); $("intake-panel").hidden = true; message("Ready. Your draft is open and editable.", false, { near: $("artwork-form").querySelector('button[type="submit"]') });
     }
   }
   if (intakePreparationActive && ![...incomingJobs.values()].some((context) => context.revision === selectionRevision)) finishIntakeCycle();
@@ -465,7 +490,7 @@ async function deleteArtworkDraft(id) {
   tabs.saved(id);syncTabDrafts();
   await refresh();
   updateLocation({tab:"collection",artworkId:null},{replace:true});
-  message(`Deleted private draft "${state.deletedDrafts?.find((entry)=>entry.id===id)?.record?.title||result.title||id}". Photos and source files were kept private and the neutral ID will not be reused.`);
+  message(`Deleted private draft "${state.deletedDrafts?.find((entry)=>entry.id===id)?.record?.title||result.title||id}". Photos and source files were kept private and the neutral ID will not be reused.`, false, { near: $("show-intake") });
 }
 async function saveArtwork({ actionName = "Save" } = {}) {
   if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
@@ -521,7 +546,7 @@ function showDuplicateQuestion(batch) {
   const pending = batch.items.find((item) => item.pendingArtworkJobs?.length);
   if (pending) {
     finishIntakeCycle();
-    message(`"${pending.name}" is already being prepared as a new artwork. Wait for that preparation to finish before trying again.`, false, { persistent: true });
+    message(`"${pending.name}" is already being prepared as a new artwork. Wait for that preparation to finish before trying again.`, false, { persistent: true, near: $("intake-submit") });
     return;
   }
   const item = batch.items.find((entry) => entry.existingMediaIds?.length && entry.allowDuplicateSource !== true);
@@ -542,7 +567,7 @@ function showColourQuestion(batch) {
   $("colour-batch-scope").textContent = `Use sRGB for all ${untaggedCount} currently selected untagged images only`;
   $("colour-apply-batch").checked = false; $("colour-decision").hidden = false; setIntakeSubmitState("Choose colour profile above");
   $("colour-decision").scrollIntoView({ block: "center", behavior: "instant" }); $("use-srgb").focus({ preventScroll: true });
-  message("Choose how to interpret this image before preparation. Nothing has been added as an artwork.");
+  message("Choose how to interpret this image before preparation. Nothing has been added as an artwork.", false, { near: $("intake-submit") });
 }
 async function submitPreparedSelection(batch) {
   if (batch.revision !== selectionRevision) return;
@@ -558,7 +583,7 @@ async function submitPreparedSelection(batch) {
       if (settings.purpose === "artwork" && index === 0) pendingEditorJob = result.jobId;
     }
     await refresh();
-    if (state.jobs.some((job) => currentJobs.has(job.id) && job.status === "running")) message("Preparing image… Your editor will open when the draft is ready.", false, { persistent: true });
+    if (state.jobs.some((job) => currentJobs.has(job.id) && job.status === "running")) message("Preparing image… Your editor will open when the draft is ready.", false, { persistent: true, near: $("intake-submit") });
     if (![...incomingJobs.values()].some((context) => context.revision === batch.revision)) finishIntakeCycle();
   } catch (error) { finishIntakeCycle(); throw error; }
 }
@@ -569,26 +594,26 @@ $("use-srgb").addEventListener("click", action(async () => {
   else unanswered[0].useSrgb = true;
   await showColourQuestion(batch);
 }));
-$("choose-another-image").addEventListener("click", () => { resetColourSelection({ clearFiles: true }); $("artwork-form").hidden = true; message("Choose another image. No draft was created."); $("files").focus(); $("files").click(); });
+$("choose-another-image").addEventListener("click", action(() => { resetColourSelection({ clearFiles: true }); $("artwork-form").hidden = true; message("Choose another image. No draft was created.", false, { near: $("intake-submit") }); $("files").focus(); $("files").click(); }));
 $("duplicate-open").addEventListener("click", action(async () => {
   const current = duplicateBatch; if (!current) return;
   duplicateBatch = null; $("duplicate-decision").hidden = true; finishIntakeCycle();
   const artworkId = current.item.existingArtworkIds?.[0], mediaId = current.item.existingMediaIds?.[0];
-  if (artworkId) { $("intake-panel").hidden = true; await openArtwork(artworkId); message("Opened the existing draft for this photo."); return; }
-  if (mediaId) { mediaSelection.clear(); mediaSelection.add(mediaId); navigateTab("media"); renderMedia(); message("Showing the existing photo in Photos & references."); }
+  if (artworkId) { $("intake-panel").hidden = true; await openArtwork(artworkId); message("Opened the existing draft for this photo.", false, { near: $("artwork-form").querySelector('button[type="submit"]') }); return; }
+  if (mediaId) { mediaSelection.clear(); mediaSelection.add(mediaId); navigateTab("media"); renderMedia(); message("Showing the existing photo in Photos & references.", false, { near: $("media-add-images") }); }
 }));
 $("duplicate-create-anyway").addEventListener("click", action(async () => {
   const current = duplicateBatch; if (!current) return;
   current.item.allowDuplicateSource = true; duplicateBatch = null; $("duplicate-decision").hidden = true;
   await showDuplicateQuestion(current.batch);
 }));
-$("duplicate-cancel").addEventListener("click", () => { duplicateBatch = null; $("duplicate-decision").hidden = true; finishIntakeCycle(); message("No new draft was created."); });
+$("duplicate-cancel").addEventListener("click", action(() => { duplicateBatch = null; $("duplicate-decision").hidden = true; finishIntakeCycle(); message("No new draft was created.", false, { near: $("intake-submit") }); }));
 $("intake-form").addEventListener("submit", action(async () => {
   if (editorDirty) throw new Error("Save the artwork you are editing before adding more photos");
-  if (inspecting) { message("This selection is already being checked or prepared.", false, { persistent: true }); return; }
+  if (inspecting) { message("This selection is already being checked or prepared.", false, { persistent: true, near: $("intake-submit") }); return; }
   const batch = { revision: selectionRevision, settings: relationship(), primary: $("intake-role").value === "primary", items: [] };
   if (batch.settings.purpose === "attach" && batch.primary && $("files").files.length > 1) throw new Error("Choose one primary image at a time");
-  inspecting = true; setIntakeSubmitState("Checking selected images…"); message("Checking selected images…", false, { persistent: true });
+  inspecting = true; setIntakeSubmitState("Checking selected images…"); message("Checking selected images…", false, { persistent: true, near: $("intake-submit") });
   try {
     for (const file of $("files").files) {
       const bytes = await file.arrayBuffer(), sha256 = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
@@ -598,7 +623,7 @@ $("intake-form").addEventListener("submit", action(async () => {
     }
     if (!batch.items.length) throw new Error("Choose an image first");
     await showDuplicateQuestion(batch);
-  } catch (error) { finishIntakeCycle(); message(`Failed — ${humanReason(error.message)}`, true); }
+  } catch (error) { finishIntakeCycle(); message(`Failed — ${humanReason(error.message)}`, true, { near: $("intake-submit") }); }
 }));
 let snapshotOptions = [];
 $("load-snapshot").addEventListener("click", action(async () => { snapshotOptions = await api("/api/snapshot"); options($("snapshot-id"), snapshotOptions.map((entry) => ({ id: entry.id, title: `${entry.id} · ${entry.orientation} · ${entry.width}×${entry.height}px` })), "Choose a frozen image"); }));
@@ -607,18 +632,58 @@ $("import-snapshot").addEventListener("click", action(async () => {
   resetColourSelection();
   await showColourQuestion({ revision: selectionRevision, settings: relationship(), primary: $("intake-role").value === "primary", items: [{ snapshotId: selected.id, name: `Frozen image ${selected.id}`, needsColourDecision: !selected.hasEmbeddedProfile, useSrgb: false }] });
 }));
-function attachments(media) { return state.catalogue.artworks.filter((work) => work.reproductions.some((image) => image.src === media.reproduction.src)); }
+function mediaLinks(media) {
+  const linked = [];
+  for (const work of state.catalogue.artworks) for (const image of work.reproductions) if (image.src === media.reproduction.src) linked.push({ work, image });
+  return linked;
+}
+function attachments(media) { return mediaLinks(media).map(({ work }) => work); }
+function mediaRoleLabel(role) { return roles.find(([value]) => value === role)?.[1] || role || "Artwork image"; }
+function mediaFacts(media, duplicateGroups) {
+  const links = mediaLinks(media), reference = !links.length && media.disposition.includes("reference"), duplicates = duplicateGroups.get(media.sourceSha256) || [];
+  return { media, links, status: links.length ? "used" : reference ? "reference" : "unattached", duplicates };
+}
 function renderMedia() {
-  $("media-library").replaceChildren(); state.media.forEach((media, index) => {
-    const linked = attachments(media), card = button("", () => { mediaSelection.has(media.id) ? mediaSelection.delete(media.id) : mediaSelection.add(media.id); renderMedia(); }); card.className = "thumbnail-card"; card.dataset.mediaId = media.id; card.setAttribute("aria-label", `Select photo ${index + 1}`); card.setAttribute("aria-pressed", String(mediaSelection.has(media.id)));
-    card.append(thumb(media, ""), node("strong", linked.length ? "Artwork photo" : media.disposition.includes("reference") ? "Process / reference only" : "Unattached photo"));
-    card.append(node("small", linked.map(title).join(", ") || "Private")); if (mediaSelection.has(media.id)) card.append(node("span", "Selected", "selection-mark")); $("media-library").append(card);
+  const duplicateGroups = new Map();
+  for (const media of state.media) if (media.sourceSha256) {
+    if (!duplicateGroups.has(media.sourceSha256)) duplicateGroups.set(media.sourceSha256, []);
+    duplicateGroups.get(media.sourceSha256).push(media);
+  }
+  const facts = state.media.map((media) => mediaFacts(media, duplicateGroups));
+  const counts = {
+    all: facts.length,
+    used: facts.filter((entry) => entry.status === "used").length,
+    unattached: facts.filter((entry) => entry.status === "unattached").length,
+    reference: facts.filter((entry) => entry.status === "reference").length,
+    duplicates: facts.filter((entry) => entry.duplicates.length > 1).length,
+  };
+  const duplicateSourceGroups = [...duplicateGroups.values()].filter((group) => group.length > 1).length;
+  $("media-summary").textContent = `${counts.all} photo${counts.all === 1 ? "" : "s"} in private Studio · ${counts.used} used by artwork · ${counts.unattached} unattached · ${counts.reference} reference only · ${counts.duplicates} entr${counts.duplicates === 1 ? "y" : "ies"} in ${duplicateSourceGroups} repeated-source group${duplicateSourceGroups === 1 ? "" : "s"}.`;
+  const filterLabels = { all: "All", used: "Used by artwork", unattached: "Unattached", reference: "Reference only", duplicates: "Duplicates" };
+  for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) {
+    const key = control.dataset.mediaFilter; control.textContent = `${filterLabels[key]} (${counts[key]})`; control.setAttribute("aria-pressed", String(mediaFilter === key));
+  }
+  const visible = facts.filter((entry) => mediaFilter === "all" || mediaFilter === "duplicates" ? (mediaFilter === "all" || entry.duplicates.length > 1) : entry.status === mediaFilter);
+  $("media-library").replaceChildren();
+  visible.forEach((entry) => {
+    const { media, links, status, duplicates } = entry, index = state.media.findIndex((candidate) => candidate.id === media.id);
+    const card = button("", () => { mediaSelection.has(media.id) ? mediaSelection.delete(media.id) : mediaSelection.add(media.id); renderMedia(); });
+    card.className = "thumbnail-card media-card"; card.dataset.mediaId = media.id; card.dataset.mediaStatus = status; card.dataset.duplicateSource = String(duplicates.length > 1); card.setAttribute("aria-label", `Select photo ${index + 1}`); card.setAttribute("aria-pressed", String(mediaSelection.has(media.id)));
+    const statusLabel = status === "used" ? "Used by artwork" : status === "reference" ? "Reference only" : "Unattached";
+    card.append(thumb(media, ""), node("strong", statusLabel));
+    if (links.length) for (const { work, image } of links) card.append(node("small", `Used by: ${title(work)} · ${mediaRoleLabel(image.role)}`, "media-usage"));
+    else card.append(node("small", status === "reference" ? "Stored as a reference · not displayed by any artwork" : "Stored in Studio · not used by any artwork", "media-usage"));
+    if (duplicates.length > 1) card.append(node("span", `Same source ×${duplicates.length}`, "media-duplicate-badge"));
+    if (mediaSelection.has(media.id)) card.append(node("span", "Selected", "selection-mark"));
+    $("media-library").append(card);
   });
+  if (!visible.length) $("media-library").append(node("p", "No photos match this filter.", "hint"));
   $("media-selection-panel").hidden = !mediaSelection.size; $("media-selection-count").textContent = `${mediaSelection.size} photo${mediaSelection.size === 1 ? "" : "s"} selected`;
   workPicker($("media-targets"), "Attach to", (id) => { mediaTarget = id; renderMedia(); }, mediaTarget);
   $("media-target-summary").textContent = mediaTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === mediaTarget))}` : "Click the artwork these photos belong to.";
   $("media-details").replaceChildren(); for (const media of state.media.filter((media) => mediaSelection.has(media.id))) $("media-details").append(node("p", `${media.name} · ${media.id}\nSHA256 ${media.sourceSha256}\n${media.reproduction.width}×${media.reproduction.height}px`, "technical-block"));
 }
+for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) control.addEventListener("click", () => { mediaFilter = control.dataset.mediaFilter; renderMedia(); });
 $("clear-media-selection").addEventListener("click", () => { mediaSelection.clear(); renderMedia(); });
 $("remove-selected-media").addEventListener("click", action(async () => {
   const chosen = state.media.filter((media) => mediaSelection.has(media.id));
@@ -629,14 +694,14 @@ $("remove-selected-media").addEventListener("click", action(async () => {
   }
   if (!confirm(`Remove ${chosen.length} selected photo${chosen.length === 1 ? "" : "s"} from Photos & references?\n\nOriginal selected files and private derivatives are kept. This only removes the active Studio library entries.`)) { message("Photo removal cancelled."); return; }
   await api("/api/media/delete", { mediaIds: chosen.map((media) => media.id) });
-  mediaSelection.clear(); await refresh(); message(`Removed ${chosen.length} private photo${chosen.length === 1 ? "" : "s"} from Studio. Source files were kept.`);
+  mediaSelection.clear(); await refresh(); message(`Removed ${chosen.length} private photo${chosen.length === 1 ? "" : "s"} from Studio. Source files were kept.`, false, { near: $("media-add-images") });
 }));
 $("attach-selected-media").addEventListener("click", action(async () => {
   if (!mediaTarget) throw new Error("Click the target artwork first"); if (editorDirty) throw new Error("Save your artwork changes before attaching photos");
   const role = $("media-role").value;
   if (role === "primary" && mediaSelection.size > 1) throw new Error("Choose one primary image at a time");
   for (const id of mediaSelection) { await api("/api/media/attach", { mediaId: id, artworkId: mediaTarget, role: role === "primary" ? "alternate" : role }); state = await api("/api/state"); if (role === "primary") await makePrimary(mediaTarget, state.media.find((media) => media.id === id).reproduction.src); }
-  mediaSelection.clear(); await refresh(); message("Photos added to the chosen artwork. Nothing is public.");
+  mediaSelection.clear(); await refresh(); message("Photos added to the chosen artwork. Nothing is public.", false, { near: $("media-add-images") });
 }));
 function sequence(container, ids, changed) {
   container.replaceChildren(); ids.forEach((id, index) => { const work = state.catalogue.artworks.find((work) => work.id === id), item = node("li"), content = node("div"); item.dataset.artworkId = id; item.append(thumb(imageFor(work), title(work))); content.append(node("strong", title(work))); if (dateLabel(work)) content.append(node("small", dateLabel(work)));
@@ -668,7 +733,7 @@ async function deleteProjectDraft() {
   if (!confirm(`Delete private project "${project.title}"?\n\nIts ${project.memberIds.length} artwork${project.memberIds.length === 1 ? "" : "s"} and all photos are kept. Only the private project draft is removed.`)) { message("Project deletion cancelled."); return; }
   await api("/api/project/delete", { id: project.id, expectedVersion: editingProjectVersion });
   const title = project.title; editingProject = null; editingProjectVersion = null; projectMembers = []; $("project-form").hidden = true;
-  await refresh(); message(`Deleted private project "${title}". Its artworks and photos were kept.`);
+  await refresh(); message(`Deleted private project "${title}". Its artworks and photos were kept.`, false, { near: $("new-project") });
 }
 $("project-form").addEventListener("submit", action(saveProject));
 $("delete-project").addEventListener("click", action(deleteProjectDraft));

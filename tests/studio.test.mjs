@@ -785,8 +785,8 @@ test("real-pilot cleanup UI exposes project/media removal, duplicate interruptio
   await page.locator("#project-members").getByRole("button", { name: "Remove", exact: true }).click();
   await page.getByText(/cannot be saved with no artworks/i).waitFor();
   await page.getByRole("button", { name: "Save project", exact: true }).click();
-  await page.locator("#message").getByText(/use Delete project draft/i).waitFor();
-  assert.equal(await page.locator("#message").getAttribute("data-tone"), "error");
+  const projectFeedback = page.locator("#project-form .action-feedback"); await projectFeedback.getByText(/use Delete project draft/i).waitFor();
+  assert.equal(await projectFeedback.getAttribute("data-tone"), "error");
   page.once("dialog", async (dialog) => { assert.match(dialog.message(), /artwork.*kept/i); await dialog.accept(); });
   await page.getByRole("button", { name: "Delete project draft", exact: true }).click();
   await page.getByText(/Deleted private project/).waitFor();
@@ -797,9 +797,8 @@ test("real-pilot cleanup UI exposes project/media removal, duplicate interruptio
   await page.locator(`#media-library [data-media-id="${reference.mediaId}"]`).click();
   page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Source files|Original selected files/i); await dialog.accept(); });
   await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
-  await page.getByText(/Source files were kept/).waitFor();
+  await page.locator("#media").getByText(/Source files were kept/).waitFor();
   assert.equal(service.studio.state().media.some((entry) => entry.id === reference.mediaId), false);
-  assert.equal(await page.locator("#message").getAttribute("data-tone"), "info");
 
   await page.getByRole("button", { name: "Artworks", exact: true }).click();
   await page.getByRole("button", { name: "Add images", exact: true }).click();
@@ -815,5 +814,50 @@ test("real-pilot cleanup UI exposes project/media removal, duplicate interruptio
   assert.equal(await page.getByRole("button", { name: "Create another artwork anyway", exact: true }).isVisible(), true);
   await page.getByRole("button", { name: "Cancel", exact: true }).click();
   await page.getByText(/No new draft was created/).waitFor();
+});
+
+test("real-pilot follow-up keeps action feedback local and makes media usage and duplicates explicit", async (t) => {
+  const { options } = await setup(t, { allowPublicExport: false });
+  const service = await startStudio(options); t.after(() => service.stop());
+
+  const used = await add(service.studio, "used-source.png"); await edit(service.studio, used.artworkId, { title: "Used work" });
+  const duplicateReference = await add(service.studio, "same-source-reference.png", "media");
+  const detachedBytes = await sharp({ create: { width: 64, height: 80, channels: 3, background: "#607080" } }).png().toBuffer();
+  const detachedJob = await service.studio.intake(detachedBytes, { name: "detached-source.png", purpose: "artwork", assumeSrgb: true, sha256: checksum(detachedBytes) });
+  await service.studio.waitForJobs();
+  const detached = service.studio.state().jobs.find((job) => job.id === detachedJob).result; await edit(service.studio, detached.artworkId, { title: "Detached work" });
+  await service.studio.deleteArtwork(detached.artworkId, service.studio.artworkVersion(detached.artworkId));
+
+  const browser = await chromium.launch(); t.after(() => browser.close());
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.goto(service.origin); await page.getByText(/Studio ready\./).waitFor();
+  await page.getByRole("button", { name: "Photos & references", exact: true }).click();
+
+  await page.getByText(/used by artwork.*unattached.*reference only/i).waitFor();
+  const usedCard = page.locator(`#media-library [data-media-id="${used.mediaId}"]`);
+  assert.equal(await usedCard.getAttribute("data-media-status"), "used");
+  await usedCard.getByText("Used by artwork", { exact: true }).waitFor();
+  await usedCard.getByText(/Used by: Used work · Primary image/).waitFor();
+  await usedCard.getByText(/Same source ×2/).waitFor();
+
+  const referenceCard = page.locator(`#media-library [data-media-id="${duplicateReference.mediaId}"]`);
+  assert.equal(await referenceCard.getAttribute("data-media-status"), "reference");
+  await referenceCard.getByText(/not displayed by any artwork/i).waitFor();
+  await referenceCard.getByText(/Same source ×2/).waitFor();
+
+  const detachedCard = page.locator(`#media-library [data-media-id="${detached.mediaId}"]`);
+  assert.equal(await detachedCard.getAttribute("data-media-status"), "unattached");
+  await detachedCard.getByText(/not used by any artwork/i).waitFor();
+
+  await page.locator('[data-media-filter="duplicates"]').click();
+  assert.equal(await page.locator("#media-library .media-card").count(), 2);
+  await page.locator('[data-media-filter="all"]').click();
+
+  await usedCard.click();
+  await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
+  const mediaFeedback = page.locator("#media-selection-panel .action-feedback");
+  await mediaFeedback.getByText(/attached to.*Used work/i).waitFor();
+  assert.equal(await mediaFeedback.getAttribute("data-tone"), "error");
+  assert.equal(await page.locator("#message").getByText(/attached to.*Used work/i).count(), 0, "direct-action error is not sent to the distant global banner");
 });
 

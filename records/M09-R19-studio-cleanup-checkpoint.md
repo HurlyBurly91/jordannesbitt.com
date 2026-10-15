@@ -73,3 +73,14 @@ The Studio test file contains no other unbounded `while`/infinite loops after th
 After the hang/fixture corrections, the owner reran the complete Studio test file with browsers installed. Result: **28/29 PASS**. The sole failure was not product behavior: the R19 cleanup UI correctly rendered both the inline empty-project guidance and the error status bar with overlapping text, while the test used an unscoped `getByText(/use Delete project draft/i)` locator and Playwright strict mode rejected the two valid matches.
 
 The assertion is narrowed to `#message`, because that step specifically verifies the persistent error status bar after attempting to save an empty project. No application behavior is changed by this correction.
+
+## Owner manual review and follow-up — 2026-10-15
+
+The owner manually exercised R19 on real private Studio state. Confirmed working behavior:
+- removing the final artwork from a project and deleting the private project;
+- warning while the same artwork source was still being prepared;
+- interruption when adding a source image already present in Studio.
+
+The owner did **not** accept R19 as the final UX checkpoint. Two usability defects were reported: direct errors/confirmations could appear in the distant top status bar rather than near the pressed control, and Photos & references did not clearly distinguish which repeated-looking media entries were actually used by artworks, unattached, reference-only or duplicates of the same source.
+
+The prior automated R19 verification at commit `b18489b36eaced084caeff372ee3b08ce80c332d` completed `npm run verify` with strict durable-state validation PASS, Astro 0 errors/warnings/hints and 101/101 tests passing. Human acceptance remains unresolved because the follow-up UX defects materially affect the inspected surface. Owner-authorized M09-R20 carries the corrective implementation and a new human gate; no R19 human acceptance is inferred.

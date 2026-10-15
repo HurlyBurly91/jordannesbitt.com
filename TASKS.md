@@ -4,7 +4,7 @@
 Milestone: M09
 State: ACTIVE
 Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R19
+Active-Request: M09-R20
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -236,4 +236,71 @@ Source: USER, 2026-10-11. After exercising the real pilot, the owner reported fo
     - Remove an unattached Photos & references item and confirm attached-media refusal/guidance.
     - Re-submit the same image while pending and after completion; confirm pending refusal and deliberate duplicate override choice.
     - Confirm success/ready/preview text appears as a neutral bounded status bar while errors remain conspicuous.
+
+## M09-R20 — Contextual Studio feedback and media-state clarity
+
+Source: USER, 2026-10-15. During R19 manual review the owner confirmed project removal/deletion and duplicate-source interruption worked, but reported that action feedback appearing in the distant top banner was hard to associate with the button pressed and that Photos & references did not make active use, unattached items or repeated source images clear. The owner explicitly authorized: `fix these Studio UX issues`.
+
+- [~] M09-R20-01 Keep direct-action confirmation/error feedback adjacent to the initiating control or action group.
+  Source: USER
+  Requirement: Save/delete/intake/media/review and similar direct actions must not rely on a distant top-of-page banner when their initiating control remains visible. Informational confirmations remain bounded/transient; errors remain persistent and announced as alerts. Startup/background events may continue to use the global status bar.
+  Verified-By:
+    - M09-R20-V01
+    - M09-R20-V02
+    - M09-R20-H01
+
+- [~] M09-R20-02 Make Photos & references explicitly show what is used, unattached, reference-only and repeated from the same source.
+  Source: USER
+  Requirement: Every active media card states whether it is displayed by an artwork, unattached, or reference-only. Used cards name artwork/reproduction roles. Repeated active `sourceSha256` entries are visibly marked without merging/deleting them, with filters/counts for All, Used by artwork, Unattached, Reference only and Duplicates.
+  Verified-By:
+    - M09-R20-V01
+    - M09-R20-V02
+    - M09-R20-H01
+
+- [~] M09-R20-P01 Preserve R19 duplicate-intake/project/media deletion semantics, R13/R18 editing/deletion behavior, source/private derivative retention and all public export/release boundaries.
+  Source: DERIVED
+  Requirement: This follow-up is presentation/interaction clarity only. Duplicate source records remain deliberate identities unless the owner explicitly removes them; no source bytes, derivatives, public catalogue records or release state are deleted or changed by the new labels/filters.
+  Verified-By:
+    - M09-R20-V01
+    - M09-R20-V02
+
+- [~] M09-R20-V01 Run full project verification after the follow-up.
+  Source: DERIVED
+  Covers:
+    - M09-R20-01
+    - M09-R20-02
+    - M09-R20-P01
+  Gate: INTEGRATION
+  Command: npm run verify
+  Oracle: integration-or-end-to-end
+  Expected: strict state validation, Astro build and all browser/non-browser tests pass, including the R19 protections and R20 contextual-feedback/media-clarity coverage.
+  Limitations:
+    - Automated checks do not replace owner usability review.
+
+- [~] M09-R20-V02 Verify contextual feedback and media classification/duplicate-display invariants.
+  Source: DERIVED
+  Covers:
+    - M09-R20-01
+    - M09-R20-02
+    - M09-R20-P01
+  Gate: CONSTRAINT
+  Command: targeted Studio R20 browser test
+  Oracle: property-or-invariant
+  Expected: direct-action errors render in local action feedback rather than the global banner; media cards expose used/unattached/reference state, artwork+role where used, repeated-source badges and a duplicates filter while existing source-retention/deletion guards remain intact.
+  Limitations:
+    - Duplicate display is active-state/source-hash reporting, not automatic deduplication or source-file cleanup.
+
+- [H] M09-R20-H01 Owner reviews feedback placement and Photos & references clarity in normal Studio use.
+  Source: USER
+  Requires:
+    - M09-R20-V01
+    - M09-R20-V02
+  Covers:
+    - M09-R20-01
+    - M09-R20-02
+  Gate: HUMAN
+  Verification:
+    - Trigger an intake/project/media error and ordinary confirmation; confirm feedback appears beside the relevant action rather than requiring a scroll to the global banner.
+    - Review Photos & references with the All/Used/Unattached/Reference/Duplicates filters and confirm each card's usage/repeated-source meaning is understandable.
+    - Confirm duplicate labels do not merge/delete intentional duplicate records and existing removal/source-retention behavior remains correct.
 
