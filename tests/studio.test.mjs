@@ -833,7 +833,7 @@ test("real-pilot follow-up keeps action feedback local and makes media usage and
   await page.goto(service.origin); await page.getByText(/Studio ready\./).waitFor();
   await page.getByRole("button", { name: "Photos & references", exact: true }).click();
 
-  await page.getByText(/used by artwork.*unattached.*reference only/i).waitFor();
+  await page.locator("#media-summary").getByText(/used by artwork.*unattached.*reference only/i).waitFor();
   const usedCard = page.locator(`#media-library [data-media-id="${used.mediaId}"]`);
   assert.equal(await usedCard.getAttribute("data-media-status"), "used");
   await usedCard.getByText("Used by artwork", { exact: true }).waitFor();

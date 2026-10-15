@@ -35,3 +35,9 @@ No source uploads/private derivatives are deleted. No repository/public catalogu
 ## Verification status
 
 Implementation and targeted browser coverage are committed. Full `npm run verify` and the targeted R20 browser check are pending on the implementation revision before owner re-review.
+
+## Targeted selector correction — 2026-10-15
+
+The first owner-run R20 targeted browser check reached the Photos & references screen and failed only because an intentionally broad Playwright text locator matched three valid UI elements containing the same state vocabulary: the explanatory hint, the live summary and the filter group. The product rendered the expected information.
+
+The test now scopes that assertion to `#media-summary`, which is the element whose count/state sentence the check is intended to verify. No application behavior changed. GitHub hosted state/build validation for the implementation revision `950f0af882fe5350ac9c688bba242b139fe35be0` completed successfully.
