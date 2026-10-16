@@ -65,6 +65,15 @@ without occupying a long-running polling call. Framework 1.2.0 restricts
 repository-state freshness checks to evidence required by current work or the
 selected human gate, while retaining older PASS records as historical provenance.
 It also defaults hosted CI to explicit integration/MVP/release boundaries.
+Framework 1.2.1 corrects evidence applicability: historical requirement
+dependencies no longer transitively import all preceding PASS fingerprints,
+while explicit evidence reuse and current-request evidence remain freshness-
+checked. A pending Next-Gate is considered for evidence selection only during
+HUMAN_VERIFICATION. Framework 1.2.2 fixes the remaining case where a
+pending human task belonging to the active request could import historical
+evidence during FOLLOW_UP. Human-only active requests retain normal scoping
+instead of triggering the missing-request conservative fallback. No schema
+migration is required (schema 2 unchanged).
 
 Relevant framework-owned contracts:
 

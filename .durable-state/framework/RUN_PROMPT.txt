@@ -194,7 +194,12 @@ Resume autonomous development from durable repository state.
     bind code-dependent experience to current repository state.
 
 35. Read historical records selectively. Historical evidence is not
-    automatically current.
+    automatically current. A Requires/Blocked-By dependency on an old requirement
+    does not import every earlier Vxx PASS into the active freshness gate.
+    Explicit reuse of an old Vxx requires current applicability review or new
+    verification. Do not rewrite historical repository-state fingerprints.
+    Next-Gate contributes direct evidence references to freshness checks only
+    during HUMAN_VERIFICATION.
 
 36. Before closeout, verify required IDs and acceptance criteria, complete
     required external and human gates, reconcile accepted docs, validate

@@ -348,8 +348,12 @@ HEAD=<commit>; DIFF-SHA256=<material-worktree fingerprint>
 The framework fingerprint excludes only live ledger/provenance and vendored
 framework-management files whose own recording would otherwise be
 self-referential. Changes to implementation, tests, canonical docs, sources,
-configuration, or other material files can stale the evidence and require review
-or rerun.
+configuration, or other material files can stale applicable evidence and require
+review or rerun. Task dependencies on old requirements do not automatically
+reuse their historical evidence: only evidence in the active request or directly
+cited there (or by the selected human gate during HUMAN_VERIFICATION) is checked
+for current repository-state freshness. Explicitly verify behavior still required
+by the current gate; never replace old PASS fingerprints with newer values.
 
 ## Deterministic validation
 

@@ -750,12 +750,15 @@ class Validator:
         task_by_id: dict[str, Task],
         status_header: dict[str, FieldValue],
     ) -> set[str]:
-        """Select V evidence used by the active request or human gate.
+        """Select evidence whose present-day applicability is explicitly claimed.
 
-        Older completed evidence retains its original recorded PASS, without
-        asserting applicability to newer code. Resolve transitive dependencies
-        when an active requirement or gate reuses older evidence. Missing or
-        conflicting active-request metadata retains conservative global checks.
+        Check V tasks in the active request and V IDs directly referenced by
+        its non-human tasks. Pending human gates are not implicitly selected. A dependency on an older requirement is *not* an implicit
+        request to revalidate every test that originally established it:
+        Requires/Blocked-By represent task ordering, not evidence reuse.
+        A selected human gate contributes its direct evidence references only
+        during HUMAN_VERIFICATION. Inconsistent active-request metadata is
+        checked conservatively against all recorded evidence.
         """
         all_evidence = {task.task_id for task in ledger.tasks if task.kind == "V"}
         active = ledger.header.get("Active-Request")
@@ -768,37 +771,37 @@ class Validator:
         ):
             return all_evidence
 
-        roots = {
-            task.task_id
-            for task in ledger.tasks
+        request_tasks = [
+            task for task in ledger.tasks
             if task.request == active.value
             or task.request.startswith(active.value + "-F")
-        }
-        if not roots:
+        ]
+        if not request_tasks:
             return all_evidence
 
-        next_gate = status_header.get("Next-Gate")
-        if next_gate is not None and next_gate.value in task_by_id:
-            roots.add(next_gate.value)
+        # Pending or completed human gates must not import stale evidence
+        # merely by belonging to the active request. A request containing
+        # only H tasks is still present and must not trigger global fallback.
+        current_tasks = [task for task in request_tasks if task.kind != "H"]
 
-        seen: set[str] = set()
-        pending = list(roots)
-        while pending:
-            task_id = pending.pop()
-            if task_id in seen:
-                continue
-            seen.add(task_id)
-            task = task_by_id.get(task_id)
-            if task is None:
-                continue
+        phase = status_header.get("Phase")
+        next_gate = status_header.get("Next-Gate")
+        if phase is not None and phase.value == "HUMAN_VERIFICATION" and next_gate is not None:
+            selected = task_by_id.get(next_gate.value)
+            if selected is not None and selected.kind == "H":
+                if selected not in current_tasks:
+                    current_tasks.append(selected)
+
+        current_evidence = {task.task_id for task in current_tasks if task.kind == "V"}
+        for task in current_tasks:
             for field_name in (
                 "Requires", "Blocked-By", "Verified-By", "Conclusion-Evidence"
             ):
                 for referenced_id, _ in self._refs(task.values(field_name)):
-                    if referenced_id in task_by_id and referenced_id not in seen:
-                        pending.append(referenced_id)
+                    if referenced_id in all_evidence:
+                        current_evidence.add(referenced_id)
 
-        return seen & all_evidence
+        return current_evidence
 
     def _validate_verification_tasks(
         self,

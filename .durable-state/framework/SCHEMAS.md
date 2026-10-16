@@ -263,15 +263,23 @@ Generate the value with:
 /path/to/durable-state-machine/bin/durable-state fingerprint .
 ```
 
-Repository-state freshness is checked for verified evidence in the active
-request (including follow-ups), the selected human gate, and the transitive
-`Requires`, `Blocked-By`, `Verified-By` and `Conclusion-Evidence` dependency
-closure. Unreferenced historical `Vxx` PASS records retain their original
-revision and historical meaning; they do not assert correctness of newer code.
-Explicitly link reused older evidence to the active requirement or gate. If
-its applicability is stale or unknown, reverify the current claim before
-acceptance. Do not bulk rebind past evidence to new commits. Missing or
-contradictory active-request metadata retains conservative full checking.
+Repository-state freshness is checked for completed `Vxx` evidence
+belonging to the active request (including follow-ups), and for older `Vxx`
+records directly cited by its tasks in `Requires`, `Blocked-By`,
+`Verified-By`, or `Conclusion-Evidence`. During `HUMAN_VERIFICATION`, the
+selected `Next-Gate` also contributes its direct `Vxx` references. Outside
+that phase, a `Next-Gate` pointer does not select evidence for freshness checks.
+
+A task-level `Requires` or `Blocked-By` link to an earlier requirement
+preserves ordering and prerequisite completion; it does not implicitly reuse
+every verification from that requirement's historical `Verified-By` chain.
+Old PASS records retain their original revision and historical meaning, not a
+claim about newer code. If current behavior relies on an old result, record
+new verification evidence or explicitly reference that `Vxx` record and review
+its current applicability. Never rewrite historical fingerprints to satisfy
+strict validation. Missing or contradictory active-request metadata retains
+conservative full checking. Run `--strict` at the relevant closeout/selected
+human gate, not after every intermediate experiment with a changing worktree.
 
 Human evidence:
 
