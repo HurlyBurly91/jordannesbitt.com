@@ -4,7 +4,7 @@ Framework-Policy: .durable-state/framework/AGENTS.md
 
 Before substantive work, read and obey the versioned framework policy above. This root file is project-owned specialization for the **experience-augmented durable-state architecture**. Project rules may narrow or extend the framework but may not silently weaken its durability, provenance, verification, security, evidence, or human-acceptance invariants.
 
-Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.1.5 / schema 2 from authoritative `HurlyBurly91/durable-state-machine` main commit `6746415f645c6c56ce39794b6962364cb39ca1bc`.
+Do not edit `.durable-state/framework/` or `.durable-state/MANIFEST` during ordinary project work. They are updater-owned. The installed release is framework 1.2.0 / schema 2 from authoritative `HurlyBurly91/durable-state-machine` main commit `1b5c9258800d04c0c2b05edb70e99294578ce72a`.
 
 ## Repository and product scope
 
@@ -33,7 +33,7 @@ The public catalogue/release guards remain authoritative. `release:check` being 
 
 The owner requires explicit permission for repository modifications.
 
-The 2026-10-09 owner instructions authorize the in-place durable-state migrations and managed same-schema framework updates through the current consolidated-main 1.1.5 update, including narrow compatibility/provenance/checker edits and verified checkpoint commits/pushes on `redesign/astro-foundation`. It does not authorize application behavior changes, public content approval, master/backup mutation, deployment, DNS/hosting changes, real messages, purchases, payments, or M10/M11 work.
+The 2026-10-16 owner instruction additionally authorizes the managed, same-schema framework 1.2.0 update without extending other project permissions. The 2026-10-09 owner instructions authorize the in-place durable-state migrations and managed same-schema framework updates through the then-current consolidated-main 1.1.5 update, including narrow compatibility/provenance/checker edits and verified checkpoint commits/pushes on `redesign/astro-foundation`. It does not authorize application behavior changes, public content approval, master/backup mutation, deployment, DNS/hosting changes, real messages, purchases, payments, or M10/M11 work.
 
 Historical bounded M09 implementation grants remain exactly as recorded; this migration does not expand them.
 
