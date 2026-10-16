@@ -169,6 +169,17 @@ completion evidence.
 
 ## Asynchronous external verification
 
+Hosted CI is an explicit integration/release gate, not an automatic consequence
+of a commit, push, checkpoint, or ordinary milestone transition. Default to
+focused local verification during implementation and relevant local integration
+checks at milestone completion. Defer broad hosted cross-platform/full-suite
+verification until an MVP/release candidate unless the latest user instruction
+or an explicit active acceptance contract requires it earlier. Do not create or
+re-enable push/PR/scheduled CI triggers during ordinary agent work. New CI
+workflows default to manual dispatch; publication and deployment workflows
+retain their independently specified triggers. Record hosted CI as a required
+`Vxx` only when the active contract actually calls for it.
+
 Read `.durable-state/framework/ASYNC_EXTERNAL_VERIFICATION.md` when required
 verification runs in an external system that continues independently of the
 coding-agent process.
@@ -238,7 +249,9 @@ Keep exhaustive evidence in generated JSON/TSV/CSV/log/capture artifacts.
 Persist only decisive evidence, a reproduction reference, conclusion,
 uncertainty, and next direction.
 
-Checkpoint when losing a decision would be expensive to reconstruct: a changed
+Commit and push checkpoints preserve work; they do not automatically request
+hosted verification or establish acceptance. Checkpoint when losing a decision
+would be expensive to reconstruct: a changed
 requirement, causal conclusion, accepted/rejected strategy, blocker, human gate,
 durable external wait, long interruption/handoff, or risky operation. Pair task
 state with repository state—prefer a commit; otherwise record HEAD plus a

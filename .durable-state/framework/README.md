@@ -61,7 +61,10 @@ machine work. Framework 1.1.4 excluded Python-generated `__pycache__/` and
 validator execution from invalidating its own immutable source-payload hash.
 Framework 1.1.5 adds asynchronous external-verification contracts so an agent
 can record an exact provider run and target, checkpoint, yield, and later resume
-without occupying a long-running polling call.
+without occupying a long-running polling call. Framework 1.2.0 restricts
+repository-state freshness checks to evidence required by current work or the
+selected human gate, while retaining older PASS records as historical provenance.
+It also defaults hosted CI to explicit integration/MVP/release boundaries.
 
 Relevant framework-owned contracts:
 

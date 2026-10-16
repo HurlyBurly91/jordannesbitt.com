@@ -263,6 +263,16 @@ Generate the value with:
 /path/to/durable-state-machine/bin/durable-state fingerprint .
 ```
 
+Repository-state freshness is checked for verified evidence in the active
+request (including follow-ups), the selected human gate, and the transitive
+`Requires`, `Blocked-By`, `Verified-By` and `Conclusion-Evidence` dependency
+closure. Unreferenced historical `Vxx` PASS records retain their original
+revision and historical meaning; they do not assert correctness of newer code.
+Explicitly link reused older evidence to the active requirement or gate. If
+its applicability is stale or unknown, reverify the current claim before
+acceptance. Do not bulk rebind past evidence to new commits. Missing or
+contradictory active-request metadata retains conservative full checking.
+
 Human evidence:
 
 ```markdown
@@ -679,6 +689,8 @@ Exit status:
 2  invocation/environment failure
 ```
 
-Warnings primarily identify potentially stale repository evidence or an
-unverified strong negative conclusion. `--strict` promotes them to failure and
-is required before milestone closeout and schema migration.
+Warnings identify potentially stale evidence required by current work or the
+selected gate, and other material uncertainty such as unverified strong negative
+conclusions. `--strict` promotes them to failure and remains required before
+milestone closeout and schema migration; unreferenced historical evidence does
+not fail merely because later code changed.

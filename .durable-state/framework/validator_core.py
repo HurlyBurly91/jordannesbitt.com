@@ -206,7 +206,7 @@ class Validator:
         task_by_id = self._validate_task_identity(ledger)
         self._validate_references(ledger, task_by_id)
         self._validate_evidence_coverage(ledger, task_by_id)
-        self._validate_verification_tasks(ledger, task_by_id)
+        self._validate_verification_tasks(ledger, task_by_id, status_header)
         self._validate_conclusions(ledger, task_by_id)
         self._validate_supersession(ledger, task_by_id)
         self._validate_file_bindings(ledger)
@@ -744,10 +744,71 @@ class Validator:
                 self.error(code, ledger.path, item.line, f"{task.task_id} has unresolved {name}")
         return values
 
+    def _current_evidence_ids(
+        self,
+        ledger: ParsedLedger,
+        task_by_id: dict[str, Task],
+        status_header: dict[str, FieldValue],
+    ) -> set[str]:
+        """Select V evidence used by the active request or human gate.
+
+        Older completed evidence retains its original recorded PASS, without
+        asserting applicability to newer code. Resolve transitive dependencies
+        when an active requirement or gate reuses older evidence. Missing or
+        conflicting active-request metadata retains conservative global checks.
+        """
+        all_evidence = {task.task_id for task in ledger.tasks if task.kind == "V"}
+        active = ledger.header.get("Active-Request")
+        status_active = status_header.get("Active-Request")
+        if (
+            active is None
+            or status_active is None
+            or active.value != status_active.value
+            or not REQUEST_RE.fullmatch(active.value)
+        ):
+            return all_evidence
+
+        roots = {
+            task.task_id
+            for task in ledger.tasks
+            if task.request == active.value
+            or task.request.startswith(active.value + "-F")
+        }
+        if not roots:
+            return all_evidence
+
+        next_gate = status_header.get("Next-Gate")
+        if next_gate is not None and next_gate.value in task_by_id:
+            roots.add(next_gate.value)
+
+        seen: set[str] = set()
+        pending = list(roots)
+        while pending:
+            task_id = pending.pop()
+            if task_id in seen:
+                continue
+            seen.add(task_id)
+            task = task_by_id.get(task_id)
+            if task is None:
+                continue
+            for field_name in (
+                "Requires", "Blocked-By", "Verified-By", "Conclusion-Evidence"
+            ):
+                for referenced_id, _ in self._refs(task.values(field_name)):
+                    if referenced_id in task_by_id and referenced_id not in seen:
+                        pending.append(referenced_id)
+
+        return seen & all_evidence
+
     def _validate_verification_tasks(
-        self, ledger: ParsedLedger, task_by_id: dict[str, Task]
+        self,
+        ledger: ParsedLedger,
+        task_by_id: dict[str, Task],
+        status_header: dict[str, FieldValue],
     ) -> None:
-        del task_by_id
+        current_evidence_ids = self._current_evidence_ids(
+            ledger, task_by_id, status_header
+        )
         for task in ledger.tasks:
             if task.kind not in {"V", "H"}:
                 continue
@@ -810,7 +871,7 @@ class Validator:
                                 "E090", ledger.path, result_values[0].line,
                                 f"verified V task {task.task_id} must record a PASS result",
                             )
-                        if repository_values:
+                        if repository_values and task.task_id in current_evidence_ids:
                             self._validate_repository_state_value(
                                 ledger.path, repository_values[0], task.task_id
                             )

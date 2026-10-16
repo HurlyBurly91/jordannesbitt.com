@@ -6,6 +6,13 @@ External verification may continue independently after the coding agent has
 submitted work. Examples include hosted CI, remote build farms, deployment
 checks, hardware tests, external evaluators, and provider-side validation.
 
+External verification is conditional on an explicit current requirement, not
+required for every checkpoint. During implementation use focused local tests;
+reserve broad hosted CI for an MVP/release candidate unless the user or an
+active acceptance contract requires it earlier. CI workflows should default to
+manual dispatch. This document governs a run *once required*; it neither
+schedules CI nor authorizes changing release/deployment triggers.
+
 The framework distinguishes:
 
 ```text

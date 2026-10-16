@@ -123,11 +123,15 @@ Resume autonomous development from durable repository state.
 26. At an expensive-to-reconstruct boundary, including suspension for external
     verification, checkpoint task and repository state together: preferably a
     commit; otherwise HEAD plus a material dirty-worktree identity from
-    `durable-state fingerprint`.
+    `durable-state fingerprint`. Commit/push does not implicitly dispatch CI.
 
-27. Run risk-proportionate verification. Record actual commands, results,
-    limitations, repository state, gate, oracle class, and exact covered
-    requirement IDs when material.
+27. Run focused local checks during implementation, relevant local integration
+    checks at milestone completion, and hosted cross-platform/full-suite CI at
+    a separately authorized integration/MVP/release boundary. Earlier external
+    checks need a concrete active acceptance contract or user instruction; do
+    not infer them from commits, pushes, or historical CI requirements.
+    Record actual commands, results, limitations, repository state, gate,
+    oracle class, and covered requirement IDs when material.
 
 27a. When required verification executes in an external system that continues
      without this process, keep `ACTIVE / AUTOMATED_VERIFICATION` and represent

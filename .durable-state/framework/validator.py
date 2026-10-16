@@ -92,7 +92,7 @@ class Validator(_core.Validator):
         task_by_id = self._validate_task_identity(ledger)
         self._validate_references(ledger, task_by_id)
         self._validate_evidence_coverage(ledger, task_by_id)
-        self._validate_verification_tasks(ledger, task_by_id)
+        self._validate_verification_tasks(ledger, task_by_id, status_header)
         self._validate_async_external_verification(
             status_path,
             status_header,
