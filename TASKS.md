@@ -295,12 +295,43 @@ Source: USER, 2026-10-15. During R19 manual review the owner confirmed project r
   Requires:
     - M09-R20-V01
     - M09-R20-V02
+    - M09-R20-F1-V01
   Covers:
     - M09-R20-01
     - M09-R20-02
+    - M09-R20-F1-01
   Gate: HUMAN
   Verification:
     - Trigger an intake/project/media error and ordinary confirmation; confirm feedback appears beside the relevant action rather than requiring a scroll to the global banner.
     - Review Photos & references with the All/Used/Unattached/Reference/Duplicates filters and confirm each card's usage/repeated-source meaning is understandable.
     - Confirm duplicate labels do not merge/delete intentional duplicate records and existing removal/source-retention behavior remains correct.
+
+### M09-R20-F1 — Clear hidden media selection on filter changes
+
+Source: USER, 2026-10-20. During R20 owner review, the owner demonstrated that batch removal itself works, but an attached-media removal error leaves that attached item selected. Switching filters hides the selected item without clearing it, so a later visible batch can be refused because the hidden attached item remains in the selection. The owner authorized the correction.
+
+- [~] M09-R20-F1-01 Clear Photos & references selection whenever the active media filter changes.
+  Source: USER
+  Requirement: Moving between All / Used by artwork / Unattached / Reference only / Duplicates starts a fresh visible selection. A selected item that becomes hidden must not silently remain in `mediaSelection` or participate in later attach/remove actions. After an expected attached-media refusal, switching filters must clear that failed selection so a newly selected eligible visible batch can be removed normally.
+  Verified-By:
+    - M09-R20-F1-V01
+    - M09-R20-H01
+
+- [~] M09-R20-F1-P01 Preserve media deletion safety and source-retention semantics.
+  Source: DERIVED
+  Requirement: Filter changes only clear ephemeral UI selection. They do not delete media, detach artwork relationships, merge duplicate-source records, alter source/private derivatives or relax attached-media removal refusal.
+  Verified-By:
+    - M09-R20-F1-V01
+
+- [~] M09-R20-F1-V01 Verify hidden-selection clearing and fresh batch removal after an attached-media refusal.
+  Source: DERIVED
+  Covers:
+    - M09-R20-F1-01
+    - M09-R20-F1-P01
+  Gate: CONSTRAINT
+  Command: node --test --test-name-pattern="real-pilot follow-up keeps action feedback local" tests/studio.test.mjs
+  Oracle: integration-or-end-to-end
+  Expected: attached-media removal is refused locally; changing to another filter clears the prior selection; a newly selected multi-item eligible batch removes successfully; source-retention and duplicate-display behavior remain unchanged.
+  Limitations:
+    - This browser regression does not replace the full M09-R20-V01 suite or owner usability review.
 

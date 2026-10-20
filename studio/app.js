@@ -683,7 +683,7 @@ function renderMedia() {
   $("media-target-summary").textContent = mediaTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === mediaTarget))}` : "Click the artwork these photos belong to.";
   $("media-details").replaceChildren(); for (const media of state.media.filter((media) => mediaSelection.has(media.id))) $("media-details").append(node("p", `${media.name} · ${media.id}\nSHA256 ${media.sourceSha256}\n${media.reproduction.width}×${media.reproduction.height}px`, "technical-block"));
 }
-for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) control.addEventListener("click", () => { mediaFilter = control.dataset.mediaFilter; renderMedia(); });
+for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) control.addEventListener("click", () => { mediaSelection.clear(); mediaFilter = control.dataset.mediaFilter; renderMedia(); });
 $("clear-media-selection").addEventListener("click", () => { mediaSelection.clear(); renderMedia(); });
 $("remove-selected-media").addEventListener("click", action(async () => {
   const chosen = state.media.filter((media) => mediaSelection.has(media.id));

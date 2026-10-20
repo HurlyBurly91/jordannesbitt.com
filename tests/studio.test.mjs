@@ -823,6 +823,10 @@ test("real-pilot follow-up keeps action feedback local and makes media usage and
 
   const used = await add(service.studio, "used-source.png"); await edit(service.studio, used.artworkId, { title: "Used work" });
   const duplicateReference = await add(service.studio, "same-source-reference.png", "media");
+  const secondReferenceBytes = await sharp({ create: { width: 64, height: 80, channels: 3, background: "#806040" } }).png().toBuffer();
+  const secondReferenceJob = await service.studio.intake(secondReferenceBytes, { name: "second-reference.png", purpose: "media", assumeSrgb: true, sha256: checksum(secondReferenceBytes) });
+  await service.studio.waitForJobs();
+  const secondReference = service.studio.state().jobs.find((job) => job.id === secondReferenceJob).result;
   const detachedBytes = await sharp({ create: { width: 64, height: 80, channels: 3, background: "#607080" } }).png().toBuffer();
   const detachedJob = await service.studio.intake(detachedBytes, { name: "detached-source.png", purpose: "artwork", assumeSrgb: true, sha256: checksum(detachedBytes) });
   await service.studio.waitForJobs();
@@ -860,5 +864,22 @@ test("real-pilot follow-up keeps action feedback local and makes media usage and
   await mediaFeedback.getByText(/attached to.*Used work/i).waitFor();
   assert.equal(await mediaFeedback.getAttribute("data-tone"), "error");
   assert.equal(await page.locator("#message").getByText(/attached to.*Used work/i).count(), 0, "direct-action error is not sent to the distant global banner");
+
+  // A failed attached-media removal must not leave a hidden selection behind when
+  // the owner moves to another filter and starts a fresh batch.
+  await page.locator('[data-media-filter="reference"]').click();
+  assert.equal(await page.locator("#media-selection-panel").isVisible(), false, "changing filters clears the previous selection");
+
+  const visibleReference = page.locator(`#media-library [data-media-id="${duplicateReference.mediaId}"]`);
+  const visibleSecondReference = page.locator(`#media-library [data-media-id="${secondReference.mediaId}"]`);
+  await visibleReference.click();
+  await visibleSecondReference.click();
+  assert.equal(await page.locator("#media-selection-count").innerText(), "2 photos selected");
+
+  page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Remove 2 selected photos/i); await dialog.accept(); });
+  await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
+  await page.locator(`#media-library [data-media-id="${duplicateReference.mediaId}"]`).waitFor({ state: "detached" });
+  await page.locator(`#media-library [data-media-id="${secondReference.mediaId}"]`).waitFor({ state: "detached" });
+  assert.equal(service.studio.state().media.some((entry) => entry.id === duplicateReference.mediaId || entry.id === secondReference.mediaId), false, "fresh visible batch removes after prior attached-media error");
 });
 

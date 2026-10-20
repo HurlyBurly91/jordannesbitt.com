@@ -52,3 +52,18 @@ The owner's first full R20 `npm run verify` completed strict state validation an
 - the second draft-deletion test could observe the previous still-visible deletion confirmation and race ahead of the second asynchronous deletion, so it now waits for the actual editor/card removal state.
 
 Those assertions are updated to the R20 contextual-feedback contract and current media terminology. No application behavior, source-retention rule, deletion semantics or public boundary is changed by this compatibility correction.
+
+## Owner review and hidden-selection follow-up — 2026-10-20
+
+The owner supplied a normal-use screencast covering the R20 review surface. The review confirmed:
+- direct attached-media removal errors appear beside the relevant action;
+- single unattached removal succeeds;
+- multi-item batch removal succeeds and reports retained source files;
+- Used by artwork / Unattached / Reference only / Duplicates filters and counts are understandable;
+- attached items identify the artwork relationship and remain protected;
+- repeated-source badges remain separate identities rather than being silently merged;
+- counts update after successful removal.
+
+The same review exposed one bounded defect. After selecting an attached media item and triggering the expected removal refusal, that item remained selected. Switching to another filter hid the selected item but did not remove it from `mediaSelection`. A later visible batch therefore included the hidden attached record and was refused.
+
+M09-R20-F1 corrects this by clearing ephemeral media selection whenever the media filter changes. The attached-media refusal itself is unchanged. No media/source bytes are deleted by a filter change, no artwork relationship is altered, and duplicate/source-retention boundaries remain intact. Automated and final owner verification remain pending.
