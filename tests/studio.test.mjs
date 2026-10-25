@@ -832,10 +832,21 @@ test("real-pilot follow-up keeps action feedback local and makes media usage and
   await service.studio.waitForJobs();
   const detached = service.studio.state().jobs.find((job) => job.id === detachedJob).result; await edit(service.studio, detached.artworkId, { title: "Detached work" });
   await service.studio.deleteArtwork(detached.artworkId, service.studio.artworkVersion(detached.artworkId));
+  const beforeRemoval = service.studio.state(), uploads = resolve(service.studio.root, "uploads");
+  const retainedPaths = [...new Set([...Object.values(beforeRemoval.assets).map((asset) => asset.path), ...(await readdir(uploads)).map((name) => resolve(uploads, name))])];
+  const retainedHashes = await Promise.all(retainedPaths.map(async (path) => [path, checksum(await readFile(path))]));
 
   const browser = await chromium.launch(); t.after(() => browser.close());
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await page.clock.install();
   await page.goto(service.origin); await page.getByText(/Studio ready\./).waitFor();
+  await page.getByRole("button", { name: "Projects", exact: true }).click();
+  await page.getByRole("button", { name: "New project", exact: true }).click();
+  await page.locator('#project-form [name="title"]').fill("Unfinished synthetic project");
+  await page.getByRole("button", { name: "Save project", exact: true }).click();
+  const unrelatedFeedback = page.locator("#project-form .action-feedback");
+  await unrelatedFeedback.getByText("Choose at least one artwork before saving this project.", { exact: true }).waitFor();
+  const unrelatedError = await unrelatedFeedback.textContent();
   await page.getByRole("button", { name: "Photos & references", exact: true }).click();
 
   await page.locator("#media-summary").getByText(/used by artwork.*unattached.*reference only/i).waitFor();
@@ -863,23 +874,66 @@ test("real-pilot follow-up keeps action feedback local and makes media usage and
   const mediaFeedback = page.locator("#media-selection-panel .action-feedback");
   await mediaFeedback.getByText(/attached to.*Used work/i).waitFor();
   assert.equal(await mediaFeedback.getAttribute("data-tone"), "error");
+  assert.equal(await mediaFeedback.getAttribute("role"), "alert");
+  const attachedError = await mediaFeedback.textContent();
+  await page.clock.fastForward(6500);
+  assert.equal(await mediaFeedback.isVisible(), true, "relevant removal errors outlive informational feedback timers");
+  assert.equal(await mediaFeedback.textContent(), attachedError);
   assert.equal(await page.locator("#message").getByText(/attached to.*Used work/i).count(), 0, "direct-action error is not sent to the distant global banner");
 
   // A failed attached-media removal must not leave a hidden selection behind when
   // the owner moves to another filter and starts a fresh batch.
   await page.locator('[data-media-filter="reference"]').click();
   assert.equal(await page.locator("#media-selection-panel").isVisible(), false, "changing filters clears the previous selection");
+  const errorAfterFilter = await mediaFeedback.textContent();
 
   const visibleReference = page.locator(`#media-library [data-media-id="${duplicateReference.mediaId}"]`);
   const visibleSecondReference = page.locator(`#media-library [data-media-id="${secondReference.mediaId}"]`);
   await visibleReference.click();
   await visibleSecondReference.click();
   assert.equal(await page.locator("#media-selection-count").innerText(), "2 photos selected");
+  assert.deepEqual((await page.locator('#media-library [aria-pressed="true"]').evaluateAll((cards) => cards.map((card) => card.dataset.mediaId))).sort(), [duplicateReference.mediaId, secondReference.mediaId].sort());
+  const staleErrorVisibleOnNewSelection = await mediaFeedback.isVisible();
 
+  const removed = page.waitForResponse((response) => response.url().endsWith("/api/media/delete"));
   page.once("dialog", async (dialog) => { assert.match(dialog.message(), /Remove 2 selected photos/i); await dialog.accept(); });
   await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
+  const response = await removed; assert.equal(response.status(), 200);
+  assert.deepEqual(response.request().postDataJSON().mediaIds.sort(), [duplicateReference.mediaId, secondReference.mediaId].sort(), "request contains only the new eligible selection");
   await page.locator(`#media-library [data-media-id="${duplicateReference.mediaId}"]`).waitFor({ state: "detached" });
   await page.locator(`#media-library [data-media-id="${secondReference.mediaId}"]`).waitFor({ state: "detached" });
   assert.equal(service.studio.state().media.some((entry) => entry.id === duplicateReference.mediaId || entry.id === secondReference.mediaId), false, "fresh visible batch removes after prior attached-media error");
-});
+  const success = page.locator("#media-add-images + .action-feedback");
+  await success.getByText(/Removed 2 private photos.*Source files were kept/).waitFor();
+  assert.equal(await success.getAttribute("role"), "status");assert.equal(await success.getAttribute("data-tone"), "info");
+  const errorAfterSuccess = await mediaFeedback.textContent();
+  await page.locator('[data-media-filter="all"]').click();await usedCard.click();
+  const staleErrorVisibleAfterSuccess = await mediaFeedback.isVisible();
+  t.diagnostic(JSON.stringify({ errorRetainedAfterFilter: Boolean(errorAfterFilter), staleErrorVisibleOnNewSelection, removalStatus: response.status(), errorRetainedAfterSuccess: Boolean(errorAfterSuccess), staleErrorVisibleAfterSuccess }));
+  assert.equal(errorAfterFilter, "", "filter change must clear obsolete error content, not merely hide its parent");
+  assert.equal(staleErrorVisibleOnNewSelection, false, "the old error must not resurface for the new eligible batch");
+  assert.equal(errorAfterSuccess, "", "successful removal cannot leave a previous failure behind");
+  assert.equal(staleErrorVisibleAfterSuccess, false, "next selection cannot resurrect the prior removal failure");
 
+  await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();
+  await mediaFeedback.getByText(/attached to.*Used work/i).waitFor();await page.clock.fastForward(6500);
+  assert.equal(await mediaFeedback.isVisible(), true);assert.equal(await mediaFeedback.getAttribute("role"), "alert");assert.equal(await mediaFeedback.textContent(), attachedError, "new genuine failures remain persistent and local");
+  await usedCard.click();assert.equal(await mediaFeedback.textContent(), "", "selection-only changes clear obsolete removal errors");
+  await usedCard.click();assert.equal(await mediaFeedback.isVisible(), false);
+  await page.getByRole("button", { name: "Remove selected from Studio", exact: true }).click();await mediaFeedback.getByText(/attached to.*Used work/i).waitFor();
+  await page.getByRole("button", { name: "Clear selection", exact: true }).click();assert.equal(await mediaFeedback.textContent(), "");
+  assert.equal(await mediaFeedback.getAttribute("role"), "status", "cleared content is no longer an active alert");
+
+  // Attach and remove share one action group; clearing must respect the message's actual action.
+  await usedCard.click();await page.getByRole("button", { name: "Add selected photos to artwork", exact: true }).click();
+  await mediaFeedback.getByText("Click the target artwork first", { exact: true }).waitFor();
+  await page.locator('[data-media-filter="unattached"]').click();await detachedCard.click();
+  assert.equal(await mediaFeedback.textContent(), "Click the target artwork first", "unresolved attachment feedback must not be blanket-cleared as removal feedback");
+  assert.equal(await mediaFeedback.getAttribute("role"), "alert");
+  await page.getByRole("button", { name: "Projects", exact: true }).click();
+  assert.equal(await unrelatedFeedback.isVisible(), true);assert.equal(await unrelatedFeedback.textContent(), unrelatedError);assert.equal(await unrelatedFeedback.getAttribute("role"), "alert");
+  assert.deepEqual(service.studio.state().media.find((entry) => entry.id === used.mediaId), beforeRemoval.media.find((entry) => entry.id === used.mediaId), "attached photo is unchanged");
+  assert.deepEqual(service.studio.state().catalogue, beforeRemoval.catalogue, "artwork attachment and public intentions are unchanged");
+  assert.deepEqual(service.studio.state().assets, beforeRemoval.assets, "private derivative allowlist remains intact");
+  for (const [path, hash] of retainedHashes) assert.equal(checksum(await readFile(path)), hash, "source/upload and private derivative bytes survive removal");
+});

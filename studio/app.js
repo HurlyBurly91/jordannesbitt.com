@@ -11,7 +11,7 @@ const sessionEditors = new Map();
 let editingVersion, openRevision = 0;
 const staleEditors = new Set(), deletedEditors = new Set(), versionChecks = new Map();
 const previewReturns = new Map();
-let messageTimer = null, activeActionTarget = null, mediaFilter = "all";
+let messageTimer = null, activeActionTarget = null, mediaFilter = "all", mediaFeedbackContext = "";
 const localMessageTimers = new WeakMap();
 const tabs = coordinateArtworkTabs({
   isDirty: (id) => (editingArtwork === id && editorDirty) || sessionEditors.get(id)?.dirty,
@@ -106,7 +106,8 @@ function writeMessage(bar, value, error, persistent) {
   if (global) messageTimer = timer; else localMessageTimers.set(bar, timer);
 }
 function message(text, error = false, { persistent = false, near = null, global = false } = {}) {
-  const value = humanReason(text), local = global ? null : feedbackNode(near || activeActionTarget);
+  const target = near || activeActionTarget, value = humanReason(text), local = global ? null : feedbackNode(target);
+  if (local) local.dataset.actionTarget = target instanceof Element ? target.id : "";
   writeMessage(local || $("message"), value, error, persistent);
 }
 function node(tag, text, className) { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; }
@@ -643,7 +644,15 @@ function mediaFacts(media, duplicateGroups) {
   const links = mediaLinks(media), reference = !links.length && media.disposition.includes("reference"), duplicates = duplicateGroups.get(media.sourceSha256) || [];
   return { media, links, status: links.length ? "used" : reference ? "reference" : "unattached", duplicates };
 }
+function clearMediaRemovalError() {
+  // Attach and remove share a feedback node; unrelated errors must survive.
+  const output = $("media-selection-panel").querySelector('.action-feedback[data-action-target="remove-selected-media"]');
+  if (output?.dataset.tone === "error") writeMessage(output, "", false, false);
+}
 function renderMedia() {
+  const context = JSON.stringify([mediaFilter, [...mediaSelection].sort()]);
+  if (context !== mediaFeedbackContext) clearMediaRemovalError();
+  mediaFeedbackContext = context;
   const duplicateGroups = new Map();
   for (const media of state.media) if (media.sourceSha256) {
     if (!duplicateGroups.has(media.sourceSha256)) duplicateGroups.set(media.sourceSha256, []);
@@ -694,6 +703,7 @@ $("remove-selected-media").addEventListener("click", action(async () => {
   }
   if (!confirm(`Remove ${chosen.length} selected photo${chosen.length === 1 ? "" : "s"} from Photos & references?\n\nOriginal selected files and private derivatives are kept. This only removes the active Studio library entries.`)) { message("Photo removal cancelled."); return; }
   await api("/api/media/delete", { mediaIds: chosen.map((media) => media.id) });
+  clearMediaRemovalError();
   mediaSelection.clear(); await refresh(); message(`Removed ${chosen.length} private photo${chosen.length === 1 ? "" : "s"} from Studio. Source files were kept.`, false, { near: $("media-add-images") });
 }));
 $("attach-selected-media").addEventListener("click", action(async () => {
