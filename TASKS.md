@@ -3,8 +3,9 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R21
+Phase: HUMAN_VERIFICATION
+Active-Request: M09-R5
+Next-Gate: M09-R5-H01
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -40,25 +41,6 @@ The current schema-2 validator can bind inherited pending human gates directly t
   Gate: HUMAN
   Verification:
     - Owner explicitly approves the exact public source/rights/factual content/manifest/business/contact set before M09 closeout or M10.
-
-- [H] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current presentation; automation does not approve content/artistry or close M09.
-  Source: DERIVED from USER review boundary; preserved stable ID.
-  Covers:
-    - M09-R5-02
-    - M09-R5-04
-  Coverage-Source: records/M09-schema1-ledger-snapshot-2026-10-09.md
-  Gate: HUMAN
-  Verification:
-    - Owner explicitly accepts or revises the persistent visual-review content.
-
-- [H] M09-R5-H02 Manually resolve the preserved mobile opened-inspection colour-contrast INCONCLUSIVE cases; absence of automated violations is not a pass.
-  Source: DERIVED from observed review; preserved stable ID.
-  Covers:
-    - M09-R5-04
-  Coverage-Source: records/M09-schema1-ledger-snapshot-2026-10-09.md
-  Gate: HUMAN
-  Verification:
-    - Human/manual review resolves the exact recorded contrast cases.
 
 - [H] M09-R6-H01 Owner tests practical local intake/edit/media identity/project+Selected ordering/lead/preview/review/explicit export usability and readable polish.
   Source: USER/DERIVED human gate; preserved stable ID.
@@ -116,6 +98,33 @@ The current schema-2 validator can bind inherited pending human gates directly t
   Gate: HUMAN
   Verification:
     - Human/manual review resolves the exact recorded contrast case.
+
+## M09-R5 — Existing pilot content and curation owner review
+
+Existing unresolved gates moved here without changing their stable IDs, scope, historical coverage or acceptance state. No completed R5 implementation is rehydrated. After the accepted R20/R21 closeout, the next recommended task is owner review of the already generated ten-work pilot and its provisional classifications/date proxies/groups, then explicit initial Selected Work order, authored project membership/sequence and homepage lead decisions. All choices stay private/provisional until separately approved for public source/rights/launch. No new content implementation is started by this closeout.
+
+- [H] M09-R5-H01 Owner reviews regenerated provisional classifications/groups/pilot/colour and current presentation; automation does not approve content/artistry or close M09.
+  Source: DERIVED from USER review boundary; preserved stable ID.
+  Requires:
+    - M09-R21-V04
+  Covers:
+    - M09-R5-02
+    - M09-R5-04
+  Coverage-Source: records/M09-schema1-ledger-snapshot-2026-10-09.md
+  Gate: HUMAN
+  Review-Target: Existing private package /home/jordan/.local/share/jordannesbitt-art/m09/reviews/review-2026-10-06T00-55-36-730Z-0f6e9c43; start owner-review-summary.md and SERVE.txt, with original snapshot binding/provenance in records/M09-R5-persistent-regeneration-checkpoint.md. Directory and expected summary/serve/report/site entries checked present during closeout; not regenerated or newly accepted.
+  Verification:
+    - Owner explicitly accepts or revises the persistent visual-review content.
+    - Correct uncertain work classification/date proxies and nominate/confirm the initial ten-work pilot, Selected Work order, genuine project memberships/sequences and homepage lead; do not invent titles/dimensions/rights or infer public-source approval.
+
+- [H] M09-R5-H02 Manually resolve the preserved mobile opened-inspection colour-contrast INCONCLUSIVE cases; absence of automated violations is not a pass.
+  Source: DERIVED from observed review; preserved stable ID.
+  Covers:
+    - M09-R5-04
+  Coverage-Source: records/M09-schema1-ledger-snapshot-2026-10-09.md
+  Gate: HUMAN
+  Verification:
+    - Human/manual review resolves the exact recorded contrast cases.
 
 ## M09-R13 — Current editable multi-tab Studio owner gate
 
@@ -238,6 +247,8 @@ Source: USER, 2026-10-11. After exercising the real pilot, the owner reported fo
     - Confirm success/ready/preview text appears as a neutral bounded status bar while errors remain conspicuous.
 
 ## M09-R20 — Contextual Studio feedback and media-state clarity
+
+Studio request closeout CLOSED2026-10-25 following R20-H01 acceptance2026-10-23, R21-H01 acceptance2026-10-25 and verified scoped publication below. The separately recorded checker repair is locally verified but intentionally remains unpublished/uncommitted; this closeout does not claim a clean committed-checker verification or close M09.
 
 Source: USER, 2026-10-15. During R19 manual review the owner confirmed project removal/deletion and duplicate-source interruption worked, but reported that action feedback appearing in the distant top banner was hard to associate with the button pressed and that Photos & references did not make active use, unattached items or repeated source images clear. The owner explicitly authorized: `fix these Studio UX issues`.
 
@@ -393,6 +404,8 @@ Source: USER, 2026-10-20. During R20 owner review, the owner demonstrated that b
 
 ## M09-R21 — Clear obsolete media-removal feedback
 
+Studio correction closeout CLOSED2026-10-25. All R21 requirement/evidence/human tasks are verified within their recorded scope, including the latest authorized closeout checkpoint. Historical prior no-commit constraints and uncommitted-review evidence remain intact as provenance; the dated latest grant below governs publication. No other human gate is accepted.
+
 Source: USER, 2026-10-23 owner acceptance of tested R20 functionality plus a newly observed stale-error defect. Re-entry to FOLLOW_UP before implementation. Scope: local removal-feedback lifecycle, the existing R20 browser regression and necessary durable/canonical evidence only. Preserve the existing uncommitted scripts/durable-state-check.mjs and TASKS.md repair. No dependency/hosted-CI changes or dispatch, unrelated refactor, commit/push, real-file deletion or public approval. Owner requests a verified uncommitted checkpoint for review; publication is not a prerequisite for this explicitly local review.
 
 - [x] M09-R21-01 Clear obsolete removal errors when media selection/filter context changes or a removal succeeds, retaining relevant local persistent errors and appropriate alert/status semantics.
@@ -490,15 +503,15 @@ Source: USER, 2026-10-23 owner acceptance of tested R20 functionality plus a new
 
 Latest owner grant supersedes the preceding no-commit/push stop condition only for the six Studio correction/closeout files:studio/app.js,tests/studio.test.mjs,docs/studio.md,STATUS.md,TASKS.md,records/M09-R20-studio-ux-clarity-checkpoint.md. Historical no-commit instructions/evidence above describe their original checkpoint and are preserved. scripts/durable-state-check.mjs is explicitly excluded from staging and editing; its prior implementation/evidence stays in this worktree. No other human gate, branch, dependency, hosted workflow, private data or release boundary is authorized to change.
 
-- [ ] M09-R21-05 Complete the accepted R20/R21 Studio closeout and publish only the authorized checkpoint.
+- [x] M09-R21-05 Complete the accepted R20/R21 Studio closeout and publish only the authorized checkpoint.
   Source: USER,2026-10-25.
   Requirement: Preserve earlier TASKS repair evidence and excluded checker bytes; run strict validation and the exact bounded Node22.23.3/npm10.9.9 full verify command; review/stage exactly the six authorized files, commit/push only redesign/astro-foundation without force, and report remaining dirty state/M09 gates plus an existing content-curation next task. No new substantial M09 implementation or deployment/Actions dispatch.
   Verified-By:
     - M09-R21-V03
     - M09-R21-V04
-- [~] M09-R21-D02 Reconcile accepted request coverage, scoped publication and remaining M09 human gates.
+- [x] M09-R21-D02 Reconcile accepted request coverage, scoped publication and remaining M09 human gates.
   Source: DERIVED from M09-R21-05.
-  Next: Required full verification passes; finish exact six-file staged review and authorized commit/push, record actual remote equality, then select existing M09-R5-H01 pilot content/curation review without accepting it or beginning implementation. Initial branch/HEAD/remote all match d01027d5ed280113db7f77aa805165452ed994a9; seven expected modified files/index empty/no divergence. Excluded checker blob b0efc08273cf4c9e83d726473a0960981bab0ef3 matches the prior handoff. The missing disposable browser cache was restored using existing pinned browser:install, without tracked/dependency changes.
+  Resolution: Required strict/full verification passed and exact six-file checkpoint0fa460964e14fe7344b40ea3102d4035e9f0a139 committed/pushed/remote-equal. No application/test change was needed during closeout. Excluded checker remains unstaged at b0efc08273cf4c9e83d726473a0960981bab0ef3; earlier ledger repair evidence retained. Next existing M09-R5-H01 is selected without acceptance or new implementation; all other pending gates preserve their status. The restored disposable browser cache and earlier intermittent capture evidence remain documented, not conflated with application acceptance.
 - [x] M09-R21-V03 Verify the accepted closeout on the actual preserved local worktree.
   Source: DERIVED
   Covers:
@@ -511,7 +524,7 @@ Latest owner grant supersedes the preceding no-commit/push stop condition only f
   Repository-State: HEAD=d01027d5ed280113db7f77aa805165452ed994a9; DIFF-SHA256=1041a739f9aa8c010505a3a2ebb8981a485d48d20e136f5657acf25c1a99bebb
   Limitations:
     - Verification includes the explicitly excluded uncommitted checker repair. A clean checkout of the scoped commit still has the obsolete 1.1.5 checker expectation; do not claim standalone committed-checker verification or silently include the repair.
-- [ ] M09-R21-V04 Publish and verify the exact authorized Studio closeout scope.
+- [x] M09-R21-V04 Publish and verify the exact authorized Studio closeout scope.
   Source: DERIVED
   Covers:
     - M09-R21-05
@@ -519,3 +532,7 @@ Latest owner grant supersedes the preceding no-commit/push stop condition only f
   Command: git diff --check; exact staged diff/path/blob review; git commit; git push origin redesign/astro-foundation; local/remote HEAD and excluded-checker/index/worktree verification.
   Oracle: static-analysis
   Expected: Only six authorized code/test/docs/state files committed; development remote equals actual checkpoint; checker remains byte-identical, unstaged and uncommitted; no private media/unrelated work/protected-ref changes or unnecessary Actions.
+  Result: PASS. Commit/push0fa460964e14fe7344b40ea3102d4035e9f0a139 (Close accepted R20 and R21 Studio feedback fixes) exits0; development remote equals actual local checkpoint. Exact paths:studio/app.js,tests/studio.test.mjs,docs/studio.md,STATUS.md,TASKS.md,records/M09-R20-studio-ux-clarity-checkpoint.md. Index is empty; only remaining modified path scripts/durable-state-check.mjs,worktree blob b0efc08273cf4c9e83d726473a0960981bab0ef3 vs unchanged committed blob a0991a1f8fa25183a2d2f0e2fd0fe67521cdecc1. No private data, dependency/workflow/backend/public-source edits, forced operations or hosted dispatch; master9add7fefbaa2817d974c7c2ba6517ba5b2ecec7c and backup3bc95c75bbe85918ce10498af31a751e2cf58fc6 remain as at closeout start. Final durable metadata records this actual publication and selects the pre-existing pilot review gate; no new code/content work.
+  Repository-State: HEAD=0fa460964e14fe7344b40ea3102d4035e9f0a139; DIFF-SHA256=962d9dd37d76e0a468003887b3ff7b5f972c1c0c441641f73201538f994085a7
+  Limitations:
+    - Local full verification includes the expressly excluded checker repair; pure scoped-commit checkout retains the obsolete-checker blocker. A separate future checker commit still needs authorization; it was neither staged nor changed here. Publication is a development checkpoint, not M09 completion or M10/public website release.
