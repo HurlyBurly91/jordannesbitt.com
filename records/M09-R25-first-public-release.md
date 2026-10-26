@@ -28,4 +28,10 @@ Previous successful live/master commit **9add7fefbaa2817d974c7c2ba6517ba5b2ecec7
 
 ## Publication result
 
-Pending actual development checkpoint,history-preserving master integration,rollback rehearsal,Pages deployment and live verification. This prepublication evidence does not claim a successful release.
+Development content checkpoint **bec8e5be3dea4ff8640a016a429364bc6b14bcf8** committed/pushed83reviewedpaths. Annotated previous-live tag pushed and peeled9add7fe confirmed. Local history-preserving release merge **c774ab9abb1b3cd839a6396c100ba018b6c622a7**,firstparent9add7fe/secondparentbec8e5b;release tree **ee2d08f4252fcc61197651b45771618876048f23** exactly equals the development candidate. Disposable clone `git revert --no-commit -m 1 c774ab9abb1b3cd839a6396c100ba018b6c622a7` restores every tracked byte to previous tree **3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5**.
+
+Commit transition makes the earlier untracked-file fingerprint stale;strict validation correctly refuses it. Fresh committed-candidate full verify **106/106**,strictstate/build0diagnostics,release:check and exact artifact/privacy/private-preservation audit PASS at c774ab9. Old dirty evidence retained in Precommit fields,not overwritten with a new hash. No application/test/checker change was needed. Development fast-forwarded to the release merge;this evidence-only update is committed before master publication so deployed source has current reproducible evidence.
+
+When the evidence-only tip is included,the rollback must first revert that tip without committing,then revert the release merge with `-m 1`,and commit the combined reviewed restoration. The local rehearsal is repeated against that exact final tip before its master push. This is a normal history-preserving rollback;neither revert is applied to live as a test.
+
+Actual Pages deployment/live result remains pending until recorded below;local integration is not yet a published-site success.
