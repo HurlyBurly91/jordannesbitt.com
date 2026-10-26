@@ -16,6 +16,8 @@ An enquiry carries the work ID/title/URL and routes to the approved public recip
 
 Mocks cover normal/error/spam cases. A real delivery test requires explicit permission and verified receipt by the owner before production acceptance. Never automatically subscribe an enquirer to a mailing list. Newsletter integration is optional and needs separate consent/configuration. Do not store messages, buyer details or secrets in Git or client-visible configuration.
 
+The existing domain's Cloudflare email-obfuscation layer rewrites ordinary public email links to a JavaScript-decoded address. The direct-contact markup uses Cloudflare's documented per-address `<!--email_off-->` / `<!--/email_off-->` exception so the owner-approved email remains readable/clickable without JavaScript. This is a content-markup integration fix,not a Cloudflare/hosting/DNS setting change. Verify both JavaScript and no-JavaScript live contact;local HTML alone cannot prove edge behavior. Reference: https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/ (updated2026-08-03,inspected2026-10-26).
+
 ## Hosting and business gates
 
 GitHub Pages excludes sites primarily facilitating commercial transactions (source R08 in research.md). Do not assume that moving checkout to another URL makes every commercial use compliant. Keep the current deployment untouched during preparation; M10 must select or confirm suitable hosting for the intended sales-oriented site before release. No automatic paid signup, DNS changes or legal-policy publication.
