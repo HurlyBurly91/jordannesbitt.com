@@ -3,7 +3,7 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: FOLLOW_UP
 Active-Request: M09-R25
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
@@ -828,7 +828,7 @@ Source: USER's required verification/report of the authorized export,now bound t
 
 Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit complete bounded release grant and subsequent HIGH confirmation. This supersedes earlier no-professional/manifest/commit/master/deploy stop conditions for this release only. No repeat artwork/title/kind/alt/rights/63-derivative approvals. Existing draft About must be verbatim; public contact jordan.c.nesbitt@gmail.com. Existing Pages/domain; no hosting migration/DNS or commerce. Historical private-Studio/other-corpus gates are retained without making them new launch prerequisites or falsely accepting them.
 
-- [~] M09-R25-01 Prepare and publish exactly w-0184 Kaiya,w-0183 Untitled Figure 036,w-0178 Untitled,w-0175 Untitled,w-0180 Otto in that order,lead Kaiya,no projects,approved verbatim About and public contact; create checksum-bound exact owner launch manifest.
+- [x] M09-R25-01 Prepare and publish exactly w-0184 Kaiya,w-0183 Untitled Figure 036,w-0178 Untitled,w-0175 Untitled,w-0180 Otto in that order,lead Kaiya,no projects,approved verbatim About and public contact; create checksum-bound exact owner launch manifest.
   Source: USER
   Verified-By:
     - M09-R25-V01
@@ -841,16 +841,17 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
   Source: USER
   Verified-By:
     - M09-R25-V02
-- [~] M09-R25-03 Commit/push verified development release,preserve previous actual live commit and practical rollback,integrate master without history loss/force push,deploy via existing Pages workflow and verify actual live HTTPS/home/five works/About/contact/images/navigation/sitemap;record commit/deployment/result.
+- [x] M09-R25-03 Commit/push verified development release,preserve previous actual live commit and practical rollback,integrate master without history loss/force push,deploy via existing Pages workflow and verify actual live HTTPS/home/five works/About/contact/images/navigation/sitemap;record commit/deployment/result.
   Source: USER
   Verified-By:
     - M09-R25-V03
-- [~] M09-R25-D01 Reconcile existing state and execute the bounded first-release workflow.
+- [x] M09-R25-D01 Reconcile existing state and execute the bounded first-release workflow.
   Source: DERIVED
   Progress: Initial expected dirty paths reviewed; HEAD/origin development9069f4936bf3defa5e4c8db521b3c2e2eca75d1f. Remote master9add7fefbaa2817d974c7c2ba6517ba5b2ecec7c is actual previous successful Pages deployment,run38913420907/deployment7121081577. Existing HTTPS root200/TLS verified. No active pending deployment observed. Existing private profile is the approved552-byte proposal. Existing content/source guards remain unchanged.
   Reproduced-Corrections: First release verify105/106: controlled-empty negative fixture copied the newly added real launch manifest,so missing-manifest assertion failed before any application defect. Remove only that copied approval in the synthetic helper,retaining every negative assertion. Deployment action v3 defaults Node20,below project requirement and native TypeScript runtime;pin verified22.23.3 and run unchanged release:check after build/upload,before dependent deploy. Existing workflow/host/domain preserved.
   Committed-Candidate:83reviewed/stagedpaths committed/pushed as bec8e5be3dea4ff8640a016a429364bc6b14bcf8;oldlive annotated rollback tag pushed. Local master merge c774ab9abb1b3cd839a6396c100ba018b6c622a7 has firstparent oldlive9add7fe,secondparent developmentbec8e5b and exact equal treeee2d08f4252fcc61197651b45771618876048f23. Disposable revert restores prior tree3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5 exactly. No master push yet. Framework strict check correctly reports old dirty evidence fingerprint stale after untracked media becomes committed;V01/V02 reopened only for fresh committed-candidate revalidation,not an application failure or rewritten historical proof. Development fast-forwarded to the local release merge for this check;subsequent evidence-only commits will be included in exact rollback rehearsal before publication.
   Live-Defect: First Pagesrun40274885693 SUCCESS for ed1d7db;downloaded87fileartifact is byte-identical to localaudit. Existing Cloudflare edge adds an exact challenge trailer and rewrites the public mailto/email through email-protection/email-decode script. Normal-JS40browsercases pass;source-byte audit exposes that edge email rewriting loses the intended no-JS direct-contact fallback. This is a real reproducible release integration defect,not content discrepancy. Apply documented per-address `email_off` markup around the approved direct email,without changing hosting/DNS/Cloudflare settings or professional/media/manifest. Official https://developers.cloudflare.com/waf/tools/scrape-shield/email-address-obfuscation/ (updated2026-08-03) specifies these comments. Reverify fullsuite/exactartifact and liveJS/noJS,redeploy correction normally;preserve first deployed run/fingerprint as historical evidence. Exact CDN challenge addition is compared separately from published artifact,never silently called byte-identical raw HTML.
+  Resolution: Bounded first release completed at https://jordannesbitt.com/ with exact approved five works/order/lead/About/contact. Final target282234ca5e66cd98e6d6319a181defd404b8bf82,Pages40277248712SUCCESS/deployment7325171617;downloaded87fileartifact exact,86livefiles approved payload verified,48livebrowsercases including8noJS pass. Contact edge defect corrected without host/DNS changes;8contrastfindings remain INCONCLUSIVE. Private preservation/rollback PASS. Historical progress/pending descriptions above are retained chronology,not unresolved release work. Unrelated inherited private-Studio/other-corpus human gates remain deferred under owner scope,not falsely accepted or new publication prerequisites.
 - [x] M09-R25-V01 Verify actual release code/content and mobile findings.
   Source: DERIVED
   Covers:
@@ -882,7 +883,7 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
   Result: PASS. Repeated after contact correction:all9154existingprivatefiles unchanged,no unrelated additions;64approved sourcehashes/552byteprofile/63emittedderivatives exact,noEXIF/XMP/IPTC,exact5artworkroutes/searchIDs,87fileartifact/nootherprivatework/notes/masters/reviewdata/credentials/offers. Content digest unchanged,newoutputd7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968. Only contact markup/canonical integration docs/ledger/record changed;no host/DNS/edge settings. Independent downloaded first-run87fileartifact exactly matched first local artifact;CDN transformations and contact defect were reported separately,not called raw-byte equality.
   Repository-State: HEAD=ed1d7dbdd75f7a3d7e4073ba5cee667d173077b4; DIFF-SHA256=fbb5a5c848c549056da4d87274b86807a9d3f5f1a95bb2313429ba54da02e79e
   Limitations: Existing public repository history remains historical; private evidence/backups stay outside Git.
-- [~] M09-R25-V03 Verify development publication,rollback,master deployment and live artifact.
+- [x] M09-R25-V03 Verify development publication,rollback,master deployment and live artifact.
   Source: DERIVED
   Covers:
     - M09-R25-01
@@ -899,8 +900,22 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
   First-External-Conclusion: SUCCESS
   First-Resume-Mechanism: MANUAL
   First-Suspension-Checkpoint: HEAD=ed1d7dbdd75f7a3d7e4073ba5cee667d173077b4; WORKTREE=CLEAN
+  Verification-Mode: EXTERNAL_ASYNC
+  External-Provider: github-actions
+  External-Run-ID: 40277248712
+  Target-Identity: commit:282234ca5e66cd98e6d6319a181defd404b8bf82
+  Required-Checks:
+    - build
+    - deploy
+  External-Status: COMPLETED
+  External-Conclusion: SUCCESS
+  Resume-Mechanism: MANUAL
+  Suspension-Checkpoint: HEAD=282234ca5e66cd98e6d6319a181defd404b8bf82; WORKTREE=CLEAN
   Command: Reviewed exact Git checkpoint/nonforce push/history-preserving integration;exact Pages run/deployment identity and successful jobs;live HTTP/browser/asset/hash/sitemap verification.
   Oracle: integration-or-end-to-end
   Expected: Actual successful deployment is bound to approved release commit;all live critical paths/HTTPS/assets and exact five-work content match verified artifact;previous live revision is durably recoverable.
   Progress: Developmentbec8e5b and evidence-onlytiped1d7db committed/pushed;history-preserving mergec774ab9 firstparentoldlive9add7fe retained. Master/development remote both equal ed1d7db before final release-result metadata. Exact final-tip rollback rehearsal reverts ed1d7db then c774ab9(-m1),restores every tracked byte/prior tree3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5. Rollbacktag publicly preserved;23previouslivefiles privately captured. Existing Pages run40274885693 for exact tip is IN_PROGRESS,not PASS. Owner explicitly requires waiting for actual terminal deployment and live verification in this bounded execution;no new approval/yield checkpoint is introduced.
+  Correction-Progress: First-run progress above is historical;its completed SUCCESS and the separate no-JS contact defect are preserved in D01/record. Correction282234ca5e66cd98e6d6319a181defd404b8bf82 committed/pushed development,masterfast-forwarded/pushed without force. Exact new-tip rollback rehearsal reverts282234c,ed1d7db,c774ab9(-m1),again restores prior tree byte-for-byte. New exact Pagesrun40277248712 QUEUED,not PASS;wait and liveJS/noJS/artifact/approved-payload verification remain active.
+  Result: PASS. Exact final Pagesrun40277248712 targets282234ca5e66cd98e6d6319a181defd404b8bf82:buildjob121422501964SUCCESS including strict content step,deployjob121422646466SUCCESS,completed2026-10-26T06:00:20Z;deployment7325171617statusSUCCESS. Artifact12630562988/github-pages downloaded,safely extracted;87files each SHA256-identical to corrected localoutputd7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968. Live48Chromium/Firefoxdesktop/mobilecases including8noJS verify5works/lead/order/About/contact/mailto/images/navigation/inspection and0confirmedviolations/reflowfailures;8openedcontrastcases INCONCLUSIVE. All86servedfiles verified:68raw-byteidentical;18HTMLpayloads identical after validating/removing only exact Cloudflare terminal challenge template and consuming exact documented2email_off markers on Contact. RawHTML is explicitly NOT byte-identical;noothertransform accepted. Sitemaps/search/CSS/media exact;HTTPSapex200/TLSvalid,www→HTTPSapex200;CNAME unchanged. Final9154privatefilehashes unchanged. Remote master/development both282234c before result-only checkpoint;actual master/deployed target remains282234c. Exact final-tip rollback rehearsed before push restores previous tree3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5 and pushedtagpre-first-release-2026-10-26. Final evidence-only development checkpoint does not redeploy master.
+  Repository-State: HEAD=282234ca5e66cd98e6d6319a181defd404b8bf82; WORKTREE=CLEAN
   Limitations: Mailto draft inspection sends no email;indexing/field performance not inferred. User explicitly requires waiting for actual deployment result in this bounded execution.

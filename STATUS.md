@@ -3,11 +3,11 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
+Phase: FOLLOW_UP
 Active-Request: M09-R25
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
 ```
 
-R25 firstPagesrun40274885693 SUCCESS/ed1d7db;87filehostedartifact exact,HTTPSlive40normalJSchecks pass. Strict live audit found existingCloudflare email-obfuscation breaks no-JS contact;documented per-address email_off markup fixes this without edge/DNS/hosting changes. Corrected full106/106/strictstate/build/release PASS;58localbrowserchecks including8native noJS pass,exact63media/private9154files preserved. Newoutputd7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968;8mobilecontrast cases remain INCONCLUSIVE. Now commit/push correction,rehearse exacttiprollback,deploy normally,wait actualresult and verify liveJS/noJS/artifact/payload. No commerce/hostingmigration/DNS. Details records/M09-R25-first-public-release.md.
+PUBLISHED and live-verified https://jordannesbitt.com/:exact5approvedworks/order,Kaiyalead,verbatimAbout,publiccontact,no projects/commerce. Master/deployed282234ca5e66cd98e6d6319a181defd404b8bf82;Pages40277248712SUCCESS,deployment7325171617.106/106tests/state/build/release PASS;87uploadedfiles exact auditedartifact,86servedfiles approvedpayload verified;48livebrowsercases including8noJS PASS. ExistingCloudflare challenge addition and consumed email_off markers explicitly accounted for,not called rawHTMLbyteequality.8mobileopenedcontrastcases remain INCONCLUSIVE.9154privatefiles unchanged;oldlive9add7fe/pushedtag preserved,exacttiprollback rehearsed. R25complete;result-only development checkpoint preserves deployedmaster. M09 remainsACTIVE for historical/deferred private-Studio/other-corpus gates,without reopening approved release or inventing acceptance. No hosting/DNS change;M11deferred. See records/M09-R25-first-public-release.md.

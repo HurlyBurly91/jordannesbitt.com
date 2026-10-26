@@ -40,4 +40,32 @@ Existing Cloudflare adds its terminal challenge script to HTML,and rewrites the 
 
 Contact-only correction now passes full **106/106**,strictstate/build0diagnostics,release:check and **58actual local browsercases**,including8native no-JS checks in Chromium/Firefox. Visible/clickable owner email and natively disabled draft-preparation button verified with scripts disabled. Corrected output SHA256 **d7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968**;approved content digest/64sourcehashes/63derivatives remain exact,9154existingprivatefiles unchanged.8mobilecontrast cases remain INCONCLUSIVE. Native no-JS diagnostic initially used a JS-decoding screenshot helper which hung in Firefox and was stopped by timeout;changed to actual native loading/link/button assertions,targeted8/8 then full58/58 pass. Uppercase-rendered email and fieldset-vs-button disabled semantics were diagnostic-harness corrections,not application failures or weakened content assertions. Corrected logs/report retained privately.
 
-Previous live homepage includes the same existing challenge addition;raw capture hash above is request-specific. After validating/removing that exact terminal template,the previous approved homepage payload SHA256 is **17a31df0cf6783f0c2f3d9078ba1eae516482719d1fe4f1834548adc851a3c9c**. Use that payload for rollback comparisons,while preserving raw capture separately. Final correction/deployment/live result remains pending below.
+Previous live homepage includes the same existing challenge addition;raw capture hash above is request-specific. After validating/removing that exact terminal template,the previous approved homepage payload SHA256 is **17a31df0cf6783f0c2f3d9078ba1eae516482719d1fe4f1834548adc851a3c9c**. Use that payload for rollback comparisons,while preserving raw capture separately.
+
+## Final published release — COMPLETE
+
+Live target: **https://jordannesbitt.com/**. Final release/master commit **282234ca5e66cd98e6d6319a181defd404b8bf82**,`Preserve direct public contact through the existing CDN`. Development and master were remote-equal at this revision before the result-only development checkpoint. History-preserving release merge c774ab9 and both parent histories remain intact;no force push/reset/history discard. `public/CNAME` exactly unchanged from previouslive.
+
+Actual workflow: **[40277248712](https://github.com/HurlyBurly91/jordannesbitt.com/actions/runs/40277248712)**,target282234c,conclusion **SUCCESS**. Buildjob **121422501964** succeeds including exact production-content gate;deployjob **121422646466** succeeds at **2026-10-26T06:00:20Z**. GitHub Pages deployment **7325171617** status **success** at06:00:21Z. GitHub reports an HTTP environment URL,but independent live checks explicitly use HTTPS and validate TLS. `https://www.jordannesbitt.com/` redirects to HTTPSapex200. Provider Node20-action-runtime/Ubuntu-image deprecation annotations remain non-fatal warnings;the website build itself uses pinned Node22.23.3. No hosting/DNS mutation.
+
+Actual uploaded artifact **12630562988**,`github-pages`,14,561,705bytes compressed. Downloaded/extracted113members/87files with safe regular-file/directory validation. All87files are byte-for-byte SHA256-identical to the corrected local production artifact. Final output digest **d7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968**,approved content/media digest unchanged **d5e0d78a33c2ba0eb88fb3d4310578dae7afcabbe9dc087f9b0bece264f0b719**. Exact63derivatives,5artworkroutes,5searchrecords,zero projects;approved About/contact only. Private notes/masters/other works/review state/credentials absent. Final audit confirms all9154existingprivatefiles unchanged.
+
+**48livebrowsercases PASS**:Chromium153.0.8010.12 and Firefox155.0,360/1440×900,DPR1;10critical routes each,plus8native no-JavaScript cases. Home/Kaiyalead/exact5selectionorder,Work,Archive,all5artworkheadings/routes,verbatimAbout,visible/clickable approved email,images,real navigation,fit/larger/Escape/focus and mobile reflow verified. No actual email sent or mail application launched. Both browsers' no-JS contact retains actual mailto/address and disables the optional draft button natively. Representative live Home/mobileContact screenshots inspected.0confirmedaxeviolations/reflowfailures;the same8opened-mobileinstructioncontrast findings remain **INCONCLUSIVE**,not PASS/fullWCAG.
+
+**86servedfiles verified** (CNAME is deployment configuration):68raw-byteidentical nonHTML assets,including all63images/searchJSON/CSS/sitemaps;18HTML pages match the exact approved artifact payload after accounting for only independently inspected Cloudflare transformations. Each challenge script must equal the exact known terminal template except dynamic ray/timestamp fields;Contact consumes exactly the documented2email_off comments. No email-obfuscation rewrite remains and no arbitrary added scripts/changed content are accepted. RawHTML is **not** claimed byte-identical. Separate raw/artifact/approved-payload hashes and all live checks persist in corrected-live-checks.json;downloaded hosted artifact equality is independent of this edge comparison.
+
+## Exact exercised rollback for final public commit
+
+Pushed annotated tag **pre-first-release-2026-10-26** peels to previouslive **9add7fefbaa2817d974c7c2ba6517ba5b2ecec7c**. Disposable local clone rehearsal from282234c executed:
+
+```bash
+git revert --no-commit 282234ca5e66cd98e6d6319a181defd404b8bf82
+git revert --no-commit ed1d7dbdd75f7a3d7e4073ba5cee667d173077b4
+git revert --no-commit -m 1 c774ab9abb1b3cd839a6396c100ba018b6c622a7
+git write-tree
+git rev-parse 'pre-first-release-2026-10-26^{tree}'
+```
+
+Both tree outputs equal **3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5**,proving everytrackedbyte restored to the prior site. On an authorized actual rollback,review that exact equality,commit the combined restoration,push master normally,and verify the restored workflow result/old payload. No external rollback was performed as a test. Later unrelated master commits require reconciliation;the final result-only development commit is not on deployedmaster and need not be reverted for this public rollback.
+
+R25 bounded first-publication task is complete. Final result evidence is committed/pushed on redesign/astro-foundation without another master deployment. M09's historical other-corpus/private-Studio/manual gates are deferred,not manufactured accepted or new release blockers;M11commerce remains deferred. Existing dependency-audit findings and8inconclusivecontrast findings remain honestly recorded. No claim of search indexing,mail delivery,fieldperformance,physical-artcolour or blanket M09/M10 acceptance.
