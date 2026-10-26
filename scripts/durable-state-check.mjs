@@ -6,6 +6,7 @@ const root = process.cwd();
 const errors = [];
 const required = [
   ".durable-state/MANIFEST",
+  ".durable-state/framework/RELEASE",
   ".durable-state/framework/AGENTS.md",
   ".durable-state/framework/ASYNC_EXTERNAL_VERIFICATION.md",
   ".durable-state/framework/HUMAN_GATE_READINESS.md",
@@ -37,14 +38,14 @@ function header(document, label) {
   return values;
 }
 
-function parseManifest(document) {
+function parseManifest(document, label = "MANIFEST") {
   const values = {};
   for (const raw of document.split("\n")) {
     if (!raw.trim()) continue;
     const index = raw.indexOf("=");
-    if (index <= 0) { errors.push(`Invalid MANIFEST line: ${raw}`); continue; }
+    if (index <= 0) { errors.push(`Invalid ${label} line: ${raw}`); continue; }
     const key = raw.slice(0,index), value = raw.slice(index+1);
-    if (key in values) errors.push(`Duplicate MANIFEST key: ${key}`);
+    if (key in values) errors.push(`Duplicate ${label} key: ${key}`);
     values[key] = value;
   }
   return values;
@@ -100,15 +101,28 @@ if (errors.length === 0) {
   if (!/experience retrieval is disabled/i.test(resume)) errors.push("RUN_PROMPT.txt lacks explicit experience-disabled fallback");
 
   const manifest=parseManifest(await text(".durable-state/MANIFEST"));
+  const release=parseManifest(await text(".durable-state/framework/RELEASE"), "framework RELEASE");
+  // Project-owned policy is the independently reviewed pin; the updater-owned
+  // manifest must not supply its own expected version/commit. Reject ambiguity.
+  const pins=[...agents.matchAll(/The installed release is framework ([0-9]+\.[0-9]+\.[0-9]+) \/ schema ([0-9]+) from authoritative `([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)` main commit `([0-9a-f]{40})`\./g)];
+  const pin=pins.length===1 && (agents.match(/The installed release is framework /g)??[]).length===1 ? pins[0] : null;
+  if(!pin) errors.push("AGENTS.md must contain exactly one well-formed installed framework release/schema/repository/commit pin");
   const expected={
     FORMAT_VERSION:"1",
     VARIANT:"experience-augmented",
-    FRAMEWORK_VERSION:"1.1.5",
     SCHEMA_VERSION:"2",
     SOURCE_REPOSITORY:"HurlyBurly91/durable-state-machine",
-    SOURCE_COMMIT:"6746415f645c6c56ce39794b6962364cb39ca1bc",
   };
+  if(pin){
+    expected.FRAMEWORK_VERSION=pin[1];
+    expected.SOURCE_COMMIT=pin[4];
+    if(pin[2]!==expected.SCHEMA_VERSION) errors.push(`AGENTS.md framework schema=${pin[2]} expected ${expected.SCHEMA_VERSION}`);
+    if(pin[3]!==expected.SOURCE_REPOSITORY) errors.push(`AGENTS.md framework repository=${pin[3]} expected ${expected.SOURCE_REPOSITORY}`);
+  }
   for(const [key,value] of Object.entries(expected)) if(manifest[key]!==value) errors.push(`MANIFEST ${key}=${manifest[key]} expected ${value}`);
+  for(const key of ["FORMAT_VERSION", "VARIANT", "FRAMEWORK_VERSION", "SCHEMA_VERSION"]) {
+    if(release[key]!==manifest[key]) errors.push(`Framework RELEASE ${key}=${release[key]} differs from MANIFEST ${manifest[key]}`);
+  }
   if(!/^[0-9a-f]{64}$/.test(manifest.PAYLOAD_SHA256??"")) errors.push("MANIFEST PAYLOAD_SHA256 invalid");
   else {
     const actual=await frameworkPayloadHash(".durable-state/framework");

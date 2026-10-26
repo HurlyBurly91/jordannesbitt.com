@@ -8,6 +8,15 @@ export async function isolatedProject(t, { parent = "/tmp/opencode" } = {}) {
   const root = await mkdtemp(resolve(parent, "jordannesbitt-fixture-"));
   t.after(() => rm(root, { recursive: true, force: true }));
   for (const path of ["src", "public", "astro.config.mjs", "tsconfig.json", "package.json"]) await cp(resolve(repository, path), resolve(root, path), { recursive: true });
+  // Synthetic/isolated cases must not inherit whichever real portfolio happens
+  // to be approved in the checkout. Each caller explicitly supplies its data.
+  for (const name of ["artworks", "projects", "professional"]) await writeFile(resolve(root, `src/content/${name}.json`), "[]\n");
+  // An approved source portfolio may now contain media too. Do not inherit it
+  // into an empty synthetic case (including deliberately unsafe-symlink tests).
+  await rm(resolve(root, "src/media"), { recursive: true, force: true });
+  // A real launch approval cannot authorize a caller's synthetic catalogue.
+  // Missing-manifest negative cases must begin without the copied real grant.
+  await rm(resolve(root, "src/config/launch-manifest.json"), { force: true });
   await mkdir(resolve(root, "scripts/lib"), { recursive: true });
   for (const file of ["release-gate.mjs", "output-quality.mjs"]) await cp(resolve(repository, "scripts/lib", file), resolve(root, "scripts/lib", file));
   await symlink(resolve(repository, "node_modules"), resolve(root, "node_modules"), "dir");

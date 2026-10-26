@@ -1,1 +1,565 @@
-[]
+[
+  {
+    "id": "w-0184",
+    "slug": "w-0184",
+    "aliases": [],
+    "published": true,
+    "fixture": false,
+    "title": "Kaiya",
+    "date": {
+      "certainty": "exact",
+      "year": 2026
+    },
+    "medium": "painting",
+    "kind": "original",
+    "techniques": [
+      "Watercolour"
+    ],
+    "materials": "Watercolour on cold press.",
+    "dimensions": [],
+    "reproductions": [
+      {
+        "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-2400.jpg",
+        "alt": "Seated figure looking back over one shoulder, painted in pale watercolour washes with dark outlines.",
+        "width": 2400,
+        "height": 3003,
+        "role": "primary",
+        "variants": [
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-320.jpg",
+            "width": 320,
+            "height": 401,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-320.webp",
+            "width": 320,
+            "height": 401,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-320.avif",
+            "width": 320,
+            "height": 401,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-640.jpg",
+            "width": 640,
+            "height": 801,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-640.webp",
+            "width": 640,
+            "height": 801,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-640.avif",
+            "width": 640,
+            "height": 801,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-960.jpg",
+            "width": 960,
+            "height": 1201,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-960.webp",
+            "width": 960,
+            "height": 1201,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-960.avif",
+            "width": 960,
+            "height": 1201,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-1600.jpg",
+            "width": 1600,
+            "height": 2002,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-1600.webp",
+            "width": 1600,
+            "height": 2002,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-1600.avif",
+            "width": 1600,
+            "height": 2002,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-2400.jpg",
+            "width": 2400,
+            "height": 3003,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-2400.webp",
+            "width": 2400,
+            "height": 3003,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-e8c8cb8572564c1a8dfe5ea645277915/ba1a79314ccf89b8-2400.avif",
+            "width": 2400,
+            "height": 3003,
+            "format": "avif"
+          }
+        ]
+      }
+    ],
+    "featured": true,
+    "selectedOrder": 0,
+    "homepageLead": true,
+    "availability": {
+      "state": "unknown",
+      "reviewed": false
+    }
+  },
+  {
+    "id": "w-0183",
+    "slug": "w-0183",
+    "aliases": [],
+    "published": true,
+    "fixture": false,
+    "title": "Untitled Figure 036",
+    "date": {
+      "certainty": "exact",
+      "year": 2025
+    },
+    "medium": "painting",
+    "kind": "original",
+    "techniques": [
+      "Watercolour"
+    ],
+    "materials": "Watercolour on cold press.",
+    "dimensions": [],
+    "reproductions": [
+      {
+        "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-1440.jpg",
+        "alt": "Seated figure with orange hair and red lips, outlined in dark lines against a pale background.",
+        "width": 1440,
+        "height": 1920,
+        "role": "primary",
+        "variants": [
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-320.jpg",
+            "width": 320,
+            "height": 427,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-320.webp",
+            "width": 320,
+            "height": 427,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-320.avif",
+            "width": 320,
+            "height": 427,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-640.jpg",
+            "width": 640,
+            "height": 853,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-640.webp",
+            "width": 640,
+            "height": 853,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-640.avif",
+            "width": 640,
+            "height": 853,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-960.jpg",
+            "width": 960,
+            "height": 1280,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-960.webp",
+            "width": 960,
+            "height": 1280,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-960.avif",
+            "width": 960,
+            "height": 1280,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-1440.jpg",
+            "width": 1440,
+            "height": 1920,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-1440.webp",
+            "width": 1440,
+            "height": 1920,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-6cba7bd63743432e8417a70d97179e03/8b4ab458d27a2e89-1440.avif",
+            "width": 1440,
+            "height": 1920,
+            "format": "avif"
+          }
+        ]
+      }
+    ],
+    "featured": true,
+    "selectedOrder": 1,
+    "homepageLead": false,
+    "availability": {
+      "state": "unknown",
+      "reviewed": false
+    }
+  },
+  {
+    "id": "w-0178",
+    "slug": "w-0178",
+    "aliases": [],
+    "published": true,
+    "fixture": false,
+    "title": "Untitled",
+    "date": {
+      "certainty": "exact",
+      "year": 2024
+    },
+    "medium": "painting",
+    "kind": "original",
+    "techniques": [
+      "Oil Painting"
+    ],
+    "materials": "Oil on board",
+    "dimensions": [],
+    "reproductions": [
+      {
+        "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-1440.jpg",
+        "alt": "Yellow sunflowers with dark centres and green stems against a loosely painted tan background.",
+        "width": 1440,
+        "height": 1440,
+        "role": "primary",
+        "variants": [
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-320.jpg",
+            "width": 320,
+            "height": 320,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-320.webp",
+            "width": 320,
+            "height": 320,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-320.avif",
+            "width": 320,
+            "height": 320,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-640.jpg",
+            "width": 640,
+            "height": 640,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-640.webp",
+            "width": 640,
+            "height": 640,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-640.avif",
+            "width": 640,
+            "height": 640,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-960.jpg",
+            "width": 960,
+            "height": 960,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-960.webp",
+            "width": 960,
+            "height": 960,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-960.avif",
+            "width": 960,
+            "height": 960,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-1440.jpg",
+            "width": 1440,
+            "height": 1440,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-1440.webp",
+            "width": 1440,
+            "height": 1440,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-43fa4c02225c4657b038c40bbca6594a/33637c8efd5dfe84-1440.avif",
+            "width": 1440,
+            "height": 1440,
+            "format": "avif"
+          }
+        ]
+      }
+    ],
+    "featured": true,
+    "selectedOrder": 2,
+    "homepageLead": false,
+    "availability": {
+      "state": "unknown",
+      "reviewed": false
+    }
+  },
+  {
+    "id": "w-0175",
+    "slug": "w-0175",
+    "aliases": [],
+    "published": true,
+    "fixture": false,
+    "title": "Untitled",
+    "date": {
+      "certainty": "circa",
+      "year": 2021
+    },
+    "medium": "printmaking",
+    "kind": "original-print",
+    "techniques": [
+      "Relief print"
+    ],
+    "materials": "Oil based ink on archival paper.",
+    "dimensions": [],
+    "reproductions": [
+      {
+        "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-1440.jpg",
+        "alt": "Black ink relief print of a fragmented face with wide eyes and angular, hatched marks.",
+        "width": 1440,
+        "height": 1536,
+        "role": "primary",
+        "variants": [
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-320.jpg",
+            "width": 320,
+            "height": 341,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-320.webp",
+            "width": 320,
+            "height": 341,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-320.avif",
+            "width": 320,
+            "height": 341,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-640.jpg",
+            "width": 640,
+            "height": 683,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-640.webp",
+            "width": 640,
+            "height": 683,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-640.avif",
+            "width": 640,
+            "height": 683,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-960.jpg",
+            "width": 960,
+            "height": 1024,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-960.webp",
+            "width": 960,
+            "height": 1024,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-960.avif",
+            "width": 960,
+            "height": 1024,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-1440.jpg",
+            "width": 1440,
+            "height": 1536,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-1440.webp",
+            "width": 1440,
+            "height": 1536,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-eca14b4b821047858eae6390f437753a/86183186e6d25d93-1440.avif",
+            "width": 1440,
+            "height": 1536,
+            "format": "avif"
+          }
+        ]
+      }
+    ],
+    "featured": true,
+    "selectedOrder": 3,
+    "homepageLead": false,
+    "availability": {
+      "state": "unknown",
+      "reviewed": false
+    }
+  },
+  {
+    "id": "w-0180",
+    "slug": "w-0180",
+    "aliases": [],
+    "published": true,
+    "fixture": false,
+    "title": "Otto",
+    "date": {
+      "certainty": "exact",
+      "year": 2025
+    },
+    "medium": "painting",
+    "kind": "original",
+    "techniques": [
+      "Oil Painting"
+    ],
+    "materials": "Oil on canvas board",
+    "dimensions": [],
+    "reproductions": [
+      {
+        "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-1440.jpg",
+        "alt": "Oil portrait of a face emerging from dark, loosely layered brushstrokes, with pale highlights on the forehead, nose and cheek.",
+        "width": 1440,
+        "height": 1440,
+        "role": "primary",
+        "variants": [
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-320.jpg",
+            "width": 320,
+            "height": 320,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-320.webp",
+            "width": 320,
+            "height": 320,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-320.avif",
+            "width": 320,
+            "height": 320,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-640.jpg",
+            "width": 640,
+            "height": 640,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-640.webp",
+            "width": 640,
+            "height": 640,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-640.avif",
+            "width": 640,
+            "height": 640,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-960.jpg",
+            "width": 960,
+            "height": 960,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-960.webp",
+            "width": 960,
+            "height": 960,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-960.avif",
+            "width": 960,
+            "height": 960,
+            "format": "avif"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-1440.jpg",
+            "width": 1440,
+            "height": 1440,
+            "format": "jpeg"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-1440.webp",
+            "width": 1440,
+            "height": 1440,
+            "format": "webp"
+          },
+          {
+            "src": "/media/image-8148306611884a35ad2b4a093f7cbaca/14154f68e2cceeaf-1440.avif",
+            "width": 1440,
+            "height": 1440,
+            "format": "avif"
+          }
+        ]
+      }
+    ],
+    "featured": true,
+    "selectedOrder": 4,
+    "homepageLead": false,
+    "availability": {
+      "state": "unknown",
+      "reviewed": false
+    }
+  }
+]

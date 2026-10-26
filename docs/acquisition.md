@@ -2,6 +2,8 @@
 
 ## First release
 
+Owner's current initial-release scope is a five-work portfolio,not an online store: no prices,checkout,payments,inventory or commerce integrations. Preserve unknown availability without fabricated offers. Descriptions,physical dimensions,edition facts and projects are optional unless genuinely needed by the actual content; do not require them just to fill fields. The 2026-10-26 M09-R25 grant explicitly authorizes publication through existing GitHub Pages at jordannesbitt.com,without hosting migration or DNS changes. Public contact is the owner-supplied jordan.c.nesbitt@gmail.com. Earlier sales-oriented capabilities below remain supported/deferred behavior,not new requirements for this minimal release.
+
 Provide a quiet, explicit Available view and an artwork-specific enquiry route. The work remains the focus. Prefer visible, owner-approved prices with currency where the owner has set a price; allow an explicit enquiry-only mode where appropriate. Never make up a price or publish an old conversational estimate as a current offer.
 
 Show the actual medium/process, image and sheet dimensions where relevant, edition size and artist's proofs if verified, signature/numbering, framed/unframed status, condition disclosures where needed and who handles the enquiry. Distinguish originals, original prints and reproductions. Include approved shipping destinations, packing, framing, collection and timing information; unknown shipping costs must not be presented as included.

@@ -14,6 +14,9 @@ export function getStaticPaths() {
   })));
 }
 const { artwork, alias } = Astro.props;
+// Different works may intentionally share a title; only document metadata needs
+// disambiguation. Keep the authored display title and canonical URL untouched.
+const documentTitle = artworks.some((work) => work.id !== artwork.id && work.title === artwork.title) ? `${artwork.title} — ${artwork.id}` : artwork.title;
 const path = `/artwork/${artwork.slug}/`;
 const primary = artwork.reproductions.find((image) => image.role === "primary");
 const schema = {
@@ -24,6 +27,6 @@ const schema = {
 };
 const video = videoMetadata(artwork, identity.siteUrl);
 ---
-<BaseLayout title={artwork.title} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} image={primary} pageType={video ? "video.other" : "article"} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Archive", path: "/archive/" }, { name: artwork.title, path }]} schema={[schema, ...(video ? [video] : [])]}>
+<BaseLayout title={documentTitle} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} image={primary} pageType={video ? "video.other" : "article"} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Archive", path: "/archive/" }, { name: artwork.title, path }]} schema={[schema, ...(video ? [video] : [])]}>
   <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)}><ArtworkOffer artwork={artwork} recipient={professional?.contact} /></ArtworkView>
 </BaseLayout>

@@ -5,8 +5,9 @@ import { resolve } from "node:path";
 import { chromium } from "playwright";
 import { specimenSite } from "./helpers/specimen-site.mjs";
 import { publicSpecimens } from "./fixtures/public-specimens.mjs";
-import { repository } from "./helpers/build-project.mjs";
-import { validateCatalogue } from "../src/lib/catalogue.ts";
+import { repository, isolatedProject } from "./helpers/build-project.mjs";
+import { validateCatalogue, publicCatalogue } from "../src/lib/catalogue.ts";
+import { readCatalogue } from "../src/lib/catalogue-source.ts";
 import { isAvailable, priceLabel, enquiryContext } from "../src/lib/acquisition.ts";
 import { draftEnquiry } from "../src/lib/enquiry.ts";
 import { professionalCases } from "./fixtures/professional.mjs";
@@ -98,7 +99,17 @@ test("missing recipient produces no enquiry action or fabricated success", async
   assert.match(await page.locator("main").innerText(), /Synthetic practice statement/);
 });
 
-test("actual empty professional output contains no unsupported CV/contact/offer claims", async () => {
+test("actual professional output follows supplied public lead, CV and contact without unsupported claims",async()=>{
+  const visible=publicCatalogue(readCatalogue(repository)),profile=visible.professional[0];
+  if(profile?.cv.length||profile?.cvPdf)await access(resolve(repository,"dist/cv"));else await assert.rejects(access(resolve(repository,"dist/cv")));
+  const home=await readFile(resolve(repository,"dist/index.html"),"utf8");assert.equal(home.includes('data-release-blocker="missing-homepage-lead"'),!visible.artworks.some((work)=>work.homepageLead));
+  const contact=await readFile(resolve(repository,"dist/contact/index.html"),"utf8"),data=JSON.parse(contact.match(/<script\b[^>]*id="enquiry-data"[^>]*>(.*?)<\/script>/s)[1]);
+  assert.equal(contact.includes('data-release-blocker="missing-recipient"'),!profile?.contact);assert.deepEqual(data.recipient,profile?.contact??null);
+  assert.deepEqual(data.works,visible.artworks.filter(isAvailable).map((work)=>enquiryContext(work,"https://jordannesbitt.com")));if(!profile?.contact)assert.doesNotMatch(contact,/<a\b[^>]*href="mailto:/);
+});
+
+test("controlled empty professional output contains no unsupported CV/contact/offer claims", async (t) => {
+  const project=await isolatedProject(t),repository=project.root,built=await project.build();assert.equal(built.code,0,built.output);
   await assert.rejects(access(resolve(repository, "dist/cv")));
   const home = await readFile(resolve(repository, "dist/index.html"), "utf8");
   assert.match(home, /data-release-blocker="missing-homepage-lead"/);

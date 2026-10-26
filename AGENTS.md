@@ -29,6 +29,8 @@ M01-M08 technical completion does not approve public content, artistic presentat
 
 The public catalogue/release guards remain authoritative. `release:check` being BLOCKED_CONTENT is expected until explicit real-content approval. Do not infer approval from schema validity, tests, local previews, silence, or historical implementation.
 
+The explicit 2026-10-26 M09-R25 owner grant approves the exact five-work initial portfolio,verbatim prepared About/public contact and launch manifest,and authorizes development commits/push,history-preserving master integration,existing GitHub Pages publication at jordannesbitt.com and live verification. That bounded grant supersedes earlier release stop conditions only for this initial publication. Preserve exact approved media/private data;no prices/payments/commerce,hosting migration or DNS change. Unrelated private-Studio polish may be deferred;inconclusive checks stay inconclusive. Release evidence/rollback is in `records/M09-R25-first-public-release.md`.
+
 ## Authorization and Git
 
 The owner requires explicit permission for repository modifications.

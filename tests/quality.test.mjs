@@ -13,15 +13,17 @@ import { specimenSite } from "./helpers/specimen-site.mjs";
 import { professionalCases } from "./fixtures/professional.mjs";
 import { movingCases, prepareMoving } from "./fixtures/moving-image.mjs";
 import { reviewPaths } from "../scripts/lib/review-package.mjs";
+import { readCatalogue } from "../src/lib/catalogue-source.ts";
+import { publicCatalogue } from "../src/lib/catalogue.ts";
 
 test("actual production build has valid local links/assets/metadata/sitemap and budget", async (t) => {
   const result = await inspectOutput(resolve(repository, "dist"));
-  assert.equal(result.htmlPages, 13);
+  const visible=publicCatalogue(readCatalogue(repository));
+  assert.ok(result.htmlPages>=13+visible.artworks.length+visible.projects.length,"base and public object/project pages must be present");
   assert.ok(result.references > 0 && result.largestJsGzip <= 100 * 1024);
   t.diagnostic(JSON.stringify(result));
-  const emptyArchive = await readFile(resolve(repository, "dist/archive/index.html"), "utf8");
-  const archiveNodes = elements(emptyArchive);
-  assert.ok(!archiveNodes.some((node) => node.attrs["data-result-count"] !== undefined || node.attrs["data-archive-form"] !== undefined), "empty actual archive has no rendered meaningless count/filter controls");
+  const archiveNodes = elements(await readFile(resolve(repository, "dist/archive/index.html"), "utf8"));
+  assert.equal(archiveNodes.some((node)=>node.attrs["data-archive-form"]!==undefined),visible.artworks.length>0,"filters follow actual public content,not a permanent empty-site assumption");
 });
 
 test("verification fails on deliberate broken links, fixture leakage, image corruption and JS budget", async (t) => {
@@ -41,13 +43,20 @@ test("verification fails on deliberate broken links, fixture leakage, image corr
   await assert.rejects(inspectOutput(output, { jsBudget: 1 }), /JavaScript.*budget exceeded/);
 });
 
-test("strict real-content checker blocks empty launch and the actual CLI returns failure", async () => {
-  const issues = await releaseIssues(repository, resolve(repository, "dist"));
+test("strict real-content checker blocks a controlled empty launch and its CLI returns failure", async (t) => {
+  const project=await isolatedProject(t),built=await project.build();assert.equal(built.code,0,built.output);
+  const issues = await releaseIssues(project.root, resolve(project.root, "dist"));
   assert.ok(issues.some((issue) => issue.includes("M09 owner-approved exact launch manifest")));
   assert.ok(issues.some((issue) => issue.includes("No genuine approved")));
   assert.ok(issues.some((issue) => issue.includes("recipient")));
   assert.ok(issues.some((issue) => issue.includes("Construction content")));
-  await assert.rejects(promisify(execFile)(process.execPath, [resolve(repository, "scripts/release-check.mjs")], { cwd: repository }), (error) => error.code === 1 && error.stderr.includes("BLOCKED_CONTENT"));
+  await assert.rejects(promisify(execFile)(process.execPath, [resolve(repository, "scripts/release-check.mjs")], { cwd: project.root }), (error) => error.code === 1 && error.stderr.includes("BLOCKED_CONTENT"));
+});
+
+test("actual release CLI reflects current content gate without manufacturing approval",async()=>{
+  const issues=await releaseIssues(repository,resolve(repository,"dist"));
+  if(issues.length)await assert.rejects(promisify(execFile)(process.execPath,[resolve(repository,"scripts/release-check.mjs")],{cwd:repository}),(error)=>{assert.equal(error.code,1);const result=JSON.parse(error.stderr);assert.equal(result.release,"BLOCKED_CONTENT");assert.equal(result.publicationAuthorized,false);assert.deepEqual(result.issues,issues);return true;});
+  else{const result=JSON.parse((await promisify(execFile)(process.execPath,[resolve(repository,"scripts/release-check.mjs")],{cwd:repository})).stdout);assert.equal(result.contentGate,"PASS");assert.equal(result.publicationAuthorized,false);}
 });
 
 test("explicit local preview mode is noindex without changing production robot/deploy settings", async (t) => {

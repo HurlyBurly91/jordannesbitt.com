@@ -14,6 +14,8 @@ Series/projects own an ordered list of member IDs; derive reverse relationships 
 
 Reject duplicate IDs/slugs, invalid enums, impossible dimensions, broken asset/relationship references and inconsistent edition/offer data. Unknown values are absent or explicit unknown, not zero, guessed dates or invented prose. Do not require an essay to publish a well-documented work.
 
+Different artworks may intentionally share an owner-approved display title,including Untitled. The stable ID/URL remains identity. If published works share a title,the document/social title adds the stable ID to remain unambiguous; the visible artwork heading and stored authored title are not retitled by that technical metadata handling. Proposed neutral titles and image-inspected alt text remain subject to exact owner disclosure approval before public-source export.
+
 ## Publication boundary
 
 Centralize the public-content predicate. Apply it to routes, static HTML, embedded JSON, search indexes, related works, counts, feeds, sitemaps, social metadata and structured data. Assets for unapproved records must not be emitted merely because a static directory is copied wholesale. Keep test fixtures outside production content and fail release checks if they leak.
@@ -43,6 +45,10 @@ The marked **public catalogue projection** in `src/lib/catalogue.ts` is the sole
 Derivative URLs are local `/media/...` references. Only already-approved-for-public-source derivatives belong in `src/media/`, outside Astro's wholesale `public/` copy root; even unpublished files there are visible in public Git. Masters/confidential intake never belong there. Missing, escaping or symlinked derivative sources are rejected. `public/media` is forbidden. The marked **publication-gated derivative emission** in `src/lib/catalogue-source.ts` copies only assets referenced by the public projection after a static build. Unpublished/orphan sources cannot be copied merely because they exist. Keep this mapping behind the media abstraction if an approved storage adapter is added later.
 
 Synthetic fixtures live only under `tests/fixtures/` and temporary `/tmp/opencode/jordannesbitt-fixture-*` test projects. Production input paths have no fixture environment switch. Production validation rejects fixture flags and TEST FIXTURE markers, including unpublished fixture inputs. Tests can explicitly validate fixtures for schema cases, but the public predicate still excludes them. Full-build boundary tests run in separate temporary roots; their output never substitutes for repository `dist/`.
+
+## Current approved public-source subset — M09-R23-H02
+
+The exact owner-authorized canonical Studio export places five approved artwork records and63existing web derivatives in the public checkout,in saved Selected Work order with the explicit w-0184 lead. The 2026-10-26 M09-R25 release grant adds the prepared verbatim approved About/public contact and exact checksum-bound launch manifest. Projects remain empty. Private masters/notes/registry,other Studio works and source paths are not exported. Earlier empty-catalogue/preauthorization evidence is historical,not a current-state claim. Actual release/deployment evidence is recorded separately;manifest approval alone is not successful deployment or a full-accessibility claim.
 
 ## Explicit intake conventions (M03)
 
