@@ -1,0 +1,27 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { professional, availableWorks } from "@/data/catalogue";
+import { enquiryContext } from "@/lib/acquisition";
+import { safeJson } from "@/lib/presentation";
+import { identity } from "@/config/identity";
+const recipient = professional?.contact;
+const works = availableWorks.map((work) => enquiryContext(work, identity.siteUrl));
+---
+<BaseLayout title="Contact" description="Public contact and artwork enquiry drafts.">
+  <header class="page-intro contact-intro"><p class="eyebrow">Contact</p><h1>Enquiries.</h1></header>
+  {recipient ? <section class="contact-content">
+    <p>{recipient.label}{recipient.representative ? ` — ${recipient.representative}` : ""}</p>
+    <p><a class="text-link" href={`mailto:${encodeURIComponent(recipient.email)}`}>{recipient.email}</a></p>
+    <p>The direct email link opens your mail app. Use the optional form to prepare a work-identified draft.</p>
+    <form data-enquiry-form><fieldset disabled><legend>Prepare an email draft</legend>
+      <div><label for="enquiry-work">Regarding</label><select id="enquiry-work" name="work"><option value="">General enquiry</option>{works.map((work) => <option value={work.id}>{work.title}</option>)}</select></div>
+      <div><label for="enquiry-message">Message</label><textarea id="enquiry-message" name="message" rows="6" maxlength="4000" required></textarea></div>
+      <div class="visually-hidden" aria-hidden="true"><label for="enquiry-website">Website (leave empty)</label><input id="enquiry-website" name="website" type="text" tabindex="-1" autocomplete="off" /></div>
+      <button type="submit">Prepare email draft</button>
+    </fieldset></form>
+    <noscript><p>Use the direct email link above; draft preparation requires JavaScript.</p></noscript>
+    <p data-enquiry-status role="status" aria-live="polite"></p><p><a class="text-link" data-draft-link hidden>Open prepared draft in mail app</a></p>
+  </section> : <p class="empty-state" data-release-blocker="missing-recipient">A reviewed public contact recipient has not been published.</p>}
+  <script is:inline id="enquiry-data" type="application/json" set:html={safeJson({ recipient: recipient ?? null, works })} />
+  <script>import "@/client/enquiry";</script>
+</BaseLayout>

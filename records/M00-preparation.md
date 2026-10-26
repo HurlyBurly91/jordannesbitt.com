@@ -1,0 +1,87 @@
+# M00 — Preparation closeout
+
+Completed: 2026-10-03, after explicit owner kickoff. Contract: milestones/M00-preparation.md.
+
+## Authorization
+
+The owner explicitly approves the plan and staged launch approach and grants autonomous implementation of **M01 through M08** on **redesign/astro-foundation**, using the locally selected **Sol 6.1 Max** model. Verified milestone checkpoints may be committed and pushed on that branch. Follow RUN_PROMPT.txt, durable state, milestone contracts and canonical domain documents. Stop before M09 or at an earlier genuine blocker requiring owner input; required human gates remain binding.
+
+Approximately 20–30 works in 3–5 coherent groups and an approximately ten-work pilot are approved **planning targets only**. The owner will choose real works, groups/series, sequencing, publication status, availability, prices and other launch content at M09. Those choices must not be fabricated or inferred during M01–M08. Clearly isolated synthetic fixtures are authorized where milestone contracts permit them, with no production leakage or representation as the owner's actual artwork.
+
+No writes to master or backup/pre-astro-redesign, publication/deployment, DNS/hosting changes, real messages, purchases, payment activation or other externally consequential actions are authorized. Development-branch checkpoint commits/pushes are explicitly authorized. M10 release and M11 commerce need separate authority. No permission is inferred for confidential input directories or host-wide changes.
+
+The requested model label is recorded as the owner's selection, not as an installed provider/variant assertion. This session identifies itself as openai/gpt-6.1-sol; M01 must resolve the actual installed runtime and configured selection without exposing credentials or inventing a variant.
+
+## Final IDs and evidence
+
+- **M00-R1-01 VERIFIED:** prior checkout recovery and safe bootstrap instructions in docs/operations.md. Original evidence: bash syntax check and six mocked bootstrap scenarios passed; no command was run on the owner's machine in that preparation environment.
+- **M00-R1-02 VERIFIED:** baseline durable-state prototype adapted with state/phase separation, stable IDs, human re-entry and selective canonical references; provenance recorded in AGENTS.md/RUN_PROMPT.txt.
+- **M00-R1-03 VERIFIED:** prior direction and source-backed research recorded in PROJECT.md and docs/research.md; observations, adaptations and unresolved inputs distinguished.
+- **M00-R1-04 VERIFIED:** M00–M11 contracts exist; technical, content, release and commerce gates distinguished.
+- **M00-R1-P01 VERIFIED (preparation):** runtime, lockfile, identity, assets and protected branches preserved by the documentation-only changes.
+- **M00-R1-P02 VERIFIED (preparation):** no implementation, publication, confidential-content permission, pricing, paid-service authorization or invented runtime configuration in preparation.
+- **M00-R1-V01 VERIFIED:** original preparation comparison, references and state-header evidence retained from TASKS.md; 25 additive documentation files and unchanged protected refs.
+- **M00-R1-H01 VERIFIED:** owner's explicit 2026-10-03 kickoff supplies the missing plan/staging and bounded execution approval.
+- **M00-R2-01 VERIFIED:** implementation/model/checkpoint scope captured in this authorization.
+- **M00-R2-02 VERIFIED:** planning targets and M09 content ownership captured.
+- **M00-R2-P01 VERIFIED (preparation and capture):** protected refs/external-effect limits captured and rechecked; these remain ongoing execution constraints.
+- **M00-R2-P02 VERIFIED (capture):** synthetic-fixture isolation requirement captured and carried into subsequent milestones.
+- **M00-R2-V01 VERIFIED:** local preparation recheck below.
+
+No superseded IDs or unresolved M00 human checks.
+
+## Local verification
+
+Environment: Linux, existing /home/jordan/jordannesbitt.com checkout, 2026-10-03. Actual runtime/build verification belongs to M01.
+
+- `git status --short --branch`, `git branch --show-current`, `git remote -v`, `git log --oneline -10`, `git diff --stat`, `git diff --check`: exit 0. Clean redesign/astro-foundation worktree at fde7d07; origin is https://github.com/HurlyBurly91/jordannesbitt.com.git.
+- `git ls-remote --heads origin redesign/astro-foundation master backup/pre-astro-redesign`: exit 0. Development fde7d07e5f9e886718ef269aaca541567a201aa4; master 755df7fee1a515388a035fce8e9e672070a1d2b4; backup 3bc95c75bbe85918ce10498af31a751e2cf58fc6. Protected refs match preparation evidence.
+- `git diff --name-status 8fc3176b9d906b2f7794237a0fab75c91a6b61b4..HEAD`: exit 0, exactly 25 added documentation files; no modified/deleted runtime files.
+- `git rev-list --left-right --count HEAD...origin/master` and `git log --oneline HEAD..origin/master`: exit 0, 4 ahead / 1 behind; master-only commit is the known PR #1 merge, not an unidentified hotfix.
+- Repository readback and milestone glob: all 12 contracts exist; referenced domain documents resolve; STATUS.md and TASKS.md matched before closeout and are updated together.
+
+## Decisions and limitations
+
+Baseline durable architecture retained; no experience layer or competing state files. Existing Astro/TypeScript and paper/ink/oxide direction retained. No M00 build, browser, visual, colour, delivery or indexing pass is claimed. Original bootstrap evidence was mocked, not a live machine modification. M01 must reproduce the real environment and build. Content/artistic acceptance remains M09; M01–M08 technical success cannot substitute for it.
+
+Next authorized milestone: M01. This closeout and its synchronized COMPLETE headers are checkpointed before resetting the bounded live ledger to M01-R1.
+
+## Later bounded grant — M09 local pilot, 2026-10-03
+
+After the completed M01–M08 batch, the owner explicitly authorizes M09-R1 local visual testing/classification of images only from `/home/jordan/Desktop/myinsta`, exact inventory snapshots, provisional owner-instructed source-mtime creation dates, absent physical measurements and cautious provisional visual categories/relationships. Permitted repository changes/checkpoints are local-review code/documentation only on redesign/astro-foundation; exact active requirements/evidence are in TASKS.md. Images/derivatives/source-linked provisional metadata remain local and may not be committed to public Git, production-published, added to a launch manifest, treated as final selection or deployed/publicly previewed. No titles/prices/availability/edition/series/exhibition/rights/artistic claims may be invented. Stop at the owner pilot-review gate. M09 final content/rights/human acceptance and M10/M11 release/commerce authority remain separate; earlier protected-branch/external-effect/host/privacy limits continue.
+
+## Later presentation-only follow-up — M09-R2, 2026-10-05
+
+Owner rejects M09 pilot presentation and authorizes reference-led gallery/catalogue sizing, distinct browse/selection/project/object/home modes and deliberate accessible inspection, generic code/docs checkpoints and100%-zoom local real-image review from the unchanged169-image snapshot. Supplied Zwirner/Kentridge references are for hierarchy/restraint/behavior, not copied code/branding/assets/prose. Preserve paper/ink/oxide identity and all M09-R1 provisional metadata/source/private-data/publication constraints; no final artistic/content/rights/manifest/launch/business approval. Return ACTIVE/HUMAN_VERIFICATION for revised owner visual acceptance, preserve older human gates and never complete M09 or release on automation alone.
+
+## Persistent regeneration follow-up — M09-R5
+
+Owner explicitly selects the recreated persistent169-image snapshot (SHA25660d841eaabd3a7e1ced4560c047c863fcba111f8b89ccc4f7f0d664cd66b8a2c) and requests fresh image inspection/provisional visual-plan/groups/approximately-ten-image pilot/lead and verified local package using current M09-R2 presentation **without redesign**. All real M09 registry/snapshot/plan/derivatives/site/screenshots/reports, including real build staging, belong under `/home/jordan/.local/share/jordannesbitt-art/m09`; only synthetic/npm/Playwright test caches may use /tmp. Earlier local-review code/docs checkpoint permission and protected-ref/privacy/publication boundaries remain; no real images/source-linked metadata or approval facts enter Git, no M09 completion or M10/M11 release authority. Exact requirements/current evidence in TASKS.md; older human gates remain unaccepted.
+
+## Local authoring/maintenance follow-up — M09-R6
+
+Owner provisionally accepts M09-R2 direction as baseline, authorizing useful restrained polish and a loopback-only local artwork/media/project/curation interface over existing authoritative schemas/intake/public projection/release/static architecture. Persistent private drafts and isolated current-component previews lead to deliberate dry-run/exact-record source approval/export. Tool implementation/testing/generic code/docs checkpoints remain on redesign/astro-foundation; current real corpus stays unapproved/private and demo export writing stays disabled. Actual owner repository writes require separate explicit startup/record-rights-disclosure/current-plan confirmation; no schema-validity approval, auto launch manifest, master/deployment/DNS/hosting/email/analytics/SearchConsole/checkout or M09 completion. Full requirements/IDs in TASKS.md; baseline human check superseded only by provisional direction plus new final-real-public review gate. Owner confirmed HIGH for the specific security boundary section, which finished targeted verification and returned explicitly to LOW.
+
+## Studio UX follow-up — M09-R7
+
+Owner finds Studio confusing and authorizes image-first/task-oriented Studio UX/information-architecture refinement with no major new features. Preserve public M09-R2 presentation,canonical models/intake,private persistence,validation/security/publication/write gates and expert controls. Plain normal labels/thumbnail choices/visual media-project-selection-lead workflows/progressive Advanced disclosure and private A–I demonstration/testing are within the existing implementation/code-docs checkpoint boundary; no actual real content/source/rights/export/launch/deployment or M09 completion approval. Current owner working state/authoritative registry are preserved by isolated persistent demonstration workspaces. LOW applies to this UI-only pass.
+
+## Explicit colour-decision intake correction — M09-R8
+
+Owner identifies blocking repeatedmissingICC/CLIflag/pendingeditor UX and authorizes human explicit per-image/scoped-current-batch sRGB choice over unchanged authoritative colour handling/intake,ready-only focusededitor,conciseprogress and clearoptional-private-save readiness. A bounded authenticated readonly selected-byte profile adapter is within correction scope,not new file-access/export authority or a global assumption. Preserve public design/schema/ingestion/colour/private storage/rights-publication-release gates/current owner data. Verify tagged/untagged/decline/batch-future-reset/duplicates/focus/save/restart/full suite and isolated actualuntagged image screenshot sequence. Generic code/docs checkpoints retain existing grant; no real rights/source/launch/deploy/M09complete approval. R7pendingtiming is explicitly superseded only; LOW applies.
+
+## Actionable validation follow-up — M09-R10
+
+Owner explicitly reports M09-R8-H01 FAILED/notaccepted: Exact without validYear disables Save/Preview and appears broken. Authorize Studio-only click-validation/local accessible errors/focus/date guidance/unsaved preservation/current-edits Preview,testing and private normaldesktop reproduction. Factual catalogue date/optional-unknown truth and canonical backend/R8colour-intake/private persistence/state-machine/security/publication/export/public design remain unchanged. Generic code/docs checkpoints stay on development branch;no real source/rights/launch/manifest/deploy/M09complete authority. Older unresolved human/colour/content gates persist;LOW UI correction.
+
+## Navigation and preview-feedback follow-up — M09-R11
+
+Owner explicitly passes R10 Year validation/focus/correction and private optional-fact behavior, but R10-H01 fails overall for absent browser Back navigation and blank preview preparation. Authorize bounded Studio history/session-edit retention, visible synchronous popup preparation/sanitized failure, browser tests and persistent private desktop A–C demonstration over unchanged backend/current-edits preview. Existing development code/docs checkpoint grant applies; owner data, R8 semantics, public presentation, source/rights/export/security/release boundaries and older unresolved human gates persist. Return for owner usability review; no M09 completion or release authority.
+
+## Cross-tab safety and preview return — M09-R12
+
+Owner reports R11-H01 FAILED overall while explicitly passing same-document navigation/edit retention, visible preparation→actual preview and Year validation/correction. Authorize bounded local browser coordination/conflict safety and private-preview-only return to Studio, meaningful tests and persistent desktop A–D demonstration. Same-artwork simultaneous writers may be explicitly unsupported, but no silent stale representation or overwrite. Existing private store remains authoritative; no unsaved state in publication/Git/URLs/channel names. Keep opener protection, production exclusion and public design. Owner confirms HIGH for concurrency/return boundary design, completed with targeted Chromium/Firefox proof and explicit LOW return. Existing code/docs checkpoints remain development-only; all older human/content/rights/colour/launch gates persist, no M09 COMPLETE or release grant.
+
+## Editable multi-tab correction — M09-R13
+
+Owner rejects R12-H01 exclusive-writer UX and artwork-hash/unopened-grid mismatch. Explicitly authorize any same/different-artwork tabs to open/edit, advisory metadata-free dirty/lifecycle coordination, unchanged authoritative save-time CAS, retained stale fields/separate newer-record review/confirmed reload and usable-view-before-history semantics. Remove browser ownership subsystem/prerequisite controls, do not automatically merge or choose last writer. Preserve R11/R10 passed behaviors/private persistence/CAS/preview-return/opener/public/export/privacy boundaries. Chromium/Firefox A–N proof and persistent exact w-0008/w-0025 case are within existing code/docs checkpoint grant; checksum-bound selected-input fork/registry copy never changes owner inventory or invents facts. Owner confirms HIGH for specific concurrency section, completed with explicit LOW return. R12 preview remains human-unaccepted; older failed/content/rights/colour/launch gates persist, no public redesign/release/M09 completion authority.

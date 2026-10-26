@@ -1,0 +1,13 @@
+<dialog class="image-inspection" aria-labelledby="inspection-title" aria-describedby="inspection-instructions" data-image-inspection>
+  <header class="inspection-toolbar">
+    <h2 id="inspection-title">Image inspection</h2>
+    <div class="inspection-controls">
+      <button type="button" data-inspection-size aria-pressed="false">Larger view</button>
+      <a data-inspection-file target="_blank" rel="noopener noreferrer">Image file</a>
+      <button type="button" data-inspection-close autofocus>Close</button>
+    </div>
+  </header>
+  <div class="inspection-viewport" data-inspection-viewport tabindex="0" role="region" aria-label="Artwork image; scroll in larger view"></div>
+  <p id="inspection-instructions" class="inspection-instructions">Fit view shows the complete image. Larger view uses the derivative’s pixels; scroll to inspect. Escape closes.</p>
+</dialog>
+<script>import "@/client/inspection";</script>

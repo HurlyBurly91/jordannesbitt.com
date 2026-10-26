@@ -1,0 +1,825 @@
+import { coordinateArtworkTabs } from "./tab-coordination.js";
+const $ = (id) => document.getElementById(id);
+const field = (form, name) => form.elements.namedItem(name);
+const lines = (value) => value.split(/\n/).map((value) => value.trim()).filter(Boolean);
+let token, state, editingArtwork, editingProject, editingProjectVersion, editingImages = [], projectMembers = [], selected = [], leadId = "", exportPlan, currentPreview;
+let editorDirty = false, selectedDirty = false, intakeTarget = "", mediaTarget = "", pendingEditorJob;
+let colourBatch = null, duplicateBatch = null, selectionRevision = 0, inspecting = false, intakePreparationActive = false, savingDraft = false;
+let previewing = false, validationAttempted = false, validationIssues = [];
+let previewPopupBusy = false, navigationReady = false, studioView = {tab:"collection",artworkId:null};
+const sessionEditors = new Map();
+let editingVersion, openRevision = 0;
+const staleEditors = new Set(), deletedEditors = new Set(), versionChecks = new Map();
+const previewReturns = new Map();
+let messageTimer = null, activeActionTarget = null, mediaFilter = "all", mediaFeedbackContext = "";
+const localMessageTimers = new WeakMap();
+const tabs = coordinateArtworkTabs({
+  isDirty: (id) => (editingArtwork === id && editorDirty) || sessionEditors.get(id)?.dirty,
+  onStatus: () => renderCoordination(),
+  onSaved: (id) => checkSavedVersion(id),
+  onReturn: (nonce) => {
+    const popup = previewReturns.get(nonce); if (!popup || popup.closed) return;
+    // Request arrives only after the returning tab has navigated back to Studio origin.
+    try { if(popup.location.origin!==location.origin)return; } catch { return; }
+    window.focus(); popup.close(); previewReturns.delete(nonce);
+    message("Returned from the private preview. Studio is ready.");
+  },
+});
+function canEditArtwork() { return Boolean(editingArtwork && editingVersion && $("artwork-form").dataset.artworkId === editingArtwork && !deletedEditors.has(editingArtwork)); }
+function syncTabDrafts() {
+  const ids = new Set([...sessionEditors].filter(([,draft])=>draft.dirty).map(([id])=>id));
+  if(editingArtwork&&(editorDirty||studioView.artworkId===editingArtwork))ids.add(editingArtwork);
+  tabs.sync(ids);
+}
+function renderCoordination() {
+  const deleted=deletedEditors.has(editingArtwork),stale=staleEditors.has(editingArtwork),dirty=tabs.hasDirty(editingArtwork),panel=$("artwork-coordination");
+  panel.hidden=studioView.artworkId!==editingArtwork||$("artwork-form").hidden||(!deleted&&!stale&&!dirty&&tabs.supported);
+  $("coordination-title").textContent=deleted?"This private draft was deleted":stale?"A newer saved version exists":dirty?"Edits in another Studio tab":"Tab notices unavailable";
+  $("coordination-message").textContent=deleted?"Another Studio tab deleted this private draft. Any unsaved values still visible here have not been copied elsewhere, but this deleted neutral ID cannot be saved again. Return to Artworks and create or open another draft.":stale?"Another tab saved a newer version. Your edits in this tab have not been lost. Review the newer saved version, or explicitly discard your edits and reload. Saving these stale edits will be refused.":dirty?"Another Studio tab also has unsaved edits for this artwork. You can continue here, but only one saved version can win. If the other tab saves first, this tab will require review before saving.":"This browser cannot show cross-tab notices. You can edit here; authoritative saved-version checks still protect every Save.";
+  $("coordination-review").hidden=deleted||!stale;$("coordination-reload").hidden=deleted||!stale;
+  $("collection").insertBefore(panel, $("artwork-form"));
+  updateEditorActions();
+}
+async function checkSavedVersion(id=editingArtwork) {
+  if(!token||!id)return;
+  const existing=versionChecks.get(id);if(existing){existing.again=true;return existing.promise;}
+  const check={again:false};versionChecks.set(id,check);
+  check.promise=(async()=>{
+    do{
+      check.again=false;
+      const loaded=editingArtwork===id?editingVersion:null,cached=sessionEditors.get(id)?.version;
+      if(!loaded&&!cached)break;
+      const latest=await api("/api/state"),version=latest.artworkVersions[id];
+      if(version===undefined){deletedEditors.add(id);staleEditors.delete(id);}
+      else if((loaded&&editingArtwork===id&&editingVersion===loaded&&loaded!==version)||(cached&&sessionEditors.get(id)?.version===cached&&cached!==version))staleEditors.add(id);
+      renderCoordination();
+    }while(check.again);
+  })().catch(()=>{}).finally(()=>versionChecks.delete(id));
+  return check.promise;
+}
+$("coordination-review").addEventListener("click", action(async () => {
+  const id=editingArtwork,latest=await api("/api/state");if(id!==editingArtwork)return;
+  const artwork=latest.catalogue.artworks.find((work)=>work.id===id),note=latest.notes[id]??"";
+  const medium=[...field($("artwork-form"),"medium").options].find((option)=>option.value===artwork.medium)?.textContent??artwork.medium;
+  const date=artwork.date.certainty==="unknown"?"Unknown":artwork.date.label||`${artwork.date.certainty==="circa"?"c. ":""}${artwork.date.year}${artwork.date.endYear?"–"+artwork.date.endYear:""}`;
+  $("newer-saved-fields").replaceChildren();
+  for(const [label,value]of [["Title",artwork.title],["Date",date],["Medium",medium],["Materials",artwork.materials],["Technique / process",artwork.techniques.join("\n")],["Primary photo description",artwork.reproductions.find((image)=>image.role==="primary")?.alt],["Private notes / rights working information",note]]){const list=node("dl");list.append(node("dt",label),node("dd",value||"Not supplied"));$("newer-saved-fields").append(list);}
+  $("newer-saved-record").textContent=JSON.stringify({artwork,privateNote:note},null,2);
+  $("newer-saved-review").hidden=false;
+}));
+$("coordination-reload").addEventListener("click", action(async () => {
+  if (!confirm("Discard my unsaved edits in this tab and reload the newer saved version?")) return;
+  await openArtwork(editingArtwork, { force: true, historyMode: "none" });
+}));
+const errorNodes = new Map();
+const currentJobs = new Set();
+const mediaSelection = new Set(), incomingJobs = new Map();
+const roles = [
+  ["primary", "Primary image"], ["detail", "Detail"], ["alternate", "Alternate view"],
+  ["framed", "Framed view"], ["installation", "Installation view"],
+  ["process", "Process image"], ["documentation", "Documentation"], ["reverse", "Reverse view"],
+];
+const dimensions = ["image", "sheet", "framed", "object"];
+function humanReason(text) {
+  if (/Missing ICC profile|Untagged source requires/i.test(text)) return "This image needs a colour-profile choice. Choose Use sRGB for this image, or choose another image.";
+  if (/unsupported image format|Input buffer|Vips|corrupt|cannot be read/i.test(text)) return "This photo could not be read. Choose a supported JPEG, PNG, TIFF, WebP or AVIF export.";
+  return String(text).replaceAll("--assume-srgb", "Use sRGB for this image");
+}
+function feedbackNode(target) {
+  const element = target instanceof Element ? target : null;
+  if (!element || !element.isConnected || element.closest("[hidden]")) return null;
+  const anchor = element.closest(".form-actions") || element;
+  let output = anchor.nextElementSibling;
+  if (!output?.classList?.contains("action-feedback")) {
+    output = node("div", "", "action-feedback");
+    output.setAttribute("aria-live", "polite");
+    anchor.insertAdjacentElement("afterend", output);
+  }
+  return output;
+}
+function writeMessage(bar, value, error, persistent) {
+  const global = bar === $("message"), previous = global ? messageTimer : localMessageTimers.get(bar);
+  clearTimeout(previous);
+  bar.textContent = value; bar.hidden = !value; bar.dataset.tone = error ? "error" : "info"; bar.setAttribute("role", error ? "alert" : "status");
+  if (!value || error || persistent) { if (global) messageTimer = null; else localMessageTimers.delete(bar); return; }
+  const timer = setTimeout(() => { if (bar.textContent === value) { bar.textContent = ""; bar.hidden = true; } }, 6000);
+  if (global) messageTimer = timer; else localMessageTimers.set(bar, timer);
+}
+function message(text, error = false, { persistent = false, near = null, global = false } = {}) {
+  const target = near || activeActionTarget, value = humanReason(text), local = global ? null : feedbackNode(target);
+  if (local) local.dataset.actionTarget = target instanceof Element ? target.id : "";
+  writeMessage(local || $("message"), value, error, persistent);
+}
+function node(tag, text, className) { const element = document.createElement(tag); if (text !== undefined) element.textContent = text; if (className) element.className = className; return element; }
+function action(handler) { return async (event) => {
+  event?.preventDefault();
+  const target = event?.submitter || event?.currentTarget, previous = activeActionTarget;
+  if (target instanceof Element) activeActionTarget = target;
+  try { await handler(event); } catch (error) { message(error.message, true, { near: target }); }
+  finally { if (activeActionTarget === target) activeActionTarget = previous; }
+}; }
+function button(text, handler) { const element = node("button", text); element.type = "button"; element.addEventListener("click", action(handler)); return element; }
+async function api(path, data, raw) {
+  const headers = { "x-studio-token": token };
+  if (raw) headers["x-studio-options"] = encodeURIComponent(JSON.stringify(data));
+  else if (data !== undefined) headers["Content-Type"] = "application/json";
+  const response = await fetch(path, { method: data === undefined ? "GET" : "POST", headers, body: raw ?? (data === undefined ? undefined : JSON.stringify(data)) });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "This change could not be saved");
+  return result;
+}
+function options(select, values, empty = "Choose") {
+  const old = select.value; select.replaceChildren(new Option(empty, ""));
+  for (const entry of values) select.add(new Option(entry.title || entry.id, entry.id));
+  if ([...select.options].some((option) => option.value === old)) select.value = old;
+}
+function roleOptions(select, includePrimary = true) {
+  select.replaceChildren();
+  for (const [value, label] of roles) if (includePrimary || value !== "primary") select.add(new Option(label, value));
+  select.value = "alternate";
+}
+function title(work) { return state.workflow[work.id]?.titleProvided ? work.title : "Untitled artwork"; }
+function dateLabel(work) {
+  if (!work.date || work.date.certainty === "unknown") return "";
+  return work.date.label || `${work.date.certainty === "circa" ? "c. " : ""}${work.date.year}${work.date.endYear ? "–" + work.date.endYear : ""}`;
+}
+function phase(record) {
+  const actual = state.actualPublic.some((work) => work.id === record.id);
+  return [actual ? "On public site · editing a draft copy" : "Draft", record.featured ? "Selected Work" : "", record.homepageLead ? "Homepage image" : ""].filter(Boolean).join(" · ");
+}
+function mediaFor(image) { return state.media.find((entry) => entry.reproduction.src === image?.src); }
+function imageFor(work) { return mediaFor(work.reproductions.find((image) => image.role === "primary") || work.reproductions[0]); }
+function thumb(media, alt) {
+  const frame = node("span", undefined, "thumb-frame");
+  if (media) { const image = document.createElement("img"); image.src = `/media/${media.id}/thumb`; image.alt = alt || ""; frame.append(image); }
+  else frame.append(node("span", "Photo unavailable", "hint"));
+  return frame;
+}
+function workCard(work, label, handler, active = false) {
+  const card = button("", handler); card.className = "thumbnail-card"; card.dataset.artworkId = work.id;
+  card.setAttribute("aria-label", `${label} ${title(work)}`); card.setAttribute("aria-pressed", String(active));
+  card.append(thumb(imageFor(work), title(work)), node("strong", title(work)));
+  if (dateLabel(work)) card.append(node("small", dateLabel(work)));
+  if (active) card.append(node("span", label === "Open" ? "Editing" : label === "Current homepage image" ? "Current homepage image" : "Chosen", "selection-mark"));
+  return card;
+}
+function workPicker(container, label, handler, active, exclude = []) {
+  container.replaceChildren();
+  for (const work of state.catalogue.artworks) if (!exclude.includes(work.id)) container.append(workCard(work, label, () => handler(work.id), work.id === active));
+  if (!container.children.length) container.append(node("p", "No other artworks to choose yet.", "hint"));
+}
+function showTab(id) {
+  for (const panel of document.querySelectorAll(".tab-panel")) panel.hidden = panel.id !== id;
+  for (const control of document.querySelectorAll("[data-tab]")) control.setAttribute("aria-current", control.dataset.tab === id ? "page" : "false");
+  if (id === "curation") openCuration();
+}
+function rememberEditor() {
+  if (!canEditArtwork() || !state?.catalogue.artworks.some((work)=>work.id===editingArtwork)) return;
+  syncPrimaryAlt();
+  sessionEditors.set(editingArtwork, {
+    controls:[...$("artwork-form").querySelectorAll("[name]")].map((control)=>({name:control.name,type:control.type,value:control.value,checked:control.checked})),
+    images:structuredClone(editingImages),dirty:editorDirty,validationAttempted,version:editingVersion,
+    details:[...$("artwork-form").querySelectorAll("details")].map((details)=>details.open),
+  });
+  syncTabDrafts();
+}
+function restoreEditor(snapshot) {
+  editingImages=structuredClone(snapshot.images);renderReproductions();
+  const controls=[...$("artwork-form").querySelectorAll("[name]")],used=new Set();
+  for(const saved of snapshot.controls){const control=controls.find((control)=>!used.has(control)&&control.name===saved.name&&control.type===saved.type);if(control){control.value=saved.value;control.checked=saved.checked;used.add(control);}}
+  for(const [index,details]of [...$("artwork-form").querySelectorAll("details")].entries())details.open=snapshot.details[index]||false;
+  editorDirty=snapshot.dirty;editingVersion=snapshot.version;validationAttempted=snapshot.validationAttempted;updateSimpleFields();
+}
+function updateLocation(view,{replace=false}={}) {
+  if(!navigationReady)return;
+  const same=studioView.tab===view.tab&&studioView.artworkId===view.artworkId;
+  studioView={...view};
+  const fragment=view.artworkId?`#artwork/${encodeURIComponent(view.artworkId)}`:view.tab==="collection"?"#artworks":`#tab/${view.tab}`;
+  // Private loopback URL/state contain only view + neutral identity, never entered metadata.
+  if(!same||replace){const method=replace?"replaceState":"pushState";history[method]({studio:1,...view},"",location.pathname+location.search+fragment);}
+}
+function navigateTab(id,{historyMode="push"}={}) {
+  rememberEditor();openRevision++;showTab(id);$("artwork-coordination").hidden=true;
+  if(id==="collection"){ $("artwork-form").hidden=true;$("intake-panel").hidden=true;$("work-list").scrollIntoView({block:"start",behavior:"instant"}); }
+  updateLocation({tab:id,artworkId:null},{replace:historyMode==="replace"});
+  syncTabDrafts();
+}
+function viewFromLocation(hash=location.hash) {
+  const artwork=hash.match(/^#artwork\/([a-z][a-z0-9-]*)$/),tab=hash.match(/^#tab\/(media|projects|curation|review)$/);
+  if(artwork&&state.catalogue.artworks.some((work)=>work.id===artwork[1]))return {tab:"collection",artworkId:artwork[1]};
+  return {tab:tab?.[1]||"collection",artworkId:null};
+}
+async function restoreNavigation(view) {
+  if(view.artworkId)await openArtwork(view.artworkId,{historyMode:"none",currentState:true});
+  else{rememberEditor();openRevision++;$("artwork-coordination").hidden=true;showTab(view.tab);if(view.tab==="collection"){$("artwork-form").hidden=true;$("intake-panel").hidden=true;$("work-list").scrollIntoView({block:"start",behavior:"instant"});}updateLocation(view,{replace:true});syncTabDrafts();}
+}
+window.addEventListener("popstate",()=>{if(navigationReady)restoreNavigation(viewFromLocation()).catch((error)=>message(error.message,true));});
+window.addEventListener("pageshow",(event)=>{if(event.persisted&&navigationReady)restoreNavigation(viewFromLocation()).catch((error)=>message(error.message,true));});
+window.addEventListener("beforeunload",(event)=>{if(editorDirty||[...sessionEditors.values()].some((draft)=>draft.dirty))event.preventDefault();});
+window.addEventListener("focus",()=>{tabs.query();checkSavedVersion();});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){tabs.query();checkSavedVersion();}});
+function showIntake(purpose = "artwork", target = "") {
+  rememberEditor();openRevision++;$("artwork-coordination").hidden=true;
+  resetColourSelection({ clearFiles: true });
+  showTab("collection"); $("intake-panel").hidden = false;
+  $("artwork-form").hidden = true;
+  updateLocation({tab:"collection",artworkId:null});syncTabDrafts();
+  document.querySelector(`[name="purpose"][value="${purpose}"]`).checked = true;
+  intakeTarget = target; updateIntake(); $("intake-panel").scrollIntoView({ block: "start" });
+}
+function purpose() { return document.querySelector('[name="purpose"]:checked').value; }
+function updateIntake() {
+  const attach = purpose() === "attach";
+  $("intake-target-panel").hidden = !attach;
+  $("intake-submit").textContent = attach ? "Add photo to artwork" : purpose() === "media" ? "Keep as process / reference" : "Create draft";
+  workPicker($("intake-targets"), "Choose artwork", (id) => { intakeTarget = id; updateIntake(); }, intakeTarget);
+  $("intake-target-summary").textContent = intakeTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === intakeTarget))}` : "Click the artwork this photo belongs to.";
+}
+function relationship() {
+  if (purpose() === "attach" && !intakeTarget) throw new Error("Click an artwork to choose where this photo belongs");
+  return { purpose: purpose(), artworkId: intakeTarget, role: $("intake-role").value === "primary" ? "alternate" : $("intake-role").value };
+}
+function renderProgress() {
+  const jobs = state.jobs.filter((job) => currentJobs.has(job.id) || job.status === "running"), counts = new Map();
+  for (const job of jobs) {
+    const text = job.status === "running" ? "Preparing…" : job.status === "complete" ? "Ready" : `Failed — ${humanReason(job.error || "This photo could not be prepared.")}`;
+    counts.set(text, (counts.get(text) || 0) + 1);
+  }
+  $("jobs-panel").hidden = !jobs.length;
+  $("jobs").replaceChildren(...[...counts].map(([text, count]) => node("p", `${text}${count > 1 ? ` (${count} images)` : ""}`)));
+}
+async function refresh({ editor = false } = {}) {
+  state = await api("/api/state");
+  $("write-mode").textContent = state.repositoryWritesEnabled ? "Repository writing is enabled for this run. Exact owner approval, dry-run and typed confirmation are still required." : "Repository writes are disabled. Start with --allow-public-export only after granting explicit public-source permission.";
+  $("work-list").replaceChildren();
+  for (const work of state.catalogue.artworks) {
+    const shell=node("div",undefined,"artwork-card-shell"),card = workCard(work, "Open", () => openArtwork(work.id), work.id === editingArtwork); card.append(node("small", phase(work))); shell.append(card);
+    if (!(state.repositoryArtworkIds||[]).includes(work.id)) { const remove=button("Delete draft",()=>deleteArtworkDraft(work.id));remove.className="danger-action";remove.setAttribute("aria-label",`Delete draft ${title(work)}`);shell.append(remove); }
+    $("work-list").append(shell);
+  }
+  if (!state.catalogue.artworks.length) $("work-list").append(node("p", "Start by adding a photo.", "hint"));
+  renderProgress();
+  renderMedia(); renderProjects(); renderReview(); updateIntake();
+  if (editor && editingArtwork===editor && studioView.artworkId===editor) await openArtwork(editor, { focus: false, force:true,historyMode:"none" });
+  await finishIncomingJobs();
+}
+async function makePrimary(artworkId, source) {
+  const work = state.catalogue.artworks.find((work) => work.id === artworkId);
+  await api("/api/artwork/save", { id: artworkId, expectedVersion: state.artworkVersions[artworkId], record: { ...work, reproductions: work.reproductions.map((image) => ({ ...image, role: image.src === source ? "primary" : image.role === "primary" ? "alternate" : image.role })) } });
+}
+async function finishIncomingJobs() {
+  for (const [id, context] of [...incomingJobs]) {
+    const job = state.jobs.find((job) => job.id === id); if (!job || job.status === "running") continue;
+    incomingJobs.delete(id);
+    if (context.revision !== undefined && context.revision !== selectionRevision) continue;
+    if (job.status === "error") { if (pendingEditorJob === id) pendingEditorJob = null; message(`Failed — ${humanReason(job.error)}`, true, { near: $("intake-submit") }); continue; }
+    if (context.primary && job.result.artworkId) {
+      const media = state.media.find((entry) => entry.id === job.result.mediaId);
+      await makePrimary(job.result.artworkId, media.reproduction.src); state = await api("/api/state");
+    }
+    if (id === pendingEditorJob || (context.purpose === "attach" && !editorDirty)) {
+      pendingEditorJob = null; await openArtwork(job.result.artworkId); $("intake-panel").hidden = true; message("Ready. Your draft is open and editable.", false, { near: $("artwork-form").querySelector('button[type="submit"]') });
+    }
+  }
+  if (intakePreparationActive && ![...incomingJobs.values()].some((context) => context.revision === selectionRevision)) finishIntakeCycle();
+}
+function formSet(form, name, value) { const control = field(form, name); if (control.type === "checkbox") control.checked = value === true; else control.value = value ?? ""; }
+function optional(form, name) { return field(form, name).value.trim() || undefined; }
+function number(form, name) { const value = optional(form, name); return value === undefined ? undefined : Number(value); }
+function date(form, optionalDate = false) {
+  const certainty = field(form, "certainty").value; if (!certainty && optionalDate) return undefined;
+  return { certainty, ...(certainty === "unknown" ? {} : { year: number(form, "year"), endYear: number(form, "endYear") }), ...(field(form, "dateLabel") && optional(form, "dateLabel") ? { label: optional(form, "dateLabel") } : {}) };
+}
+function currencyPrecision(currency) { return new Intl.NumberFormat("en-CA", { style: "currency", currency }).resolvedOptions().maximumFractionDigits; }
+function priceMinor(value, currency) {
+  if (!/^\d+(?:\.\d+)?$/.test(value)) throw new Error("Enter a positive decimal price without currency symbols");
+  const precision = currencyPrecision(currency), [whole, fraction = ""] = value.split(".");
+  if (fraction.length > precision) throw new Error(`This currency supports ${precision} decimal places`);
+  const amount = Number(whole + fraction.padEnd(precision, "0"));
+  if (!Number.isSafeInteger(amount) || amount <= 0) throw new Error("Price must be positive and within supported currency precision");
+  return amount;
+}
+function priceDisplay(price) { if (!price) return ""; const precision = currencyPrecision(price.currency), text = String(price.amountMinor).padStart(precision + 1, "0"); return precision ? text.slice(0, -precision) + "." + text.slice(-precision) : text; }
+function createInput(label, name, value = "", type = "text") { const wrapper = node("label", label), input = document.createElement("input"); input.name = name; input.type = type; input.value = value; if (type === "number") { input.step = "any"; input.min = "0"; } wrapper.append(input); return wrapper; }
+function createSelect(label, name, values, selectedValue) { const wrapper = node("label", label), select = document.createElement("select"); select.name = name; select.setAttribute("aria-label", label); for (const value of values) select.add(new Option(Array.isArray(value) ? value[1] : value, Array.isArray(value) ? value[0] : value)); select.value = selectedValue; wrapper.append(select); return wrapper; }
+function updateSimpleFields() {
+  const form = $("artwork-form"); $("year-field").hidden = field(form, "certainty").value === "unknown";
+  $("simple-offer").hidden = !["available", "edition-available"].includes(field(form, "availability").value);
+  $("price-fields").hidden = field(form, "offerMode").value !== "price";
+  $("date-year-guidance").textContent = field(form,"certainty").value === "unknown" ? "Unknown date: a year is not required. Exact and Circa require a valid year from 1 to 9999." : `${field(form,"certainty").value === "exact" ? "Exact" : "Circa"} date: Year is required (1–9999). Choose Unknown if the year is not known.`;
+  if (validationAttempted) renderValidation(artworkIssues(), { focus: false });
+  updateEditorActions();
+}
+function prominentImage(media) { $("editor-image").replaceChildren(); if (media) { const image = document.createElement("img"); image.src = `/media/${media.id}/primary`; image.alt = media.reproduction.alt; $("editor-image").append(image); } }
+function artworkIssues({ preview = false } = {}) {
+  const form = $("artwork-form"), certainty = field(form,"certainty").value, issues = [];
+  const add = (name, text) => { const control = typeof name === "string" ? field(form,name) : name; if (control && !issues.some((issue) => issue.control === control)) issues.push({control,text}); };
+  const supportedYear = (value) => /^\d{1,4}$/.test(value || "") && Number(value) >= 1 && Number(value) <= 9999;
+  if (certainty !== "unknown") {
+    const year = optional(form,"year"), end = optional(form,"endYear");
+    if (!supportedYear(year)) add("year",`${certainty === "exact" ? "Exact" : "Circa"} dates require a valid year from 1 to 9999. Enter a year, or choose Unknown.`);
+    if (end !== undefined && (!supportedYear(end) || (supportedYear(year) && Number(end) < Number(year)))) add("endYear","Enter a supported end year at or after the start year, or leave the optional end year blank.");
+  }
+  for (const kind of dimensions) {
+    const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`);
+    if ([width,height,depth].some((value) => value !== undefined)) {
+      if (!(width > 0)) add(`${kind}-width`,`Enter a positive width and height for the ${kind} size, or leave this optional size blank.`);
+      if (!(height > 0)) add(`${kind}-height`,`Enter a positive width and height for the ${kind} size, or leave this optional size blank.`);
+      if (depth !== undefined && !(depth > 0)) add(`${kind}-depth`,`Enter a positive ${kind} depth, or leave the optional depth blank.`);
+    }
+  }
+  const edition = ["editionSize","editionNumber","artistProofs","signed","numbered"].some((name) => optional(form,name) !== undefined);
+  if (edition && !(number(form,"editionSize") > 0)) add("editionSize","Enter an edition size, or clear the optional edition information.");
+  const availability = field(form,"availability").value, offered = ["available","edition-available"].includes(availability);
+  if (availability !== "unknown" && !field(form,"offerReviewed").checked) add("offerReviewed","Check the availability information, or choose Not confirmed yet.");
+  if (offered && !optional(form,"offerMode")) add("offerMode","Choose price by enquiry or a supplied price for an available work.");
+  if (offered && field(form,"offerMode").value === "price") {
+    const price = optional(form,"price"), currency = optional(form,"currency")?.toUpperCase();
+    if (!price) add("price","Enter a price, or choose Price by enquiry.");
+    if (!currency || !/^[A-Z]{3}$/.test(currency)) add("currency","Enter the three-letter currency for this price.");
+    if (price && currency && /^[A-Z]{3}$/.test(currency)) try { priceMinor(price,currency); } catch (error) { add("price",error.message); }
+  }
+  if ((editingImages.length || preview) && editingImages.filter((image) => image.role === "primary").length !== 1) add($("add-artwork-view"),"Choose one primary photo before previewing this artwork.");
+  for (const control of [...form.elements]) {
+    if (!control.validity || control.disabled || (certainty === "unknown" && ["year","endYear"].includes(control.name))) continue;
+    if (!control.validity.valid) add(control,`${control.closest("label")?.firstChild?.textContent.trim() || "This field"}: ${control.validationMessage}`);
+  }
+  return issues;
+}
+function clearValidation() {
+  for (const [control, error] of errorNodes) {
+    control.removeAttribute("aria-invalid");
+    const remaining = (control.getAttribute("aria-describedby") || "").split(/\s+/).filter((id) => id && id !== error.id);
+    if (remaining.length) control.setAttribute("aria-describedby",remaining.join(" ")); else control.removeAttribute("aria-describedby");
+    error.remove();
+  }
+  errorNodes.clear(); validationIssues = [];
+  for (const id of ["editor-validation-summary","editor-validation-summary-bottom"]) { $(id).hidden = true; $(id).textContent = ""; }
+}
+function renderValidation(issues, { focus = true, actionName = "Save" } = {}) {
+  clearValidation(); validationIssues = issues;
+  for (const [index, issue] of issues.entries()) {
+    const error = node("p",issue.text,"field-error"); error.id = `artwork-field-error-${issue.control.name || "photo"}-${index}`;
+    issue.control.setAttribute("aria-invalid","true");
+    issue.control.setAttribute("aria-describedby",[issue.control.getAttribute("aria-describedby"),error.id].filter(Boolean).join(" "));
+    (issue.control.closest("label") || issue.control).after(error); errorNodes.set(issue.control,error);
+  }
+  const summary = issues.length ? `${actionName === "Preview" ? "Preview blocked" : "Draft not saved"} — ${issues[0].text}` : "";
+  for (const id of ["editor-validation-summary","editor-validation-summary-bottom"]) { $(id).textContent = summary; $(id).hidden = !summary; }
+  if (focus && issues.length) {
+    showTab("collection"); $("artwork-form").hidden = false;
+    updateLocation({tab:"collection",artworkId:editingArtwork});renderCoordination();
+    for (let parent = issues[0].control.parentElement; parent; parent = parent.parentElement) if (parent.tagName === "DETAILS") parent.open = true;
+    issues[0].control.scrollIntoView({block:"center",behavior:"instant"}); issues[0].control.focus({preventScroll:true});
+    message(summary,true);
+  }
+  updateEditorActions();
+}
+function validateEditedArtwork(actionName = "Save") {
+  validationAttempted = true;
+  const issues = artworkIssues({preview:actionName === "Preview"}); renderValidation(issues,{actionName});
+  return issues.length === 0;
+}
+function updateEditorActions() {
+  const busy = savingDraft || previewing || previewPopupBusy;
+  for (const control of $("artwork-form").querySelectorAll("input,select,textarea,button")) control.disabled = busy || !canEditArtwork();
+  for (const control of $("artwork-form").querySelectorAll('button[type="submit"]')) { control.setAttribute("aria-describedby",control.closest(".form-actions") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  for (const id of ["preview-artwork","preview-artwork-bottom"]) { $(id).setAttribute("aria-describedby",id.endsWith("bottom") ? "editor-action-note-bottom editor-validation-summary-bottom" : "editor-action-note editor-validation-summary"); }
+  $("editor-action-note").textContent = savingDraft ? "Saving draft…" : previewing ? "Preparing the current edited draft preview…" : !editingArtwork ? "Prepare a photo before editing this draft." : staleEditors.has(editingArtwork) ? "A newer saved version exists. Your edits are retained here; stale Save will be refused. Review it or explicitly discard and reload." : validationIssues.length ? "Correct the marked field, then click Save draft or Preview artwork again. Both actions remain available." : "Save draft checks your entries. Preview artwork validates and privately saves current edits before previewing. Optional facts may stay unknown.";
+  $("editor-action-note-bottom").textContent = $("editor-action-note").textContent;
+}
+async function openArtwork(id, { focus = true, force = false, historyMode = "push", currentState = false } = {}) {
+  const revision=++openRevision;
+  if(!force&&editingArtwork===id&&editorDirty&&canEditArtwork()){
+    showTab("collection");$("artwork-form").hidden=false;
+  }else{
+    if(!currentState)message("Opening artwork…", false, { persistent: true });
+    const latest=currentState?state:await api("/api/state");
+    if(revision!==openRevision)return;
+    if(!latest.catalogue.artworks.some((work)=>work.id===id))throw new Error("This artwork is not available. Return to the grid and refresh.");
+    if(!force)rememberEditor();
+    const cached=!force&&sessionEditors.get(id)?.dirty?sessionEditors.get(id):null;
+    state=latest;
+    if(force)sessionEditors.delete(id);
+    deletedEditors.delete(id);
+    renderArtwork(id,{focus:false,cached});
+    if(cached&&cached.version!==state.artworkVersions[id])staleEditors.add(id);else staleEditors.delete(id);
+  }
+  // DOM and editable controls are ready before history acquires the artwork view.
+  updateLocation({tab:"collection",artworkId:id},{replace:historyMode!=="push"});
+  renderCoordination();syncTabDrafts();tabs.query();checkSavedVersion(id);
+  if(focus){($("artwork-coordination").hidden?$("artwork-form"):$("artwork-coordination")).scrollIntoView({block:"start",behavior:"instant"});field($("artwork-form"),"title").focus({preventScroll:true});}
+}
+function renderArtwork(id,{focus=true,cached=null}={}) {
+  clearValidation(); validationAttempted = false;
+  editingArtwork = id; pendingEditorJob = null; editorDirty = false; editingVersion=state.artworkVersions[id];const work = state.catalogue.artworks.find((record) => record.id === id); if (!work) return;
+  showTab("collection"); const form = $("artwork-form"); form.hidden = false; form.reset();
+  for (const control of form.querySelectorAll("input,select,textarea,button")) control.disabled = false;
+  $("editor-title").textContent = title(work); $("artwork-id").textContent = `Neutral identity: ${work.id}`; $("artwork-phase").textContent = phase(work);$("delete-draft-panel").hidden=(state.repositoryArtworkIds||[]).includes(work.id);
+  for (const name of ["slug", "medium", "kind", "materials", "description", "framing", "condition", "published", "featured", "selectedOrder"]) formSet(form, name, work[name]);
+  formSet(form, "title", state.workflow[id].titleProvided ? work.title : ""); formSet(form, "aliases", work.aliases.join("\n")); formSet(form, "techniques", work.techniques.join("\n"));
+  for (const name of ["certainty", "year", "endYear"]) formSet(form, name, work.date[name]); formSet(form, "dateLabel", work.date.label);
+  const offer = work.availability; formSet(form, "availability", offer.state); formSet(form, "offerMode", offer.mode); formSet(form, "offerReviewed", offer.reviewed); formSet(form, "currency", offer.price?.currency); formSet(form, "price", priceDisplay(offer.price));
+  for (const [name, key] of [["editionSize", "size"], ["editionNumber", "number"], ["artistProofs", "artistProofs"]]) formSet(form, name, work.edition?.[key]);
+  for (const name of ["signed", "numbered"]) formSet(form, name, work.edition?.[name] === undefined ? "" : String(work.edition[name]));
+  formSet(form, "privateNote", state.notes[id]);
+  const object = work.dimensions.find((entry) => entry.kind === "object"); for (const key of ["width", "height", "depth"]) formSet(form, `object-${key}`, object?.[key]); formSet(form, "object-unit", object?.unit || "cm");
+  $("dimension-fields").replaceChildren();
+  for (const kind of dimensions.filter((kind) => kind !== "object")) { const size = work.dimensions.find((entry) => entry.kind === kind), group = node("div"); group.append(node("h3", `${kind === "sheet" ? "Paper / sheet" : kind[0].toUpperCase() + kind.slice(1)} size`)); for (const key of ["width", "height", "depth"]) group.append(createInput(key, `${kind}-${key}`, size?.[key] ?? "", "number")); group.append(createSelect("Unit", `${kind}-unit`, ["cm", "mm", "in"], size?.unit || "cm")); $("dimension-fields").append(group); }
+  editingImages = structuredClone(work.reproductions); renderReproductions(); renderArtworkProjects(); prominentImage(imageFor(work)); updateSimpleFields();
+  $("artwork-technical").replaceChildren(); for (const media of state.media.filter((media) => work.reproductions.some((image) => image.src === media.reproduction.src))) $("artwork-technical").append(node("p", `${media.name} · source SHA256 ${media.sourceSha256}`, "technical-block"));
+  renderWorkListSelection();
+  if(cached)restoreEditor(cached);
+  $("collection").insertBefore(form, $("work-list"));
+  form.dataset.artworkId=id;$("newer-saved-review").hidden=true;updateEditorActions();
+  if (focus && canEditArtwork()) { form.scrollIntoView({ block: "start", behavior: "instant" }); field(form,"title").focus({ preventScroll: true }); }
+}
+function renderWorkListSelection() { for (const card of $("work-list").querySelectorAll("[data-artwork-id]")) card.setAttribute("aria-pressed", String(card.dataset.artworkId === editingArtwork)); }
+function renderArtworkProjects() {
+  $("work-projects").replaceChildren();
+  for (const project of state.catalogue.projects) { const link = button(project.title, () => { navigateTab("projects"); openProject(project.id); }); link.className = "project-chip"; if (project.memberIds.includes(editingArtwork)) link.prepend(node("span", "✓ ")); $("work-projects").append(link); }
+  if (!state.catalogue.projects.length) $("work-projects").append(button("Create a project", () => { navigateTab("projects"); openProject(); }));
+}
+function syncPrimaryAlt() { const primary = editingImages.find((image) => image.role === "primary"); if (primary) primary.alt = field($("artwork-form"), "mainAlt").value.trim() || "Private selected image; alt text needs owner review"; }
+function renderReproductions() {
+  $("reproduction-fields").replaceChildren();
+  const primary = editingImages.find((image) => image.role === "primary"); formSet($("artwork-form"), "mainAlt", primary?.alt);
+  editingImages.forEach((image, index) => {
+    const group = node("div", undefined, "view-editor"); group.dataset.source = image.src;
+    const row = node("div", undefined, "photo-row"); const media = mediaFor(image); if (media) { const picture = document.createElement("img"); picture.src = `/media/${media.id}/thumb`; picture.alt = image.alt; row.append(picture); }
+    row.append(node("strong", roles.find(([value]) => value === image.role)?.[1] || image.role)); group.append(row);
+    const controls = node("div", undefined, "view-controls");
+    controls.append(button("Move earlier", () => moveView(index, -1)), button("Move later", () => moveView(index, 1)), button("Remove photo", () => { syncPrimaryAlt(); editingImages.splice(index, 1); editorDirty = true; renderReproductions(); }));
+    if (image.role !== "primary") controls.append(button("Use as primary image", () => { syncPrimaryAlt(); for (const entry of editingImages) if (entry === image) entry.role = "primary"; else if (entry.role === "primary") entry.role = "alternate"; editorDirty = true; renderReproductions(); prominentImage(media); }));
+    group.append(controls);
+    const details = node("details"), summary = node("summary", "Photo details");
+    const role = createSelect("How should this image be used?", "view-role", roles, image.role), alt = createInput(`Photo description ${index + 1}`, "view-alt", image.alt), caption = createInput("Caption (optional)", "view-caption", image.caption || "");
+    role.querySelector("select").addEventListener("change", (event) => {
+      syncPrimaryAlt();
+      if (event.target.value === "primary") { for (const entry of editingImages) if (entry === image) entry.role = "primary"; else if (entry.role === "primary") entry.role = "alternate"; }
+      else image.role = event.target.value;
+      editorDirty = true; renderReproductions();
+    });
+    alt.querySelector("input").addEventListener("input", (event) => { image.alt = event.target.value; if (image.role === "primary") formSet($("artwork-form"), "mainAlt", image.alt); editorDirty = true; });
+    caption.querySelector("input").addEventListener("input", (event) => { image.caption = event.target.value.trim() || undefined; editorDirty = true; });
+    details.append(summary, role, alt, caption, node("p", `${image.width}×${image.height} pixels · ${image.src}`, "technical-block")); group.append(details); $("reproduction-fields").append(group);
+  });
+  updateEditorActions();
+  if(editorDirty)tabs.announce(editingArtwork);
+}
+function moveView(index, direction) { syncPrimaryAlt(); const other = index + direction; if (other < 0 || other >= editingImages.length) return; [editingImages[index], editingImages[other]] = [editingImages[other], editingImages[index]]; editorDirty = true; renderReproductions(); }
+async function deleteArtworkDraft(id) {
+  if(selectedDirty)throw new Error("Save or discard your unsaved Selected Work changes before deleting a draft.");
+  const work=state.catalogue.artworks.find((entry)=>entry.id===id);
+  if(!work)throw new Error("This draft is no longer available. Refresh Studio.");
+  if((state.repositoryArtworkIds||[]).includes(id))throw new Error("This artwork exists in the repository catalogue and cannot be deleted from private Studio.");
+  const projects=state.catalogue.projects.filter((project)=>project.memberIds.includes(id));
+  const sole=projects.filter((project)=>project.memberIds.length===1);
+  if(sole.length)throw new Error(`"${title(work)}" is the only artwork in project "${sole[0].title}". Add another member or remove the project relationship before deleting this draft.`);
+  const consequences=[];
+  if(work.featured)consequences.push("Selected Work");
+  if(work.homepageLead)consequences.push("the homepage image");
+  if(projects.length)consequences.push(`${projects.length} project${projects.length===1?"":"s"}: ${projects.map((project)=>project.title).join(", ")}`);
+  const unsaved=editingArtwork===id&&editorDirty;
+  const detail=consequences.length?`\n\nIt will also be removed from ${consequences.join(", ")}.`:"";
+  const dirty=unsaved?"\n\nUnsaved edits in this tab will be discarded.":"";
+  if(!confirm(`Delete private draft "${title(work)}"?${detail}${dirty}\n\nOriginal/source photos and private media are kept. Neutral ID ${id} will never be reused. Studio has no restore button for deleted drafts.`)){message("Draft deletion cancelled.");return;}
+  const expectedVersion=editingArtwork===id?editingVersion:state.artworkVersions[id];
+  const result=await api("/api/artwork/delete",{id,expectedVersion});
+  sessionEditors.delete(id);staleEditors.delete(id);deletedEditors.add(id);
+  if(editingArtwork===id){editingArtwork=null;editingVersion=null;editingImages=[];editorDirty=false;$("artwork-form").hidden=true;$("artwork-coordination").hidden=true;}
+  tabs.saved(id);syncTabDrafts();
+  await refresh();
+  updateLocation({tab:"collection",artworkId:null},{replace:true});
+  message(`Deleted private draft "${state.deletedDrafts?.find((entry)=>entry.id===id)?.record?.title||result.title||id}". Photos and source files were kept private and the neutral ID will not be reused.`, false, { near: $("show-intake") });
+}
+async function saveArtwork({ actionName = "Save" } = {}) {
+  if (!editingArtwork) throw new Error("Wait until this photo is ready before saving");
+  if (!canEditArtwork()) throw new Error("Wait until this artwork editor is ready before saving");
+  if (!validateEditedArtwork(actionName)) return null;
+  const form = $("artwork-form"), previous = state.catalogue.artworks.find((work) => work.id === editingArtwork), sizes = [];
+  for (const kind of dimensions) { const width = number(form, `${kind}-width`), height = number(form, `${kind}-height`), depth = number(form, `${kind}-depth`); if (width !== undefined || height !== undefined || depth !== undefined) { if (width === undefined || height === undefined) throw new Error(`${kind} size needs width and height, or leave its fields blank`); sizes.push({ kind, width, height, depth, unit: field(form, `${kind}-unit`).value }); } }
+  const availability = { state: field(form, "availability").value, reviewed: field(form, "offerReviewed").checked };
+  const offered = ["available", "edition-available"].includes(availability.state);
+  if (offered) availability.mode = optional(form, "offerMode");
+  const price = optional(form, "price"), currency = optional(form, "currency")?.toUpperCase(); if (offered && availability.mode === "price" && price) { if (!currency) throw new Error("A price needs its currency"); availability.price = { amountMinor: priceMinor(price, currency), currency }; }
+  const editionSize = number(form, "editionSize"), editionNumber = number(form, "editionNumber"), proofs = number(form, "artistProofs"), signed = optional(form, "signed"), numbered = optional(form, "numbered"); let edition;
+  if ([editionSize, editionNumber, proofs, signed, numbered].some((entry) => entry !== undefined)) { if (!editionSize) throw new Error("Supply an edition size when entering edition facts"); edition = { size: editionSize, number: editionNumber, artistProofs: proofs, signed: signed === undefined ? undefined : signed === "true", numbered: numbered === undefined ? undefined : numbered === "true" }; }
+  syncPrimaryAlt();
+  const record = { ...previous, title: field(form, "title").value.trim() || `Private draft ${previous.id} (title not supplied)`, slug: field(form, "slug").value.trim(), aliases: lines(field(form, "aliases").value), medium: field(form, "medium").value, kind: field(form, "kind").value, date: date(form), techniques: lines(field(form, "techniques").value), materials: optional(form, "materials"), description: optional(form, "description"), dimensions: sizes, reproductions: editingImages, published: field(form, "published").checked, featured: field(form, "featured").checked, selectedOrder: field(form, "featured").checked ? number(form, "selectedOrder") : undefined, availability, edition, framing: optional(form, "framing"), condition: optional(form, "condition") };
+  savingDraft = true; updateEditorActions();
+  const savedId=editingArtwork,expectedVersion=editingVersion,note=field(form,"privateNote").value;
+  try { await api("/api/artwork/save", { id:savedId, expectedVersion, record, note }); sessionEditors.delete(savedId);staleEditors.delete(savedId);if(editingArtwork===savedId)editorDirty=false;syncTabDrafts();tabs.saved(savedId);await refresh({ editor:savedId });syncTabDrafts();message("Draft saved. Nothing has been made public.");return savedId; }
+  catch (error) {
+    if (/Draft changed since/.test(error.message)) { staleEditors.add(savedId);renderCoordination();if(studioView.artworkId===savedId){$("artwork-coordination").scrollIntoView({block:"start",behavior:"instant"});}message("Save refused: another tab saved a newer version. Your edits in this tab have not been lost. Review the newer saved version, or explicitly discard and reload.",true);return null; }
+    const name = /date|year/i.test(error.message) ? "year" : /slug|alias|address/i.test(error.message) ? "slug" : /price|currency/i.test(error.message) ? "price" : /availability|reviewed/i.test(error.message) ? "availability" : /edition/i.test(error.message) ? "editionSize" : "title";
+    renderValidation([{control:field(form,name),text:humanReason(error.message)}],{actionName}); return null;
+  }
+  finally { savingDraft = false; updateEditorActions(); }
+}
+$("artwork-form").addEventListener("input", () => { if(!canEditArtwork())return;editorDirty = true; updateSimpleFields();syncTabDrafts();checkSavedVersion(); });
+$("artwork-form").addEventListener("focusin",()=>checkSavedVersion());
+$("artwork-form").addEventListener("submit", action(() => saveArtwork()));
+$("delete-artwork").addEventListener("click", action(() => deleteArtworkDraft(editingArtwork)));
+for (const input of document.querySelectorAll('[name="purpose"]')) input.addEventListener("change", updateIntake);
+$("show-intake").addEventListener("click", () => showIntake()); $("media-add-images").addEventListener("click", () => showIntake("media")); $("close-intake").addEventListener("click", action(async () => { resetColourSelection({clearFiles:true}); $("intake-panel").hidden = true;if(editingArtwork)await openArtwork(editingArtwork,{currentState:true}); }));
+$("add-artwork-view").addEventListener("click", () => showIntake("attach", editingArtwork));
+function intakeActionLabel() { return purpose() === "attach" ? "Add photo to artwork" : purpose() === "media" ? "Keep as process / reference" : "Create draft"; }
+function setIntakeSubmitState(label = null) { $("intake-submit").disabled = Boolean(label); $("intake-submit").textContent = label || intakeActionLabel(); }
+function finishIntakeCycle() { inspecting = false; intakePreparationActive = false; setIntakeSubmitState(); }
+function resetColourSelection({ clearFiles = false } = {}) {
+  selectionRevision++; colourBatch = null; duplicateBatch = null; inspecting = false; intakePreparationActive = false;
+  $("colour-decision").hidden = true; $("duplicate-decision").hidden = true; $("colour-apply-batch").checked = false; setIntakeSubmitState();
+  currentJobs.clear();
+  if (clearFiles) { $("files").value = ""; $("selected-file-preview").replaceChildren(); }
+}
+function selectedFilePreview() {
+  $("selected-file-preview").replaceChildren();
+  for (const file of $("files").files) {
+    const card = node("div", undefined, "thumbnail-card"), image = document.createElement("img"), frame = node("span", undefined, "thumb-frame"), url = URL.createObjectURL(file);
+    image.src = url; image.alt = "Selected photo"; image.addEventListener("load", () => URL.revokeObjectURL(url), { once: true }); frame.append(image); card.append(frame, node("small", file.name)); $("selected-file-preview").append(card);
+  }
+}
+$("files").addEventListener("change", () => { resetColourSelection(); selectedFilePreview(); });
+function showDuplicateQuestion(batch) {
+  if (batch.revision !== selectionRevision) return;
+  if (batch.settings.purpose !== "artwork") return showColourQuestion(batch);
+  const pending = batch.items.find((item) => item.pendingArtworkJobs?.length);
+  if (pending) {
+    finishIntakeCycle();
+    message(`"${pending.name}" is already being prepared as a new artwork. Wait for that preparation to finish before trying again.`, false, { persistent: true, near: $("intake-submit") });
+    return;
+  }
+  const item = batch.items.find((entry) => entry.existingMediaIds?.length && entry.allowDuplicateSource !== true);
+  if (!item) return showColourQuestion(batch);
+  duplicateBatch = { batch, item }; $("duplicate-decision").hidden = false; $("colour-decision").hidden = true;
+  const titles = (item.existingArtworkIds || []).map((id) => state.catalogue.artworks.find((work) => work.id === id)).filter(Boolean).map(title);
+  $("duplicate-message").textContent = titles.length ? `This exact photo is already used by ${titles.join(", ")}. Open the existing draft, or explicitly create another artwork from identical source bytes.` : "This exact photo is already in Photos & references. View the existing photo, or explicitly create another artwork from identical source bytes.";
+  $("duplicate-open").textContent = titles.length ? "Open existing draft" : "View existing photo";
+  setIntakeSubmitState("Choose duplicate action above");
+}
+function showColourQuestion(batch) {
+  if (batch.revision !== selectionRevision) return;
+  const unanswered = batch.items.filter((item) => item.needsColourDecision && !item.useSrgb);
+  if (!unanswered.length) return submitPreparedSelection(batch);
+  colourBatch = batch; const item = unanswered[0], untaggedCount = batch.items.filter((image) => image.needsColourDecision).length;
+  $("colour-image-scope").textContent = `${item.name} · image ${batch.items.indexOf(item) + 1} of ${batch.items.length}. This choice applies only to the current selection.`;
+  $("colour-batch-option").hidden = untaggedCount < 2;
+  $("colour-batch-scope").textContent = `Use sRGB for all ${untaggedCount} currently selected untagged images only`;
+  $("colour-apply-batch").checked = false; $("colour-decision").hidden = false; setIntakeSubmitState("Choose colour profile above");
+  $("colour-decision").scrollIntoView({ block: "center", behavior: "instant" }); $("use-srgb").focus({ preventScroll: true });
+  message("Choose how to interpret this image before preparation. Nothing has been added as an artwork.", false, { near: $("intake-submit") });
+}
+async function submitPreparedSelection(batch) {
+  if (batch.revision !== selectionRevision) return;
+  colourBatch = null; $("colour-decision").hidden = true; $("colour-apply-batch").checked = false; intakePreparationActive = true;
+  setIntakeSubmitState(batch.settings.purpose === "artwork" ? "Creating draft…" : "Preparing images…");
+  try {
+    for (const [index, item] of batch.items.entries()) {
+      if (batch.revision !== selectionRevision) break;
+      if (item.needsColourDecision && !item.useSrgb) throw new Error("Choose how to interpret this image before preparation");
+      const settings = { ...batch.settings, assumeSrgb: item.useSrgb === true, allowDuplicateSource: item.allowDuplicateSource === true };
+      const result = item.snapshotId ? await api("/api/snapshot/import", { id: item.snapshotId, ...settings }) : await api("/api/intake", { ...settings, name: item.file.name, lastModified: item.file.lastModified, sha256: item.sha256 }, item.bytes);
+      currentJobs.add(result.jobId); incomingJobs.set(result.jobId, { purpose: settings.purpose, primary: settings.purpose === "attach" && batch.primary, revision:batch.revision });
+      if (settings.purpose === "artwork" && index === 0) pendingEditorJob = result.jobId;
+    }
+    await refresh();
+    if (state.jobs.some((job) => currentJobs.has(job.id) && job.status === "running")) message("Preparing image… Your editor will open when the draft is ready.", false, { persistent: true, near: $("intake-submit") });
+    if (![...incomingJobs.values()].some((context) => context.revision === batch.revision)) finishIntakeCycle();
+  } catch (error) { finishIntakeCycle(); throw error; }
+}
+$("use-srgb").addEventListener("click", action(async () => {
+  const batch = colourBatch; if (!batch || batch.revision !== selectionRevision) return;
+  const unanswered = batch.items.filter((item) => item.needsColourDecision && !item.useSrgb);
+  if ($("colour-apply-batch").checked) for (const item of unanswered) item.useSrgb = true;
+  else unanswered[0].useSrgb = true;
+  await showColourQuestion(batch);
+}));
+$("choose-another-image").addEventListener("click", action(() => { resetColourSelection({ clearFiles: true }); $("artwork-form").hidden = true; message("Choose another image. No draft was created.", false, { near: $("intake-submit") }); $("files").focus(); $("files").click(); }));
+$("duplicate-open").addEventListener("click", action(async () => {
+  const current = duplicateBatch; if (!current) return;
+  duplicateBatch = null; $("duplicate-decision").hidden = true; finishIntakeCycle();
+  const artworkId = current.item.existingArtworkIds?.[0], mediaId = current.item.existingMediaIds?.[0];
+  if (artworkId) { $("intake-panel").hidden = true; await openArtwork(artworkId); message("Opened the existing draft for this photo.", false, { near: $("artwork-form").querySelector('button[type="submit"]') }); return; }
+  if (mediaId) { mediaSelection.clear(); mediaSelection.add(mediaId); navigateTab("media"); renderMedia(); message("Showing the existing photo in Photos & references.", false, { near: $("media-add-images") }); }
+}));
+$("duplicate-create-anyway").addEventListener("click", action(async () => {
+  const current = duplicateBatch; if (!current) return;
+  current.item.allowDuplicateSource = true; duplicateBatch = null; $("duplicate-decision").hidden = true;
+  await showDuplicateQuestion(current.batch);
+}));
+$("duplicate-cancel").addEventListener("click", action(() => { duplicateBatch = null; $("duplicate-decision").hidden = true; finishIntakeCycle(); message("No new draft was created.", false, { near: $("intake-submit") }); }));
+$("intake-form").addEventListener("submit", action(async () => {
+  if (editorDirty) throw new Error("Save the artwork you are editing before adding more photos");
+  if (inspecting) { message("This selection is already being checked or prepared.", false, { persistent: true, near: $("intake-submit") }); return; }
+  const batch = { revision: selectionRevision, settings: relationship(), primary: $("intake-role").value === "primary", items: [] };
+  if (batch.settings.purpose === "attach" && batch.primary && $("files").files.length > 1) throw new Error("Choose one primary image at a time");
+  inspecting = true; setIntakeSubmitState("Checking selected images…"); message("Checking selected images…", false, { persistent: true, near: $("intake-submit") });
+  try {
+    for (const file of $("files").files) {
+      const bytes = await file.arrayBuffer(), sha256 = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      const info = await api("/api/intake/inspect", { sha256 }, bytes);
+      if (batch.revision !== selectionRevision) return;
+      batch.items.push({ file, name: file.name, bytes, sha256, needsColourDecision: info.needsColourDecision, useSrgb: false, existingMediaIds: info.existingMediaIds || [], existingArtworkIds: info.existingArtworkIds || [], pendingArtworkJobs: info.pendingArtworkJobs || [], allowDuplicateSource: false });
+    }
+    if (!batch.items.length) throw new Error("Choose an image first");
+    await showDuplicateQuestion(batch);
+  } catch (error) { finishIntakeCycle(); message(`Failed — ${humanReason(error.message)}`, true, { near: $("intake-submit") }); }
+}));
+let snapshotOptions = [];
+$("load-snapshot").addEventListener("click", action(async () => { snapshotOptions = await api("/api/snapshot"); options($("snapshot-id"), snapshotOptions.map((entry) => ({ id: entry.id, title: `${entry.id} · ${entry.orientation} · ${entry.width}×${entry.height}px` })), "Choose a frozen image"); }));
+$("import-snapshot").addEventListener("click", action(async () => {
+  const selected = snapshotOptions.find((entry) => entry.id === $("snapshot-id").value); if (!selected) throw new Error("Choose a frozen image in these technical controls");
+  resetColourSelection();
+  await showColourQuestion({ revision: selectionRevision, settings: relationship(), primary: $("intake-role").value === "primary", items: [{ snapshotId: selected.id, name: `Frozen image ${selected.id}`, needsColourDecision: !selected.hasEmbeddedProfile, useSrgb: false }] });
+}));
+function mediaLinks(media) {
+  const linked = [];
+  for (const work of state.catalogue.artworks) for (const image of work.reproductions) if (image.src === media.reproduction.src) linked.push({ work, image });
+  return linked;
+}
+function attachments(media) { return mediaLinks(media).map(({ work }) => work); }
+function mediaRoleLabel(role) { return roles.find(([value]) => value === role)?.[1] || role || "Artwork image"; }
+function mediaFacts(media, duplicateGroups) {
+  const links = mediaLinks(media), reference = !links.length && media.disposition.includes("reference"), duplicates = duplicateGroups.get(media.sourceSha256) || [];
+  return { media, links, status: links.length ? "used" : reference ? "reference" : "unattached", duplicates };
+}
+function clearMediaRemovalError() {
+  // Attach and remove share a feedback node; unrelated errors must survive.
+  const output = $("media-selection-panel").querySelector('.action-feedback[data-action-target="remove-selected-media"]');
+  if (output?.dataset.tone === "error") writeMessage(output, "", false, false);
+}
+function renderMedia() {
+  const context = JSON.stringify([mediaFilter, [...mediaSelection].sort()]);
+  if (context !== mediaFeedbackContext) clearMediaRemovalError();
+  mediaFeedbackContext = context;
+  const duplicateGroups = new Map();
+  for (const media of state.media) if (media.sourceSha256) {
+    if (!duplicateGroups.has(media.sourceSha256)) duplicateGroups.set(media.sourceSha256, []);
+    duplicateGroups.get(media.sourceSha256).push(media);
+  }
+  const facts = state.media.map((media) => mediaFacts(media, duplicateGroups));
+  const counts = {
+    all: facts.length,
+    used: facts.filter((entry) => entry.status === "used").length,
+    unattached: facts.filter((entry) => entry.status === "unattached").length,
+    reference: facts.filter((entry) => entry.status === "reference").length,
+    duplicates: facts.filter((entry) => entry.duplicates.length > 1).length,
+  };
+  const duplicateSourceGroups = [...duplicateGroups.values()].filter((group) => group.length > 1).length;
+  $("media-summary").textContent = `${counts.all} photo${counts.all === 1 ? "" : "s"} in private Studio · ${counts.used} used by artwork · ${counts.unattached} unattached · ${counts.reference} reference only · ${counts.duplicates} entr${counts.duplicates === 1 ? "y" : "ies"} in ${duplicateSourceGroups} repeated-source group${duplicateSourceGroups === 1 ? "" : "s"}.`;
+  const filterLabels = { all: "All", used: "Used by artwork", unattached: "Unattached", reference: "Reference only", duplicates: "Duplicates" };
+  for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) {
+    const key = control.dataset.mediaFilter; control.textContent = `${filterLabels[key]} (${counts[key]})`; control.setAttribute("aria-pressed", String(mediaFilter === key));
+  }
+  const visible = facts.filter((entry) => mediaFilter === "all" || mediaFilter === "duplicates" ? (mediaFilter === "all" || entry.duplicates.length > 1) : entry.status === mediaFilter);
+  $("media-library").replaceChildren();
+  visible.forEach((entry) => {
+    const { media, links, status, duplicates } = entry, index = state.media.findIndex((candidate) => candidate.id === media.id);
+    const card = button("", () => { mediaSelection.has(media.id) ? mediaSelection.delete(media.id) : mediaSelection.add(media.id); renderMedia(); });
+    card.className = "thumbnail-card media-card"; card.dataset.mediaId = media.id; card.dataset.mediaStatus = status; card.dataset.duplicateSource = String(duplicates.length > 1); card.setAttribute("aria-label", `Select photo ${index + 1}`); card.setAttribute("aria-pressed", String(mediaSelection.has(media.id)));
+    const statusLabel = status === "used" ? "Used by artwork" : status === "reference" ? "Reference only" : "Unattached";
+    card.append(thumb(media, ""), node("strong", statusLabel));
+    if (links.length) for (const { work, image } of links) card.append(node("small", `Used by: ${title(work)} · ${mediaRoleLabel(image.role)}`, "media-usage"));
+    else card.append(node("small", status === "reference" ? "Stored as a reference · not displayed by any artwork" : "Stored in Studio · not used by any artwork", "media-usage"));
+    if (duplicates.length > 1) card.append(node("span", `Same source ×${duplicates.length}`, "media-duplicate-badge"));
+    if (mediaSelection.has(media.id)) card.append(node("span", "Selected", "selection-mark"));
+    $("media-library").append(card);
+  });
+  if (!visible.length) $("media-library").append(node("p", "No photos match this filter.", "hint"));
+  $("media-selection-panel").hidden = !mediaSelection.size; $("media-selection-count").textContent = `${mediaSelection.size} photo${mediaSelection.size === 1 ? "" : "s"} selected`;
+  workPicker($("media-targets"), "Attach to", (id) => { mediaTarget = id; renderMedia(); }, mediaTarget);
+  $("media-target-summary").textContent = mediaTarget ? `Adding to: ${title(state.catalogue.artworks.find((work) => work.id === mediaTarget))}` : "Click the artwork these photos belong to.";
+  $("media-details").replaceChildren(); for (const media of state.media.filter((media) => mediaSelection.has(media.id))) $("media-details").append(node("p", `${media.name} · ${media.id}\nSHA256 ${media.sourceSha256}\n${media.reproduction.width}×${media.reproduction.height}px`, "technical-block"));
+}
+for (const control of $("media-filters").querySelectorAll("[data-media-filter]")) control.addEventListener("click", () => { mediaSelection.clear(); mediaFilter = control.dataset.mediaFilter; renderMedia(); });
+$("clear-media-selection").addEventListener("click", () => { mediaSelection.clear(); renderMedia(); });
+$("remove-selected-media").addEventListener("click", action(async () => {
+  const chosen = state.media.filter((media) => mediaSelection.has(media.id));
+  if (!chosen.length) throw new Error("Choose one or more photos first");
+  for (const media of chosen) {
+    const linked = attachments(media);
+    if (linked.length) throw new Error(`"${media.name}" is attached to ${linked.map((work) => `"${title(work)}"`).join(", ")}. Remove that photo in the artwork editor and save the draft before removing it from Photos & references.`);
+  }
+  if (!confirm(`Remove ${chosen.length} selected photo${chosen.length === 1 ? "" : "s"} from Photos & references?\n\nOriginal selected files and private derivatives are kept. This only removes the active Studio library entries.`)) { message("Photo removal cancelled."); return; }
+  await api("/api/media/delete", { mediaIds: chosen.map((media) => media.id) });
+  clearMediaRemovalError();
+  mediaSelection.clear(); await refresh(); message(`Removed ${chosen.length} private photo${chosen.length === 1 ? "" : "s"} from Studio. Source files were kept.`, false, { near: $("media-add-images") });
+}));
+$("attach-selected-media").addEventListener("click", action(async () => {
+  if (!mediaTarget) throw new Error("Click the target artwork first"); if (editorDirty) throw new Error("Save your artwork changes before attaching photos");
+  const role = $("media-role").value;
+  if (role === "primary" && mediaSelection.size > 1) throw new Error("Choose one primary image at a time");
+  for (const id of mediaSelection) { await api("/api/media/attach", { mediaId: id, artworkId: mediaTarget, role: role === "primary" ? "alternate" : role }); state = await api("/api/state"); if (role === "primary") await makePrimary(mediaTarget, state.media.find((media) => media.id === id).reproduction.src); }
+  mediaSelection.clear(); await refresh(); message("Photos added to the chosen artwork. Nothing is public.", false, { near: $("media-add-images") });
+}));
+function sequence(container, ids, changed) {
+  container.replaceChildren(); ids.forEach((id, index) => { const work = state.catalogue.artworks.find((work) => work.id === id), item = node("li"), content = node("div"); item.dataset.artworkId = id; item.append(thumb(imageFor(work), title(work))); content.append(node("strong", title(work))); if (dateLabel(work)) content.append(node("small", dateLabel(work)));
+    const controls = node("div", undefined, "sequence-controls"); for (const [label, direction] of [["Move earlier", -1], ["Move later", 1]]) { const control = button(label, () => { const other = index + direction; if (other < 0 || other >= ids.length) return; [ids[index], ids[other]] = [ids[other], ids[index]]; changed(); }); control.disabled = index + direction < 0 || index + direction >= ids.length; controls.append(control); }
+    controls.append(button("Remove", () => { ids.splice(index, 1); changed(); })); content.append(controls); item.append(content); container.append(item);
+  });
+}
+function renderProjects() { $("project-list").replaceChildren(); for (const project of state.catalogue.projects) { const item = button("", () => openProject(project.id)); item.className = "thumbnail-card"; item.dataset.projectId = project.id; const first = state.catalogue.artworks.find((work) => work.id === project.memberIds[0]); item.append(thumb(first ? imageFor(first) : null, ""), node("strong", project.title)); $("project-list").append(item); } }
+function openProject(id) {
+  editingProject = id || null; editingProjectVersion = id ? state.projectVersions?.[id] : null; projectMembers = []; const form = $("project-form"); form.hidden = false; form.reset(); $("project-id").textContent = id ? `Neutral identity: ${id}` : "A neutral identity will be assigned when saved";
+  if (id) { const project = state.catalogue.projects.find((entry) => entry.id === id); for (const name of ["title", "slug", "description", "published"]) formSet(form, name, project[name]); formSet(form, "aliases", project.aliases.join("\n")); for (const name of ["certainty", "year", "endYear"]) formSet(form, name, project.date?.[name]); formSet(form, "privateNote", state.notes[id]); projectMembers = [...project.memberIds]; }
+  $("delete-project-panel").hidden = !id || (state.repositoryProjectIds || []).includes(id); renderProjectSequence();
+}
+function renderProjectSequence() {
+  sequence($("project-members"), projectMembers, renderProjectSequence); workPicker($("project-picker"), "Add to project", (id) => { projectMembers.push(id); renderProjectSequence(); }, "", projectMembers);
+  const guidance = $("project-member-guidance"); guidance.hidden = projectMembers.length > 0; guidance.textContent = editingProject ? "A project cannot be saved with no artworks. Add an artwork, or use Delete project draft below if this project should be removed." : "Choose at least one artwork before saving this new project.";
+}
+$("new-project").addEventListener("click", () => openProject());
+async function saveProject() {
+  const form = $("project-form"), old = editingProject ? state.catalogue.projects.find((entry) => entry.id === editingProject) : {};
+  if (!field(form, "title").value.trim()) throw new Error("Give this project a title");
+  if (!projectMembers.length) throw new Error(editingProject ? "This project has no artworks. Add an artwork, or use Delete project draft to remove the project." : "Choose at least one artwork before saving this project.");
+  const project = await api("/api/project/save", { record: { ...old, id: editingProject || undefined, slug: optional(form, "slug"), title: field(form, "title").value.trim(), aliases: lines(field(form, "aliases").value), date: date(form, true), description: optional(form, "description"), memberIds: projectMembers, published: field(form, "published").checked }, note: field(form, "privateNote").value }); await refresh(); openProject(project.id); message("Project saved. Nothing is public."); return project.id;
+}
+async function deleteProjectDraft() {
+  if (!editingProject) return;
+  const project = state.catalogue.projects.find((entry) => entry.id === editingProject); if (!project) throw new Error("This project is no longer available. Refresh Studio.");
+  if ((state.repositoryProjectIds || []).includes(project.id)) throw new Error("This project exists in the repository catalogue and cannot be deleted from private Studio.");
+  if (!confirm(`Delete private project "${project.title}"?\n\nIts ${project.memberIds.length} artwork${project.memberIds.length === 1 ? "" : "s"} and all photos are kept. Only the private project draft is removed.`)) { message("Project deletion cancelled."); return; }
+  await api("/api/project/delete", { id: project.id, expectedVersion: editingProjectVersion });
+  const title = project.title; editingProject = null; editingProjectVersion = null; projectMembers = []; $("project-form").hidden = true;
+  await refresh(); message(`Deleted private project "${title}". Its artworks and photos were kept.`, false, { near: $("new-project") });
+}
+$("project-form").addEventListener("submit", action(saveProject));
+$("delete-project").addEventListener("click", action(deleteProjectDraft));
+function renderSelected() { sequence($("selected-sequence"), selected, () => { selectedDirty = true; renderSelected(); }); workPicker($("selected-picker"), "Add to Selected Work", (id) => { selected.push(id); selectedDirty = true; renderSelected(); }, "", selected); }
+function openCuration() {
+  if (!selectedDirty) selected = state.catalogue.artworks.filter((work) => work.featured).sort((a, b) => (a.selectedOrder ?? 999999) - (b.selectedOrder ?? 999999)).map((work) => work.id);
+  leadId = state.catalogue.artworks.find((work) => work.homepageLead)?.id || ""; renderSelected(); renderHomepage();
+}
+function renderHomepage() {
+  $("current-lead").replaceChildren(); const lead = state.catalogue.artworks.find((work) => work.id === leadId);
+  if (lead) { const card = workCard(lead, "Current homepage image", () => previewPage("home"), true); $("current-lead").append(card); } else $("current-lead").append(node("p", "Choose the image you want on the homepage.", "hint"));
+  workPicker($("homepage-picker"), "Use on homepage", async (id) => { const savedOrder = state.catalogue.artworks.filter((work) => work.featured).sort((a, b) => (a.selectedOrder ?? 999999) - (b.selectedOrder ?? 999999)).map((work) => work.id); await api("/api/curation", { selectedIds: savedOrder, homepageLeadId: id }); await refresh(); leadId = id; renderHomepage(); message("Homepage image saved. Preview it below; nothing is public."); }, leadId);
+}
+async function saveCuration() { await api("/api/curation", { selectedIds: selected, homepageLeadId: leadId }); selectedDirty = false; await refresh(); openCuration(); message("Selected Work saved. Nothing is public."); }
+$("save-curation").addEventListener("click", action(saveCuration));
+async function buildPreview() {
+  if (editingArtwork && !validateEditedArtwork("Preview")) return null;
+  if (editorDirty && !await saveArtwork({actionName:"Preview"})) return null;
+  previewing = true; updateEditorActions();
+  try { message("Preparing your preview…", false, { persistent: true }); currentPreview = await api("/api/preview/build", {returnArtworkId:studioView.artworkId||undefined}); await refresh(); }
+  catch { throw new Error("The preview could not be prepared. Your draft is still private. Check your entries and try again."); }
+  finally { previewing = false; updateEditorActions(); }
+  $("preview-links").replaceChildren(); const record = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0];
+  for (const [label, path] of [["Homepage", "/"], ["Selected Work", "/work/"], ["Archive", "/archive/"], ["Projects", "/projects/"], ["Artwork", `/artwork/${record.slug}/`], ["Medium", `/work/${record.medium}/`], ...state.catalogue.projects.map((project) => [project.title, `/projects/${project.slug}/`])]) { const link = node("a", `Preview ${label}`); link.href = currentPreview.origin + path; link.target = "_blank"; link.rel = "noopener noreferrer"; $("preview-links").append(link); }
+  message("Preview ready. Your work is still private."); return currentPreview;
+}
+async function previewPage(kind) {
+  if(previewPopupBusy)return;
+  if(kind==="artwork"&&!canEditArtwork()){renderCoordination();return;}
+  if (editingArtwork && !validateEditedArtwork("Preview")) return;
+  previewPopupBusy=true;updateEditorActions();
+  const popup = window.open("about:blank", "_blank");
+  if(popup){
+    const nonce=crypto.randomUUID();
+    popup.sessionStorage.setItem("studio-preview-return",nonce);
+    for(const [key,entry]of previewReturns)if(entry.closed)previewReturns.delete(key);
+    previewReturns.set(nonce,popup);
+    renderPreviewStatus(popup,{failed:false,kind});popup.opener=null;
+  }
+  try { if (kind === "project") await saveProject(); if (kind === "selected" && selectedDirty) await saveCuration(); const preview = await buildPreview(); if (!preview) { if(popup)renderPreviewStatus(popup,{failed:true,kind});return; } const work = state.catalogue.artworks.find((work) => work.id === editingArtwork) || state.catalogue.artworks[0], project = state.catalogue.projects.find((entry) => entry.id === editingProject); const path = kind === "project" ? `/projects/${project.slug}/` : kind === "selected" ? "/work/" : kind === "home" ? "/" : `/artwork/${work.slug}/`; if (popup&&!popup.closed) popup.location.href = preview.origin + path; else { showTab("review"); message("Open the preview link below."); } }
+  catch {if(popup&&!popup.closed)renderPreviewStatus(popup,{failed:true,kind});message("The preview could not be prepared. Your draft is still private. Check your entries and try again.",true);}
+  finally{previewPopupBusy=false;updateEditorActions();}
+}
+function renderPreviewStatus(popup,{failed,kind}) {
+  const doc=popup.document;
+  doc.documentElement.lang="en";
+  const css=doc.createElement("link");css.rel="stylesheet";css.href=location.origin+"/studio.css";doc.head.replaceChildren(css);
+  doc.title=failed?"Preview could not be prepared":"Preparing preview — Studio";
+  const viewport=doc.createElement("meta");viewport.name="viewport";viewport.content="width=device-width,initial-scale=1";doc.head.append(viewport);
+  const main=doc.createElement("main"),heading=doc.createElement("h1"),status=doc.createElement("p"),note=doc.createElement("p");
+  heading.textContent=failed?"Preview could not be prepared":`Preparing ${kind==="artwork"?"artwork":kind==="home"?"homepage":kind==="selected"?"Selected Work":"project"} preview…`;
+  status.setAttribute("role",failed?"alert":"status");status.textContent=failed?"Return to Studio, check your entries and try Preview again.":"Please wait. This tab will open your preview when it is ready.";
+  note.textContent="PRIVATE DRAFT — Nothing here is public.";note.className="hint";main.append(heading,status,note);doc.body.replaceChildren(main);
+}
+for (const id of ["preview-artwork", "preview-artwork-bottom"]) $(id).addEventListener("click", action(() => previewPage("artwork")));
+$("preview-project").addEventListener("click", action(() => previewPage("project"))); $("preview-selected").addEventListener("click", action(() => previewPage("selected"))); $("preview-homepage").addEventListener("click", action(() => previewPage("home")));
+$("build-preview").addEventListener("click", action(buildPreview));
+function reviewRecord() { return [...state.catalogue.artworks, ...state.catalogue.projects].find((record) => record.id === $("review-record").value); }
+function showReview() { const record = reviewRecord(); $("review-phase").textContent = record ? state.workflow[record.id]?.approved ? "Public-source approval recorded; writing is still separate." : state.workflow[record.id]?.reviewed ? "Reviewed locally; source approval is still separate." : "Draft — preview and check first." : "Choose an artwork or project"; $("approval-record").textContent = record ? JSON.stringify({ record, derivatives: record.reproductions?.flatMap((image) => [image.src, ...image.variants.map((variant) => variant.src)]) || [], privateNotesAndSourcePathsExcluded: true }, null, 2) : ""; }
+function renderReview() {
+  options($("review-record"), [...state.catalogue.artworks.map((work) => ({ id: work.id, title: title(work) })), ...state.catalogue.projects]); showReview(); $("export-records").replaceChildren();
+  for (const record of [...state.catalogue.artworks, ...state.catalogue.projects]) { const label = node("label", undefined, "check"), input = document.createElement("input"); input.type = "checkbox"; input.value = record.id; input.dataset.kind = "reproductions" in record ? "artwork" : "project"; label.append(input, document.createTextNode(`${"reproductions" in record ? title(record) : record.title} · ${state.workflow[record.id]?.approved ? "Exact public-source approval recorded" : "Approval required"}`)); $("export-records").append(label); }
+}
+$("review-record").addEventListener("change", showReview);
+$("mark-reviewed").addEventListener("click", action(async () => { const record = reviewRecord(); if (!record) throw new Error("Choose an artwork or project"); await api("/api/review", { id: record.id }); await refresh(); $("review-record").value = record.id; showReview(); message("Local review recorded. Public-source approval is still separate."); }));
+$("approve-source").addEventListener("click", action(async () => { const record = reviewRecord(); if (!record) throw new Error("Choose an artwork or project"); await api("/api/approve", { id: record.id, confirmation: $("approval-confirmation").value, rightsConfirmed: $("rights-confirmed").checked }); $("approval-confirmation").value = ""; $("rights-confirmed").checked = false; await refresh(); $("review-record").value = record.id; showReview(); message("Exact public-source approval recorded. No repository files written; prepare a separate dry-run."); }));
+$("prepare-export").addEventListener("click", action(async () => { const checked = [...$("export-records").querySelectorAll("input:checked")]; exportPlan = await api("/api/export/plan", { artworkIds: checked.filter((input) => input.dataset.kind === "artwork").map((input) => input.value), projectIds: checked.filter((input) => input.dataset.kind === "project").map((input) => input.value) }); $("export-plan").textContent = JSON.stringify(exportPlan, null, 2); $("export-details").open = true; $("write-export").disabled = !exportPlan.repositoryWritesEnabled; message("Dry-run prepared. Inspect exact metadata, image hashes and public paths before writing; no public files changed."); }));
+$("write-export").addEventListener("click", action(async () => { if (!exportPlan) throw new Error("Prepare a current dry-run first"); const result = await api("/api/export/write", { token: exportPlan.token, confirmation: $("export-confirmation").value }); $("export-confirmation").value = ""; exportPlan = null; $("export-plan").textContent = JSON.stringify(result, null, 2); await refresh(); message("Approved public-source files written. No commit, deployment or launch-manifest approval performed."); }));
+for (const control of document.querySelectorAll("[data-tab]")) control.addEventListener("click", () => navigateTab(control.dataset.tab));
+$("refresh").addEventListener("click", action(() => refresh())); roleOptions($("intake-role")); roleOptions($("media-role"));
+try {
+  const initialHash=location.hash;
+  history.replaceState({studio:1,tab:"collection",artworkId:null},"",location.pathname+location.search+"#artworks");
+  const returnNonce=sessionStorage.getItem("studio-preview-return"),fromPreview=new URL(location.href).searchParams.get("return")==="preview";sessionStorage.removeItem("studio-preview-return");
+  if(returnNonce)tabs.returnToOwner(returnNonce);
+  const session = await (await fetch("/api/session")).json(); token = session.token; await refresh(); navigationReady=true;await restoreNavigation(viewFromLocation(initialHash));
+  message(returnNonce||fromPreview?"Studio ready here. If the original tab could not be focused or this preview tab could not close, continue here or switch to the original Studio tab.":"Studio ready. Nothing here is public.");
+  setInterval(async () => { if (state.jobs.some((job) => job.status === "running") || incomingJobs.size) { try { await refresh(); } catch (error) { message(error.message, true); } } }, 1000);
+} catch (error) { message(error.message, true); }

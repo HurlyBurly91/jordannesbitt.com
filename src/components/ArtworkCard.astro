@@ -1,0 +1,31 @@
+---
+import type { Artwork } from "@/data/artworks";
+import { dateLabel } from "@/lib/catalogue";
+import CatalogueImage from "./CatalogueImage.astro";
+
+interface Props {
+  artwork: Artwork;
+  mode?: "browse" | "selected" | "project" | "related";
+  scale?: "standard" | "feature" | "companion";
+}
+
+const { artwork, mode = "browse", scale = "standard" } = Astro.props;
+const image = artwork.reproductions.find((image) => image.role === "primary");
+const sizes = mode === "browse" || mode === "related" ? "(min-width: 1100px) 29vw, (min-width: 600px) 43vw, 88vw" : "(min-width: 1100px) 52vw, (min-width: 600px) 45vw, 88vw";
+---
+
+<article class:list={["artwork-card", `card--${mode}`, `card--${scale}`]} data-presentation={mode}>
+  <a href={`/artwork/${artwork.slug}/`}>
+    {image ? (
+      <div class="card-image"><CatalogueImage image={image} sizes={sizes} /></div>
+    ) : (
+      <div class="art-placeholder portrait">
+        <span class="placeholder-label">{artwork.title}</span>
+      </div>
+    )}
+    <div class="artwork-meta">
+      <h2>{artwork.title}</h2>
+      <p>{dateLabel(artwork.date)}</p>
+    </div>
+  </a>
+</article>

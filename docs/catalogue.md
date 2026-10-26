@@ -1,0 +1,81 @@
+# Catalogue and media invariants
+
+## One public catalogue
+
+Use validated structured content, preferably version-compatible Astro content collections. M02 must decide the exact file layout after reading the installed Astro version; do not copy incompatible current examples. Replace the current empty array incrementally, preserving routes and identity.
+
+An artwork has a neutral immutable ID, stable slug/aliases, honest title/date or explicit uncertainty, medium, optional techniques/materials, typed physical dimensions, ordered reproductions with role/alt/pixel dimensions, publication state and editorial flags. Physical image, sheet and framed sizes are distinct. Film and computational records carry the metadata relevant to them rather than invented painting dimensions.
+
+M09-R6 local authoring uses these same canonical schemas. Reproduction roles distinguish primary, alternate, detail, framed, installation, documentation, reverse and process views; private reference-only media need not become a public artwork or attached reproduction. Source identity/relationships are owner decisions, never automatic similarity merges. Private workflow/storage/public-source approval/export invariants are in docs/studio.md; none bypass the public predicate or release gate.
+
+Keep existing medium URLs for drawing, painting, printmaking, photography, aerial and film. Model oil/watercolour/woodcut as useful techniques. Aerial may also become a photography viewpoint facet, but do not break its existing route or duplicate the underlying work. Computational projects are explicit supported records, not a mandate to expose all software repositories.
+
+Series/projects own an ordered list of member IDs; derive reverse relationships rather than manually maintaining conflicting copies. Permit cross-medium membership. Selected Work and Available are views of the same public records. Stable artwork detail URLs remain /artwork/[slug]; project and watch pages must not create conflicting canonicals for one object.
+
+Reject duplicate IDs/slugs, invalid enums, impossible dimensions, broken asset/relationship references and inconsistent edition/offer data. Unknown values are absent or explicit unknown, not zero, guessed dates or invented prose. Do not require an essay to publish a well-documented work.
+
+Different artworks may intentionally share an owner-approved display title,including Untitled. The stable ID/URL remains identity. If published works share a title,the document/social title adds the stable ID to remain unambiguous; the visible artwork heading and stored authored title are not retitled by that technical metadata handling. Proposed neutral titles and image-inspected alt text remain subject to exact owner disclosure approval before public-source export.
+
+## Publication boundary
+
+Centralize the public-content predicate. Apply it to routes, static HTML, embedded JSON, search indexes, related works, counts, feeds, sitemaps, social metadata and structured data. Assets for unapproved records must not be emitted merely because a static directory is copied wholesale. Keep test fixtures outside production content and fail release checks if they leak.
+
+This repository is PUBLIC: an unpublished record in Git is still publicly readable. Confidential intake data, private drafts, releases, masters, collector addresses, orders and credentials must remain outside it. Only commit material explicitly approved for public source access. Robots/noindex are not access controls.
+
+## Ingestion
+
+Accept explicitly selected input paths, never scan the owner's home or reference library. Read masters without modification. Provide dry-run, explicit destination, collision handling, repeatability and manifest/checksum evidence. Reruns must not silently create duplicate works or overwrite reviewed metadata. New records default to unpublished and require review before publication.
+
+Generate restrained, high-quality responsive web derivatives with JPEG fallback and WebP/AVIF where supported. Preserve aspect ratio and orientation; handle colour profiles deliberately and test conversion before assuming colour fidelity. Remove private GPS/device metadata while retaining approved creator/rights metadata. Do not upscale, stylize, retouch, crop away artwork edges or invent details automatically.
+
+Reuse cached derivatives; avoid encoding the full preservation archive on every site build. Keep storage URLs behind a small media abstraction so a later approved object store does not change artwork identity. Image masters and large film originals never enter this repository.
+
+## Minimum review intake
+
+Owner supplies a representative approved pilot, public identity/contact, factual biography/CV, selected titles/dates/medium/dimensions, reproduction rights, intended series/order, availability and any approved prices/edition facts. Film material additionally needs poster, runtime, credits and accessibility assets where applicable. Missing inputs are a precise checklist, not permission to fabricate. See design.md and acquisition.md.
+
+## Selected validated layout (M02)
+
+Astro 5.18.2 collections are defined in `src/content.config.ts`. Approved public-source arrays live in `src/content/artworks.json`, `projects.json` and `professional.json`; all remain empty until real owner-approved input. `src/lib/catalogue.ts` supplies strict version-compatible Zod schemas and snapshot validation. Custom collection loaders validate the entire snapshot before storing any entries, rather than allowing the built-in file loader to overwrite duplicate IDs or only log invalid input. Invalid/missing JSON, metadata, relationships or assets fail the build.
+
+Artwork IDs are explicit neutral keys, never derived from titles, identity or series. Slugs and aliases must be unique within their route family; projects own an ordered member-ID list, with reverse relationships derived. Dates record exact/circa/unknown rather than a guessed zero. Dimensions distinguish image/sheet/framed/object, using positive typed measurements. Original prints/reproductions can carry edition facts; no remaining-stock field exists. Availability other than unknown and all prices require explicit reviewed state, and priced offers need positive minor currency units plus an ISO-style currency code. Film and computational fields are validated as their own object kinds. Professional biography/CV/contact is optional, public-source and subject to the same publication boundary.
+
+The marked **public catalogue projection** in `src/lib/catalogue.ts` is the sole publication predicate: published true and fixture false. It removes unpublished/fixture records, prunes project memberships to visible work IDs and omits empty public groups. `src/data/catalogue.ts` exposes only that projection to pages; `src/data/artworks.ts` is a compatibility export, not a second catalogue. Counts, related work, later search and metadata must consume this projected data.
+
+Derivative URLs are local `/media/...` references. Only already-approved-for-public-source derivatives belong in `src/media/`, outside Astro's wholesale `public/` copy root; even unpublished files there are visible in public Git. Masters/confidential intake never belong there. Missing, escaping or symlinked derivative sources are rejected. `public/media` is forbidden. The marked **publication-gated derivative emission** in `src/lib/catalogue-source.ts` copies only assets referenced by the public projection after a static build. Unpublished/orphan sources cannot be copied merely because they exist. Keep this mapping behind the media abstraction if an approved storage adapter is added later.
+
+Synthetic fixtures live only under `tests/fixtures/` and temporary `/tmp/opencode/jordannesbitt-fixture-*` test projects. Production input paths have no fixture environment switch. Production validation rejects fixture flags and TEST FIXTURE markers, including unpublished fixture inputs. Tests can explicitly validate fixtures for schema cases, but the public predicate still excludes them. Full-build boundary tests run in separate temporary roots; their output never substitutes for repository `dist/`.
+
+## Current approved public-source subset — M09-R23-H02
+
+The exact owner-authorized canonical Studio export places five approved artwork records and63existing web derivatives in the public checkout,in saved Selected Work order with the explicit w-0184 lead. The 2026-10-26 M09-R25 release grant adds the prepared verbatim approved About/public contact and exact checksum-bound launch manifest. Projects remain empty. Private masters/notes/registry,other Studio works and source paths are not exported. Earlier empty-catalogue/preauthorization evidence is historical,not a current-state claim. Actual release/deployment evidence is recorded separately;manifest approval alone is not successful deployment or a full-accessibility claim.
+
+## Explicit intake conventions (M03)
+
+`npm run ingest --` requires one selected `--input` file, an explicit `--output` outside this public checkout, and caller-supplied `--id`, `--title`, `--medium` and `--alt`. Only single JPEG/PNG/TIFF/WebP/AVIF exports are accepted; no scans, animation, master-library discovery or automatic curation. `--dry-run` reads/validates that file and reports the plan without creating output. A missing ICC profile requires an explicit reviewed `--assume-srgb` decision; no colour fidelity is inferred from a filename or successful encode.
+
+The marked **non-destructive explicit-path intake** in `scripts/lib/ingestion.mjs` hashes source bytes, validates a default-unpublished/unknown-date draft, auto-orients without cropping, converts deliberately to tagged sRGB, generates width-capped JPEG (4:4:4, quality 92), WebP (90) and AVIF (65) where supported, and never upscales. It uses pinned direct sharp 0.35.5, not Astro's older optional decoder. Private source EXIF/GPS/device metadata is discarded; optional `--creator`/`--rights` write only explicitly supplied rights fields. No artist identity or rights claim is inserted automatically.
+
+Output is `<output>/<id>/`: web derivatives, `record.json`, and a checksum/settings/format/dimension `manifest.json` with no absolute source path. A same-source/settings rerun verifies derivative checksums and reuses the cache while retaining the entire reviewed record. Source/ID/settings conflicts, corrupt caches and unknown existing destinations stop instead of silently overwriting. New work output is built in a pending sibling directory and renamed only after complete encoding/schema validation and a second unchanged-source checksum; processing errors remove the pending output. Source files are never rewritten. Interrupted process kills can leave a `.pending-...` directory; it is not a published work, is never reused as valid cache, and requires explicit local cleanup after confirming no active process. Exception/encoder failures clean their own pending output automatically.
+
+Neither intake nor local preview writes production arrays/media or changes publication. At M09, after source/privacy, colour, metadata and publication review, the owner can explicitly copy approved derivatives into the media root and add the reviewed record to the public-source catalogue. Human fidelity and actual intake permission are separate gates.
+
+Local review command: `node scripts/preview-intake.mjs --directory <output>/<id>`. This loopback-only, ephemeral-port preview serves only the record's derivative allowlist and clearly labels fixture records as synthetic, unrelated to Jordan's actual artwork. It sets noindex as a courtesy, not confidentiality. It is a review utility, not site deployment or a substitute for the M04/M09 artwork presentation review.
+
+## Moving-image adapters (M06)
+
+An artwork's stable `/artwork/<slug>/` is also its watch page when it has playable film data; no duplicate competing object canonical. A public Film index/menu exists only for public film records with supplied local poster and local MP4/WebM source or approved provider embed. Poster dimensions/alt and video upload datetime are optional explicit fields, never derived from artwork creation date or build time. MIME/extension and provider-ID consistency are validated. Runtime/credits/transcript are shown only when supplied; VideoObject uses visible supported data and omits unknown fields, with no rich-result/indexing guarantee.
+
+Local playback uses native controls, `preload=none`, user-operated Play/pause, keyboard Space, visible errors and source/transcript fallback. External YouTube/Vimeo adapters are inert until the visitor deliberately requests the player; the provider connection is described and a static external source link remains. Computational content has static context/stills/video/tools and an optional external demo link requiring explicit launch, never automatic repository/demo access. Ordinary tests generate a two-second synthetic VP9 clip locally and intercept provider requests; no original film/upload or real third-party test.
+
+Actual captions/transcripts, source rights, poster fidelity, runtime/date/credits and provider consent are required M09 intake/review items where applicable. `not-supplied` and genuinely `not-applicable` accessibility states remain distinct. Technical playback with synthetic assets does not approve those real facts or establish accessible real-film content.
+
+## Bounded local real-image pilot (M09-R1)
+
+The explicit owner request authorizes read-only images from `/home/jordan/Desktop/myinsta` for local testing/classification only, not public-source/published/manifest/rights/final-selection approval. Images, registry, snapshots, numeric filenames/source-linked dates/classifications and screenshots stay outside public Git under the persistent default `~/.local/share/jordannesbitt-art/m09` (M09-R4/R5); earlier `/tmp/opencode/jordannesbitt-m09` paths are historical evidence. Real review build staging/content/media/cache also lives inside the persistent snapshot's `builds/`; synthetic tests/npm/Playwright scratch may use /tmp. Only generic code/documentation checkpoints are authorized. Ignore all non-image contents, especially the gallery-dl SQLite file; do not follow symlinks or scan outside the selected root.
+
+The marked **frozen local-only image pilot snapshot** in `scripts/lib/pilot-snapshot.mjs` freezes the supported regular-image listing before copying, checks size/mtime stability, records exact source byte SHA256/mtime/timezone and copies immutable run inputs without changing source files. Later exports or changed/invalid inputs do not silently enter a previous run. Supported single-image JPEG/PNG/WebP/AVIF/TIFF input is explicit; corrupt/animated/changing/unsafe files receive local exclusion evidence. A local registry assigns neutral w-0001-style IDs once, preserves original numeric Instagram filename separately, never recycles IDs and records source revisions. Missing registry with old snapshots is an error, not silent reassignment; preserve/back up this local registry before clearing temporary outputs. Apparent duplicate works need owner identity decisions, not automatic merges.
+
+For this request only, source filesystem modification calendar date is the owner-instructed **provisional artwork creation date**, with UTC mtime/nanoseconds, system IANA timezone and request provenance retained for revision. It is not an Instagram-ID/EXIF inference or permanent date approval. Physical dimensions remain absent, not a pilot blocker. Titles, ownership/rights, prices, availability, edition and named projects remain unsupplied; local neutral UI review labels and explicitly provisional visual grouping/classification cannot become approved metadata through rendering.
+
+Unknown medium/object kind can be represented explicitly as `unclassified`, labelled Classification unconfirmed rather than mislabelled Computational or Original. This is an honest unknown value, not authorization to publish incomplete or private data. Existing medium URLs/predicate remain unchanged. The selected-image intake also supports single WebP/AVIF exports through the inspected direct sharp decoder; colour assumptions for untagged web exports are explicit local test conditions, not fidelity approval or silent white-balance/crop/retouch.

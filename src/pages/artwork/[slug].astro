@@ -1,0 +1,32 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ArtworkView from "@/components/ArtworkView.astro";
+import { catalogue, artworks, projectsForArtwork, professional } from "@/data/catalogue";
+import ArtworkOffer from "@/components/ArtworkOffer.astro";
+import { dateLabel } from "@/lib/catalogue";
+import { relatedWorks } from "@/lib/presentation";
+import { identity } from "@/config/identity";
+import { videoMetadata } from "@/lib/moving-image";
+
+export function getStaticPaths() {
+  return artworks.flatMap((artwork) => [artwork.slug, ...artwork.aliases].map((slug) => ({
+    params: { slug }, props: { artwork, alias: slug !== artwork.slug },
+  })));
+}
+const { artwork, alias } = Astro.props;
+// Different works may intentionally share a title; only document metadata needs
+// disambiguation. Keep the authored display title and canonical URL untouched.
+const documentTitle = artworks.some((work) => work.id !== artwork.id && work.title === artwork.title) ? `${artwork.title} — ${artwork.id}` : artwork.title;
+const path = `/artwork/${artwork.slug}/`;
+const primary = artwork.reproductions.find((image) => image.role === "primary");
+const schema = {
+  "@context": "https://schema.org", "@type": "VisualArtwork", name: artwork.title,
+  url: new URL(path, identity.siteUrl).href, creator: { "@type": "Person", name: identity.name },
+  ...(artwork.materials ? { material: artwork.materials } : {}),
+  ...(primary ? { image: { "@type": "ImageObject", contentUrl: new URL(primary.src, identity.siteUrl).href, caption: primary.alt, width: primary.width, height: primary.height } } : {}),
+};
+const video = videoMetadata(artwork, identity.siteUrl);
+---
+<BaseLayout title={documentTitle} description={`${artwork.title}, ${dateLabel(artwork.date)}, by ${identity.name}.`} canonicalPath={path} alias={alias} image={primary} pageType={video ? "video.other" : "article"} breadcrumbs={[{ name: "Home", path: "/" }, { name: "Archive", path: "/archive/" }, { name: artwork.title, path }]} schema={[schema, ...(video ? [video] : [])]}>
+  <ArtworkView artwork={artwork} projects={projectsForArtwork(artwork.id)} related={relatedWorks(catalogue, artwork.id)}><ArtworkOffer artwork={artwork} recipient={professional?.contact} /></ArtworkView>
+</BaseLayout>
