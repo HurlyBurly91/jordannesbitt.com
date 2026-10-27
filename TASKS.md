@@ -924,7 +924,7 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
 
 Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 portfolio cleanup; preserve project code, accepted five-work release and unresolved owner gates. User performed the updater locally; this GitHub checkpoint mirrors only verified updater-owned source payload and modifies project-owned policy/tests selections on `redesign/astro-foundation`, never master/live publication.
 
-- [~] M09-R26-01 Install and pin the exact unchanged 1.2.5/schema-2 upstream managed framework payload and manifest.
+- [x] M09-R26-01 Install and pin the exact unchanged 1.2.5/schema-2 upstream managed framework payload and manifest.
   Source: USER
   Verified-By:
     - M09-R26-V01
@@ -932,14 +932,14 @@ Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 port
   Source: USER
   Verified-By:
     - M09-R26-V02
-- [~] M09-R26-P01 Preserve all non-framework implementation/content, existing active tests and negative oracles, historical PASS/FAIL, exact approved release identity, previous human decisions, inherited gates, deployment and protected branches.
+- [x] M09-R26-P01 Preserve all non-framework implementation/content, existing active tests and negative oracles, historical PASS/FAIL, exact approved release identity, previous human decisions, inherited gates, deployment and protected branches.
   Source: USER
   Verified-By:
     - M09-R26-V01
 - [x] M09-R26-D01 Inspect framework release, 11 registered Node test files and current release evidence; review affected test contracts and cost/oracle overlap without deleting or demoting uncertain coverage.
   Source: DERIVED
   Result: Source-only portfolio review completed. Existing 11 registered modules retained ACTIVE. No previous 1.2.4 portfolio found. Current measured tier runtimes unknown. Reviewed Cloudflare no-JS contact escape and preserved eight inconclusive contrast observations. See docs/verification-portfolio.md and records/M09-R26-dsm-1.2.5-verification-portfolio.md.
-- [~] M09-R26-V01 Verify framework source blob and manifest payload identity; review exact branch tree diff for zero application/content/deploy/legacy-evidence modifications and preserved release/human gates.
+- [x] M09-R26-V01 Verify framework source blob and manifest payload identity; review exact branch tree diff for zero application/content/deploy/legacy-evidence modifications and preserved release/human gates.
   Source: DERIVED
   Covers:
     - M09-R26-01
@@ -948,7 +948,9 @@ Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 port
   Command: GitHub Git blob SHA comparison to upstream commit 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8; framework SHA-256 payload derivation; GitHub compare base development commit to new development checkpoint and inspect protected ref.
   Oracle: independently checked upstream Git object identity, deterministic manifest payload digest and per-path branch diff.
   Expected: All 11 managed framework blobs match exact upstream source; manifest 1.2.5/schema2/source/hash consistent; no changed source assets, public content, existing tests, master, deployed site or historical evidence.
-  Progress: Source Git blobs mirrored and SHA-matched. Final committed-tree/diff check pending publication of this maintenance checkpoint.
+  Result: PASS (source/preservation identity only). Published development commit 89acfbcb7fa6d2045fcc51782d79f11d1413c822 has the framework subtree Git-tree SHA ee266245988648420bf0155f20c9f3115dc09b15, exactly equal to authoritative upstream 1.2.5 at 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8. All 11 upstream Git blob SHAs match; manifest payload SHA-256 3e868e2f8b0d8d6a8df2af26b94d3d8ed37de83cfcf4346da4a72112085a78dd calculated from original source file hashes. GitHub compare: one fast-forward commit, 20 allowed policy/framework/docs/state paths, zero source/content/tests/workflow changes. Master remained 282234ca5e66cd98e6d6319a181defd404b8bf82. This proves Git object integrity and path scope, not that executable tests ran.
+  Repository-State: HEAD=89acfbcb7fa6d2045fcc51782d79f11d1413c822; WORKTREE=CLEAN
+  Limitations: GitHub's immutable remote commit tree was inspected; the owner's local checkout (which contains the updater's uncommitted change) was NOT inspected. V02 pending; no new site build, Playwright, hosted CI or human gate executed.
 - [?] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
   Source: DERIVED
   Covers:
