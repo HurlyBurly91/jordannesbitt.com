@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: AUTOMATED_VERIFICATION
-Active-Request: M09-R26
+Phase: FOLLOW_UP
+Active-Request: M09-R25
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -929,7 +929,7 @@ Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 port
   Source: USER
   Verified-By:
     - M09-R26-V01
-- [~] M09-R26-02 Reconcile root resume/quality/verification policy, audit the accumulated test portfolio without automatic demotion, define affected Tier 1/2 and named contract-complete public/private Tier 3 qualification, and verify the new executable selections.
+- [x] M09-R26-02 Reconcile root resume/quality/verification policy, audit the accumulated test portfolio without automatic demotion, define affected Tier 1/2 and named contract-complete public/private Tier 3 qualification, and verify the new executable selections.
   Source: USER
   Verified-By:
     - M09-R26-V02
@@ -953,15 +953,22 @@ Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 port
   Result: PASS (source/preservation identity only). Published development commit 89acfbcb7fa6d2045fcc51782d79f11d1413c822 has the framework subtree Git-tree SHA ee266245988648420bf0155f20c9f3115dc09b15, exactly equal to authoritative upstream 1.2.5 at 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8. All 11 upstream Git blob SHAs match; manifest payload SHA-256 3e868e2f8b0d8d6a8df2af26b94d3d8ed37de83cfcf4346da4a72112085a78dd calculated from original source file hashes. GitHub compare: one fast-forward commit, 20 allowed policy/framework/docs/state paths, zero source/content/tests/workflow changes. Master remained 282234ca5e66cd98e6d6319a181defd404b8bf82. This proves Git object integrity and path scope, not that executable tests ran.
   Repository-State: HEAD=89acfbcb7fa6d2045fcc51782d79f11d1413c822; WORKTREE=CLEAN
   Limitations: GitHub's immutable remote commit tree was inspected; the owner's local checkout (which contains the updater's uncommitted change) was NOT inspected. V02 pending; no new site build, Playwright, hosted CI or human gate executed.
-- [~] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
+- [x] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
   Source: DERIVED
   Covers:
     - M09-R26-02
   Gate: INTEGRATION
-  Command: npm run state:check; npm run build; npm run test:tier1; npm run test:tier2:public; npm run test:tier2:studio; npm run qualify:published-site; npm run qualify:private-studio (qualified candidates only; avoid redundant broad reruns).
+  Planned-Command: npm run state:check; npm run build; npm run test:tier1; npm run test:tier2:public; npm run test:tier2:studio; npm run qualify:published-site; npm run qualify:private-studio (qualified candidates only; avoid redundant broad reruns).
+  Command: python3 .durable-state/framework/validator.py --strict .; npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache ASTRO_TELEMETRY_DISABLED=1 npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call 'node --version && npm --version && npm ci && npm run browser:install && npm run qualify:published-site && npm run qualify:private-studio'.
   Oracle: integration-or-end-to-end
   Oracle-Details: Strict schema/project checker, Astro source compiler and renderer, actual built output and integration assertions, browser workflows and negative-case oracles remain individually required by the named qualification contracts.
   Expected: Strict state VALID with no warnings, Astro build PASS, affected test selections and named public/private qualifications run successfully with exact counts, candidate commit, elapsed time and limitations.
   Attempt-1: 2026-10-27 user synchronized the development branch to 8f1b816 and attempted public/private qualification, but both stopped in strict DSM preflight with E084 invalid Oracle on V01/V02, E057 blocked task lacking Blocked-By, and W082 on an already-completed R25-V03 external Suspension-Checkpoint. System Node18.19.1 / npm9.2.0 is below project requirements; npm ci completed with engine warnings. No build, release gate, Playwright test or qualification executed. Errors are recorded as FAIL/PRECHECK, not PASS.
   Progress: Fix project-owned schema field values and represent finished external verification as historical completed metadata without altering old run IDs, original PASS/FAIL, or framework code. The user can execute Node22 qualifications in the local checkout; this task remains IN_PROGRESS until an actual result is recorded.
   Resume: After pulling the repair checkpoint, run npm run state:check and the named public/private qualification under a Node22.23.3/npm10.9.9 runtime (see docs/operations.md). Record actual candidate commit, commands, timings, outcomes and limitations. Never infer PASS, trigger deployment, rewrite the 2026-10-26 public release evidence or close inherited human gates.
+
+  Result: PASS. Owner-supplied 2026-10-27 wilco3 terminal receipt for clean development candidate aa54d9f27473f506751bbfa3ff5afb3f4c5fe3ca. Explicit preflight: python3 validator.py --strict . returned VALID 0 errors/0 warnings. Node22.23.3/npm10.9.9 npm ci and Playwright Chromium153/Firefox155 installation succeeded; both named Tier3 qualification commands completed sequentially with shell exit code 0. Each tier ran strict state VALID0/0, project durable checker PASS, Astro check 87 files 0 diagnostics and static build 18 pages. Published-site content gate PASS with publicationAuthorized=false; its 9-module public runner passed 71/71, 0 fail/skip/cancel. Private-Studio 3-module ingestion/pilot/studio runner passed 40/40, 0 fail/skip/cancel; extra production-isolation/quality runner passed 13/13, 0 fail/skip/cancel. Total 124 test executions, not 124 distinct tests because the two named qualifications overlap on publication and quality. All 11 registered test files were exercised at least once. No live website, master, data, hosting or external provider check was modified or run.
+  Measured-Test-Runner-Time: Public 35098.970005 ms for 71 executions; private ingestion/pilot/studio 80383.593751 ms for 40; additional publication/quality 31917.798777 ms for 13. Full qualification wall time was not separately measured; the installed-browser download and npm ci are excluded from test-runner times.
+  Evidence-Source: Owner-provided terminal transcript on 2026-10-27; local noncommitted stdout log /tmp/jordannesbitt-dsm125/qualification.log. User's final git status --short emitted no changes. Historical first attempt failed strict DSM preflight before any build or tests and remains recorded above.
+  Repository-State: HEAD=aa54d9f27473f506751bbfa3ff5afb3f4c5fe3ca; WORKTREE=CLEAN
+  Limitations: No hosted CI, new live-edge/no-JavaScript email test, real email delivery, actual owner visual/rights acceptance, field performance or assistive-technology proof. Previously eight opened mobile contrast observations remain INCONCLUSIVE. npm ci reported 10 dependency advisories (1 low/2 moderate/6 high/1 critical); dependency audit/remediation is separate and was not authorized or performed. This recorded PASS covers the exact local candidate, not a later policy-only closeout commit or permission to deploy.
