@@ -26,6 +26,14 @@ M01 establishes existing build evidence; later milestones add tests as they add 
 
 Store concise evidence with task IDs and closeout records; large browser reports belong in appropriate artifacts, without private content. Never report a tool not run as passing. Production smoke checks, real enquiry receipt, human visual acceptance and search observations have distinct evidence.
 
+## Current DSM 1.2.5 verification selection (2026-10-27)
+
+The preceding M08 and M09 sections are historical technical contracts/evidence, not permission to rewrite past results. At the 2026-10-26 first release, `npm run verify` meant strict durable-state checking, Astro build and the **unfiltered** `npm test` suite; its recorded 106/106 PASS and actual published-site results remain tied to their original candidate. After this policy reconciliation, `npm run verify` selects the **current published-site Tier 3 qualification**. `npm run verify:all` retains the former broad command explicitly for diagnostics or an authorized full-suite recheck. Do not treat the renamed selection as identical historical evidence.
+
+Use `docs/verification-portfolio.md` for exact test-file membership, current FAST/INTEGRATION/LONG/GUI classifications, ACTIVE lifecycle status, negative-case oracles, overlap, unknown measured runtimes, and portfolio-review triggers. Tier 1 uses affected deterministic invariants; Tier 2 checks affected public/media or private Studio integration; Tier 3 is the relevant named qualification for a stabilized public or private-Studio candidate. Required tests remain ACTIVE; no tests have been retired on filename, unknown cost, or absence of failure alone. A public qualification must build actual output, run the independent release gate and cover public/privacy/media integration. Private-Studio qualification requires local private-state, browser/security/export and publication-isolation checks; it cannot authorize a public release.
+
+The 2026-10-26 Cloudflare no-JS contact issue is a recorded escape across the hosting boundary; local output and stubbed browser oracles cannot establish live edge correctness. Preserve an explicit real no-JS contact check and inspect edge transformations at a separately authorized release gate. The eight opened mobile-contrast observations recorded INCONCLUSIVE are **not** silently promoted to PASS. No hosted CI, deployment, external enquiry, or human gate is implied by this verification policy.
+
 ## Post-release learning
 
 With separate owner authorization, measure useful paths from work/project views to enquiries and completed purchases, not vanity traffic alone. Exclude personal message content from analytics. Record baseline, period, sample size and changes; do not infer causation from tiny samples or promise a sales outcome. Genuine studio updates and earned exhibition/publication links are preferable to automated SEO filler.

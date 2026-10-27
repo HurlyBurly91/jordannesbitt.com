@@ -125,13 +125,19 @@ Resume autonomous development from durable repository state.
     commit; otherwise HEAD plus a material dirty-worktree identity from
     `durable-state fingerprint`. Commit/push does not implicitly dispatch CI.
 
-27. Run focused local checks during implementation, relevant local integration
-    checks at milestone completion, and hosted cross-platform/full-suite CI at
-    a separately authorized integration/MVP/release boundary. Earlier external
-    checks need a concrete active acceptance contract or user instruction; do
-    not infer them from commits, pushes, or historical CI requirements.
-    Record actual commands, results, limitations, repository state, gate,
-    oracle class, and covered requirement IDs when material.
+27. Read `.durable-state/framework/VERIFICATION_POLICY.md` and select
+    the lowest tier consistent with change risk and the active contract:
+    Tier 1 for implementation iterations, Tier 2 for a stabilized feature,
+    Tier 3 at an explicitly required stabilized qualification boundary.
+    Include affected invariants, negative cases, and independent oracles.
+    Do not run broad local or hosted suites after every patch by default.
+    Record actual commands, results, limitations, cost and exact candidate
+    identity when material. Tier 3 uses the declared current qualification
+    set, not the unfiltered historical suite. Read
+    `.durable-state/framework/TEST_PORTFOLIO.md` for review triggers and
+    evidence-based consolidation, supersession, and retirement. Preserve
+    current contract coverage, not permanent execution of every old test.
+    Hosted CI remains separately authorized, never implicit on commit/push.
 
 27a. When required verification executes in an external system that continues
      without this process, keep `ACTIVE / AUTOMATED_VERIFICATION` and represent
@@ -193,13 +199,15 @@ Resume autonomous development from durable repository state.
 34. Retain experience only after a materially informative evaluated outcome and
     bind code-dependent experience to current repository state.
 
-35. Read historical records selectively. Historical evidence is not
-    automatically current. A Requires/Blocked-By dependency on an old requirement
-    does not import every earlier Vxx PASS into the active freshness gate.
-    Explicit reuse of an old Vxx requires current applicability review or new
-    verification. Do not rewrite historical repository-state fingerprints.
-    Next-Gate contributes direct evidence references to freshness checks only
-    during HUMAN_VERIFICATION.
+35. Read historical records selectively. Completed Vxx tasks are execution
+    history, including within the active request; their former PASS is
+    not an automatic current-candidate claim or demand to rerun. Old
+    requirements' historical Verified-By chains are not imported. Explicit
+    evidence dependencies of unfinished work and the selected human gate,
+    including Requires/Blocked-By chains through completed checkpoints,
+    require current applicability. The sole inferred human gate is checked
+    identically to an explicit Next-Gate during HUMAN_VERIFICATION only.
+    Never rewrite historical repository-state fingerprints.
 
 36. Before closeout, verify required IDs and acceptance criteria, complete
     required external and human gates, reconcile accepted docs, validate

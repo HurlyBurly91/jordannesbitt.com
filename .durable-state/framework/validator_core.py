@@ -744,6 +744,30 @@ class Validator:
                 self.error(code, ledger.path, item.line, f"{task.task_id} has unresolved {name}")
         return values
 
+    @staticmethod
+    def _human_gate_candidate(
+        status: dict[str, FieldValue],
+        ledger: ParsedLedger,
+        task_by_id: dict[str, Task],
+    ) -> Task | None:
+        """Resolve the same pending gate for readiness and freshness checks.
+
+        Readiness reports invalid or ambiguous selection separately. This
+        helper only resolves a valid explicit selection or the sole pending
+        human gate; it never silently substitutes for an invalid Next-Gate.
+        """
+        next_gate = status.get("Next-Gate")
+        if next_gate is None:
+            pending = [
+                task for task in ledger.tasks
+                if task.kind == "H" and task.marker == "H"
+            ]
+            return pending[0] if len(pending) == 1 else None
+        candidate = task_by_id.get(next_gate.value)
+        if candidate is not None and candidate.kind == "H" and candidate.marker == "H":
+            return candidate
+        return None
+
     def _current_evidence_ids(
         self,
         ledger: ParsedLedger,
@@ -752,13 +776,17 @@ class Validator:
     ) -> set[str]:
         """Select evidence whose present-day applicability is explicitly claimed.
 
-        Check V tasks in the active request and V IDs directly referenced by
-        its non-human tasks. Pending human gates are not implicitly selected. A dependency on an older requirement is *not* an implicit
-        request to revalidate every test that originally established it:
+        Check V evidence explicitly referenced by unfinished non-human work,
+        rather than every completed V task in the active request. Completed
+        tasks are historical execution records, not continuously asserted
+        current-candidate claims. Pending human gates are not implicitly
+        selected. Dependencies on older requirements are *not* implicit
+        requests to revalidate every test that established them:
         Requires/Blocked-By represent task ordering, not evidence reuse.
-        A selected human gate contributes its direct evidence references only
-        during HUMAN_VERIFICATION. Inconsistent active-request metadata is
-        checked conservatively against all recorded evidence.
+        A selected human gate (explicit or sole pending) contributes evidence
+        only during HUMAN_VERIFICATION. Follow explicit Requires/Blocked-By
+        dependencies, but never import an old requirement's Verified-By chain.
+        Inconsistent active-request metadata retains conservative checking.
         """
         all_evidence = {task.task_id for task in ledger.tasks if task.kind == "V"}
         active = ledger.header.get("Active-Request")
@@ -779,18 +807,21 @@ class Validator:
         if not request_tasks:
             return all_evidence
 
-        # Pending or completed human gates must not import stale evidence
-        # merely by belonging to the active request. A request containing
-        # only H tasks is still present and must not trigger global fallback.
-        current_tasks = [task for task in request_tasks if task.kind != "H"]
+        # Completed work, including V records in this request, is historical
+        # until unfinished work explicitly cites it as currently applicable.
+        # A request containing only human tasks must not trigger the
+        # missing-request conservative fallback.
+        current_tasks = [
+            task for task in request_tasks
+            if task.kind != "H" and task.marker not in {"x", "-"}
+        ]
 
         phase = status_header.get("Phase")
-        next_gate = status_header.get("Next-Gate")
-        if phase is not None and phase.value == "HUMAN_VERIFICATION" and next_gate is not None:
-            selected = task_by_id.get(next_gate.value)
-            if selected is not None and selected.kind == "H":
-                if selected not in current_tasks:
-                    current_tasks.append(selected)
+        selected = None
+        if phase is not None and phase.value == "HUMAN_VERIFICATION":
+            selected = self._human_gate_candidate(status_header, ledger, task_by_id)
+            if selected is not None:
+                current_tasks.append(selected)
 
         current_evidence = {task.task_id for task in current_tasks if task.kind == "V"}
         for task in current_tasks:
@@ -800,6 +831,25 @@ class Validator:
                 for referenced_id, _ in self._refs(task.values(field_name)):
                     if referenced_id in all_evidence:
                         current_evidence.add(referenced_id)
+
+        # A fresh summary/checkpoint must not hide a stale explicit
+        # prerequisite. Traverse dependency edges, not historical coverage
+        # (Verified-By/Covers), and stop at unselected human boundaries.
+        pending = [*current_tasks, *(task_by_id[ref] for ref in current_evidence)]
+        visited: set[str] = set()
+        while pending:
+            task = pending.pop()
+            if task.task_id in visited or task.marker == "-":
+                continue
+            visited.add(task.task_id)
+            if task.kind == "H" and task is not selected:
+                continue
+            if task.kind == "V":
+                current_evidence.add(task.task_id)
+            for ref, _ in self._refs([*task.values("Requires"), *task.values("Blocked-By")]):
+                dependency = task_by_id.get(ref)
+                if dependency is not None:
+                    pending.append(dependency)
 
         return current_evidence
 

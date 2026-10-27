@@ -6,6 +6,7 @@ Load these documents selectively; this index is not a second execution ledger.
 - `design.md`: artwork-led presentation, curation and content intake.
 - `acquisition.md`: availability, enquiries, editions, truthful offers and later checkout.
 - `quality.md`: discovery, accessibility, performance and verification evidence.
+- `verification-portfolio.md`: DSM 1.2.5 Tier 1/2 selectors, named Tier 3 qualifications, test lifecycle, oracle independence and cost review.
 - `operations.md`: inspected baseline, local setup, agent runtime, permissions and release.
 - `research.md`: dated evidence, earlier-brief reconstruction and derived design decisions.
 - `studio.md`: private local authoring, preview, concurrency and export preparation behavior.

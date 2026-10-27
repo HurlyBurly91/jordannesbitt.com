@@ -13,7 +13,9 @@ Project-specific resume additions:
 5. Read only project docs needed by the active work. The index is `docs/README.md`; local Studio rules are in `docs/studio.md`.
 6. Public Git is not private storage. M09 private authoring/review state belongs under `~/.local/share/jordannesbitt-art/m09`; disposable caches may use `/tmp/opencode`.
 7. Do not infer real artwork facts, rights, prices, availability, curation, source approval, launch-manifest approval or human acceptance.
-8. `npm run release:check` must remain an independent gate; BLOCKED_CONTENT is expected until explicit M09 content approval.
-9. M10 publication/deployment and M11 commerce require separate explicit authority. Never modify master/backup, deploy, change DNS/hosting, send real messages, purchase services or activate payments without the applicable grant.
+8. `npm run release:check` remains an independent actual-content gate. The 2026-10-26 exact five-work approved launch has already passed it; unapproved later content or changed launch-manifest bytes require fresh approval. Earlier BLOCKED_CONTENT was historical, not the default current result.
+9. The 2026-10-26 bounded first-release grant was exercised; new M10 publication/deployment and M11 commerce require separate explicit authority. Never modify master/backup, deploy, change DNS/hosting, send real messages, purchase services or activate payments without the applicable grant.
 10. Default model effort is GPT-6.1 Sol LOW and the exact HIGH/LOW transition language in root AGENTS.md applies.
 11. The complete pre-schema-2 M09 ledger is historical provenance at `records/M09-schema1-ledger-snapshot-2026-10-09.md`; do not load it by default. Current live unresolved gates are intentionally compact in `TASKS.md`.
+12. Read `docs/verification-portfolio.md`, framework `VERIFICATION_POLICY.md` and `TEST_PORTFOLIO.md`. Select affected Tier 1/2 tests during development and only the named current Tier 3 qualification at an explicit contract boundary. Preserve all active required coverage; unfiltered `npm test` and `npm run verify:all` are available diagnostics, not automatic acceptance obligations.
+13. The exact five-work public release and human decisions remain historical evidence. Do not mark omitted, not-yet-executed checks or deferred private-Studio/contrast human gates PASS.

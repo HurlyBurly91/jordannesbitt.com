@@ -13,6 +13,8 @@ Detailed generic schemas and transition contracts are in:
 .durable-state/framework/SCHEMAS.md
 .durable-state/framework/ASYNC_EXTERNAL_VERIFICATION.md
 .durable-state/framework/HUMAN_GATE_READINESS.md
+.durable-state/framework/VERIFICATION_POLICY.md
+.durable-state/framework/TEST_PORTFOLIO.md
 ```
 
 ## Durable-state map
@@ -292,6 +294,39 @@ only when current independent evidence establishes the claim. Use
 or narrow a conclusion when its scope, evidence, bindings, or assumptions
 change.
 
+## Risk-proportionate local verification
+
+Read `.durable-state/framework/VERIFICATION_POLICY.md` before selecting
+verification for an implementation iteration, integrated candidate, or
+acceptance/release qualification. Its three tiers govern *when* and *how
+broadly* to verify; the existing `Vxx`, `Verified-By`, `Covers`, `Gate`,
+and `Repository-State` fields govern *what was actually demonstrated*.
+
+During ordinary implementation run focused affected tests and invariants.
+After a feature stabilizes, run relevant subsystem and representative real
+integration checks. At an authorized stabilized acceptance boundary, run the
+project's declared current qualification set, not every accumulated test.
+Read `.durable-state/framework/TEST_PORTFOLIO.md` when defining that set,
+reviewing escaped defects or material cost growth, or retiring coverage.
+Project-specific physics, safety, security, and human requirements remain
+binding; this policy does not silently waive them.
+
+A completed `Vxx` result remains immutable historical execution evidence,
+even when it belongs to the active request. It does not by itself assert
+current applicability after a change. Unfinished work explicitly citing
+a `Vxx` or the selected human gate's explicit evidence prerequisites
+requests current applicability and can trigger strict `W082`/`W083`
+when stale. Before selecting a human gate, list actually required automated
+qualifications as `Requires:` edges on that gate; do not rely on
+unreferenced historical PASS records.
+
+Do not update old `Repository-State` fingerprints, erase failed evidence,
+or weaken a still-required oracle merely to obtain PASS. Evidence-based
+consolidation, demotion, supersession, and retirement are permitted under
+`TEST_PORTFOLIO.md` when current contracts remain adequately covered.
+Uncertain value alone does not authorize demotion of required coverage.
+A focused PASS is not an unexecuted qualification PASS.
+
 ## Verification and evidence coverage
 
 Functional success does not imply that preservation, architectural,
@@ -349,11 +384,14 @@ The framework fingerprint excludes only live ledger/provenance and vendored
 framework-management files whose own recording would otherwise be
 self-referential. Changes to implementation, tests, canonical docs, sources,
 configuration, or other material files can stale applicable evidence and require
-review or rerun. Task dependencies on old requirements do not automatically
-reuse their historical evidence: only evidence in the active request or directly
-cited there (or by the selected human gate during HUMAN_VERIFICATION) is checked
-for current repository-state freshness. Explicitly verify behavior still required
-by the current gate; never replace old PASS fingerprints with newer values.
+review or rerun. Completed tasks alone do not select evidence for current
+freshness. Unfinished work's explicit evidence references and the selected
+human gate during HUMAN_VERIFICATION do. Follow their actual Requires/Blocked-By
+prerequisite edges, including through completed checkpoints, without importing
+old requirements' historical Verified-By chains. An inferred single human gate
+uses the same freshness checks as an explicitly selected Next-Gate. This is
+task-dependency validation, not automatic source-code impact analysis.
+Never replace old PASS fingerprints with newer values.
 
 ## Deterministic validation
 

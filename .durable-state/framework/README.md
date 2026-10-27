@@ -73,7 +73,19 @@ HUMAN_VERIFICATION. Framework 1.2.2 fixes the remaining case where a
 pending human task belonging to the active request could import historical
 evidence during FOLLOW_UP. Human-only active requests retain normal scoping
 instead of triggering the missing-request conservative fallback. No schema
-migration is required (schema 2 unchanged).
+migration is required (schema 2 unchanged). Framework 1.2.3 adds
+risk-proportionate local verification tiers and treats completed `Vxx`
+tasks in the active request as historical during iteration, while enforcing
+freshness for explicit current evidence reuse and selected human gates.
+Framework 1.2.4 makes verification portfolios non-append-only: projects define
+explicit current qualification sets, review escaped defects and cost growth,
+and may consolidate, demote, supersede, or retire tests while preserving
+historical evidence. The unfiltered accumulated suite is no longer implicitly
+the acceptance contract. Framework 1.2.5 reconciles the entry policy and resume
+prompt with that portfolio contract, protects uncertain required coverage from
+automatic demotion, and scopes reviews to affected groups. It also checks
+inferred single human gates and explicit transitive evidence prerequisites,
+without importing historical requirement coverage. Schema 2 is unchanged.
 
 Relevant framework-owned contracts:
 
@@ -82,6 +94,8 @@ AGENTS.md
 SCHEMAS.md
 ASYNC_EXTERNAL_VERIFICATION.md
 HUMAN_GATE_READINESS.md
+VERIFICATION_POLICY.md
+TEST_PORTFOLIO.md
 RUN_PROMPT.txt
 ```
 

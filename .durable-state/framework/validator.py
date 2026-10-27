@@ -344,14 +344,15 @@ class Validator(_core.Validator):
         ledger: ParsedLedger,
         task_by_id: dict[str, Task],
     ) -> Task | None:
+        candidate = self._human_gate_candidate(status, ledger, task_by_id)
+        if candidate is not None:
+            return candidate
         pending = [
             task for task in ledger.tasks if task.kind == "H" and task.marker == "H"
         ]
         next_gate = status.get("Next-Gate")
 
         if next_gate is None:
-            if len(pending) == 1:
-                return pending[0]
             if not pending:
                 self.error(
                     "E131",

@@ -27,8 +27,15 @@
     "studio:navigation-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-intake-demo.mjs --navigation-flow",
     "studio:coordination-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-multitab-demo.mjs",
     "studio:multitab-demo": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers ASTRO_TELEMETRY_DISABLED=1 node scripts/studio-multitab-demo.mjs",
-    "verify": "npm run state:check && npm run build && npm test",
-    "state:check": "python3 .durable-state/framework/validator.py --strict . && node scripts/durable-state-check.mjs"
+    "verify": "npm run qualify:published-site",
+    "state:check": "python3 .durable-state/framework/validator.py --strict . && node scripts/durable-state-check.mjs",
+    "test:tier1": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/catalogue.test.mjs",
+    "test:tier2:public": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/archive.test.mjs tests/catalogue.test.mjs tests/ingestion.test.mjs tests/moving-image.test.mjs tests/presentation.test.mjs tests/professional.test.mjs tests/publication.test.mjs tests/quality.test.mjs tests/smoke.test.mjs",
+    "test:tier2:content-tools": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/ingestion.test.mjs tests/pilot.test.mjs",
+    "test:tier2:studio": "PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/ingestion.test.mjs tests/pilot.test.mjs tests/studio.test.mjs",
+    "qualify:published-site": "npm run state:check && npm run build && npm run release:check && npm run test:tier2:public",
+    "qualify:private-studio": "npm run state:check && npm run build && npm run test:tier2:studio && PLAYWRIGHT_BROWSERS_PATH=/tmp/opencode/jordannesbitt-browsers node --test tests/publication.test.mjs tests/quality.test.mjs",
+    "verify:all": "npm run state:check && npm run build && npm test"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",

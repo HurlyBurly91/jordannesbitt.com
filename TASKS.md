@@ -3,8 +3,8 @@
 ```yaml
 Milestone: M09
 State: ACTIVE
-Phase: FOLLOW_UP
-Active-Request: M09-R25
+Phase: AUTOMATED_VERIFICATION
+Active-Request: M09-R26
 Spec: milestones/M09-content-acceptance.md
 Ledger: TASKS.md
 Experience-Retrieval: disabled
@@ -919,3 +919,43 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
   Result: PASS. Exact final Pagesrun40277248712 targets282234ca5e66cd98e6d6319a181defd404b8bf82:buildjob121422501964SUCCESS including strict content step,deployjob121422646466SUCCESS,completed2026-10-26T06:00:20Z;deployment7325171617statusSUCCESS. Artifact12630562988/github-pages downloaded,safely extracted;87files each SHA256-identical to corrected localoutputd7a9b993909fe780adffb0e5b79f1dcce712ea5cf9687c11a219cdb3791c9968. Live48Chromium/Firefoxdesktop/mobilecases including8noJS verify5works/lead/order/About/contact/mailto/images/navigation/inspection and0confirmedviolations/reflowfailures;8openedcontrastcases INCONCLUSIVE. All86servedfiles verified:68raw-byteidentical;18HTMLpayloads identical after validating/removing only exact Cloudflare terminal challenge template and consuming exact documented2email_off markers on Contact. RawHTML is explicitly NOT byte-identical;noothertransform accepted. Sitemaps/search/CSS/media exact;HTTPSapex200/TLSvalid,www→HTTPSapex200;CNAME unchanged. Final9154privatefilehashes unchanged. Remote master/development both282234c before result-only checkpoint;actual master/deployed target remains282234c. Exact final-tip rollback rehearsed before push restores previous tree3464c73b7d1ec4ccee7f9bd60e4f47d3ae4fcae5 and pushedtagpre-first-release-2026-10-26. Final evidence-only development checkpoint does not redeploy master.
   Repository-State: HEAD=282234ca5e66cd98e6d6319a181defd404b8bf82; WORKTREE=CLEAN
   Limitations: Mailto draft inspection sends no email;indexing/field performance not inferred. User explicitly requires waiting for actual deployment result in this bounded execution.
+
+## M09-R26 — DSM 1.2.5 maintenance and verification-portfolio reconciliation
+
+Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 portfolio cleanup; preserve project code, accepted five-work release and unresolved owner gates. User performed the updater locally; this GitHub checkpoint mirrors only verified updater-owned source payload and modifies project-owned policy/tests selections on `redesign/astro-foundation`, never master/live publication.
+
+- [~] M09-R26-01 Install and pin the exact unchanged 1.2.5/schema-2 upstream managed framework payload and manifest.
+  Source: USER
+  Verified-By:
+    - M09-R26-V01
+- [~] M09-R26-02 Reconcile root resume/quality/verification policy, audit the accumulated test portfolio without automatic demotion, define affected Tier 1/2 and named contract-complete public/private Tier 3 qualification, and verify the new executable selections.
+  Source: USER
+  Verified-By:
+    - M09-R26-V02
+- [~] M09-R26-P01 Preserve all non-framework implementation/content, existing active tests and negative oracles, historical PASS/FAIL, exact approved release identity, previous human decisions, inherited gates, deployment and protected branches.
+  Source: USER
+  Verified-By:
+    - M09-R26-V01
+- [x] M09-R26-D01 Inspect framework release, 11 registered Node test files and current release evidence; review affected test contracts and cost/oracle overlap without deleting or demoting uncertain coverage.
+  Source: DERIVED
+  Result: Source-only portfolio review completed. Existing 11 registered modules retained ACTIVE. No previous 1.2.4 portfolio found. Current measured tier runtimes unknown. Reviewed Cloudflare no-JS contact escape and preserved eight inconclusive contrast observations. See docs/verification-portfolio.md and records/M09-R26-dsm-1.2.5-verification-portfolio.md.
+- [~] M09-R26-V01 Verify framework source blob and manifest payload identity; review exact branch tree diff for zero application/content/deploy/legacy-evidence modifications and preserved release/human gates.
+  Source: DERIVED
+  Covers:
+    - M09-R26-01
+    - M09-R26-P01
+  Gate: INVARIANT
+  Command: GitHub Git blob SHA comparison to upstream commit 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8; framework SHA-256 payload derivation; GitHub compare base development commit to new development checkpoint and inspect protected ref.
+  Oracle: independently checked upstream Git object identity, deterministic manifest payload digest and per-path branch diff.
+  Expected: All 11 managed framework blobs match exact upstream source; manifest 1.2.5/schema2/source/hash consistent; no changed source assets, public content, existing tests, master, deployed site or historical evidence.
+  Progress: Source Git blobs mirrored and SHA-matched. Final committed-tree/diff check pending publication of this maintenance checkpoint.
+- [?] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
+  Source: DERIVED
+  Covers:
+    - M09-R26-02
+  Gate: INTEGRATION
+  Command: npm run state:check; npm run build; npm run test:tier1; npm run test:tier2:public; npm run test:tier2:studio; npm run qualify:published-site; npm run qualify:private-studio (qualified candidates only; avoid redundant broad reruns).
+  Oracle: independent Python schema validator and project checker, Astro compiler/build, Node fixture and real-output assertions, Playwright browser and negative guards.
+  Expected: Strict state VALID with no warnings, Astro build PASS, affected test selections and named public/private qualifications run successfully with exact counts, candidate commit, elapsed time and limitations.
+  Blocker: Connected GitHub API can publish/review repository text but cannot execute commands on the owner's wilco3 worktree, install Node dependencies, or operate the required Playwright browsers. No local/hosted command was run and no PASS is claimed.
+  Resume: Execute these commands in the actual Node >=22.12 checkout, record evidence and then close this machine-only task; do not alter human-gate results or start hosted CI/deployment implicitly.

@@ -264,22 +264,28 @@ Generate the value with:
 ```
 
 Repository-state freshness is checked for completed `Vxx` evidence
-belonging to the active request (including follow-ups), and for older `Vxx`
-records directly cited by its tasks in `Requires`, `Blocked-By`,
-`Verified-By`, or `Conclusion-Evidence`. During `HUMAN_VERIFICATION`, the
-selected `Next-Gate` also contributes its direct `Vxx` references. Outside
-that phase, a `Next-Gate` pointer does not select evidence for freshness checks.
+explicitly referenced by unfinished, non-human tasks in the active request
+through `Requires`, `Blocked-By`, `Verified-By` or
+`Conclusion-Evidence`. Completed tasks, including `Vxx` in the same active
+request, retain recorded historical results without automatically claiming
+current applicability. During `HUMAN_VERIFICATION`, the selected
+`Next-Gate` contributes its direct `Vxx` references. Outside that phase,
+a pending `Next-Gate` alone does not select evidence.
 
-A task-level `Requires` or `Blocked-By` link to an earlier requirement
-preserves ordering and prerequisite completion; it does not implicitly reuse
-every verification from that requirement's historical `Verified-By` chain.
-Old PASS records retain their original revision and historical meaning, not a
-claim about newer code. If current behavior relies on an old result, record
-new verification evidence or explicitly reference that `Vxx` record and review
-its current applicability. Never rewrite historical fingerprints to satisfy
-strict validation. Missing or contradictory active-request metadata retains
-conservative full checking. Run `--strict` at the relevant closeout/selected
-human gate, not after every intermediate experiment with a changing worktree.
+A `Requires` or `Blocked-By` dependency on an earlier requirement
+preserves ordering without importing that requirement's historical
+`Verified-By` chain. Explicitly citing an earlier `Vxx` from unfinished
+work or a selected human gate requests current applicability, and
+`W082`/`W083` remain blocking in strict mode when stale. The selected
+human gate must list its required automated qualification evidence as
+explicit `Requires:` prerequisites, not assume old PASS records are current.
+
+After material changes, rerun affected checks and perform any required
+qualification for the new stabilized candidate. Do not rewrite historical
+fingerprints or claim unexecuted tests have passed. Missing or contradictory
+active-request metadata retains conservative full checking. Use `--strict`
+at the required candidate/human gate, not after every intermediate experiment.
+See `.durable-state/framework/VERIFICATION_POLICY.md` for the tiers.
 
 Human evidence:
 
