@@ -900,17 +900,18 @@ Source: USER, 2026-10-26, TASK FINISH AND PUBLISH JORDANNESBITT.COM; explicit co
   First-External-Conclusion: SUCCESS
   First-Resume-Mechanism: MANUAL
   First-Suspension-Checkpoint: HEAD=ed1d7dbdd75f7a3d7e4073ba5cee667d173077b4; WORKTREE=CLEAN
-  Verification-Mode: EXTERNAL_ASYNC
-  External-Provider: github-actions
-  External-Run-ID: 40277248712
-  Target-Identity: commit:282234ca5e66cd98e6d6319a181defd404b8bf82
-  Required-Checks:
+  Final-Verification-Mode: EXTERNAL_ASYNC
+  Final-External-Provider: github-actions
+  Final-External-Run-ID: 40277248712
+  Final-Target-Identity: commit:282234ca5e66cd98e6d6319a181defd404b8bf82
+  Final-Required-Checks:
     - build
     - deploy
-  External-Status: COMPLETED
-  External-Conclusion: SUCCESS
-  Resume-Mechanism: MANUAL
-  Suspension-Checkpoint: HEAD=282234ca5e66cd98e6d6319a181defd404b8bf82; WORKTREE=CLEAN
+  Final-External-Status: COMPLETED
+  Final-External-Conclusion: SUCCESS
+  Final-Resume-Mechanism: MANUAL
+  Final-Suspension-Checkpoint: HEAD=282234ca5e66cd98e6d6319a181defd404b8bf82; WORKTREE=CLEAN
+  Historical-Async-Note: Exact first-run and final-run provider IDs, statuses, target identities, checksets and suspension checkpoints are preserved as First-/Final- fields. This verified completion is historical, not a pending external wait or a claim of present-day candidate applicability. The original field names and values are retained in the pre-migration commit 8f1b816 and in records/M09-R26-dsm-1.2.5-verification-portfolio.md; see the recorded DSM 1.2.5 historical-checkpoint validator limitation.
   Command: Reviewed exact Git checkpoint/nonforce push/history-preserving integration;exact Pages run/deployment identity and successful jobs;live HTTP/browser/asset/hash/sitemap verification.
   Oracle: integration-or-end-to-end
   Expected: Actual successful deployment is bound to approved release commit;all live critical paths/HTTPS/assets and exact five-work content match verified artifact;previous live revision is durably recoverable.
@@ -946,18 +947,21 @@ Source: USER, 2026-10-27. Same-schema DSM 1.2.5 update and unfinished 1.2.4 port
     - M09-R26-P01
   Gate: INVARIANT
   Command: GitHub Git blob SHA comparison to upstream commit 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8; framework SHA-256 payload derivation; GitHub compare base development commit to new development checkpoint and inspect protected ref.
-  Oracle: independently checked upstream Git object identity, deterministic manifest payload digest and per-path branch diff.
+  Oracle: external-reference-comparison
+  Oracle-Details: Compared immutable Git blob/tree object identities to the separately sourced upstream framework; independently derived the payload SHA-256 and compared the exact changed-path set.
   Expected: All 11 managed framework blobs match exact upstream source; manifest 1.2.5/schema2/source/hash consistent; no changed source assets, public content, existing tests, master, deployed site or historical evidence.
   Result: PASS (source/preservation identity only). Published development commit 89acfbcb7fa6d2045fcc51782d79f11d1413c822 has the framework subtree Git-tree SHA ee266245988648420bf0155f20c9f3115dc09b15, exactly equal to authoritative upstream 1.2.5 at 77aef9fdfdff892a4bd2d7caf0aff3eb6fb7e5e8. All 11 upstream Git blob SHAs match; manifest payload SHA-256 3e868e2f8b0d8d6a8df2af26b94d3d8ed37de83cfcf4346da4a72112085a78dd calculated from original source file hashes. GitHub compare: one fast-forward commit, 20 allowed policy/framework/docs/state paths, zero source/content/tests/workflow changes. Master remained 282234ca5e66cd98e6d6319a181defd404b8bf82. This proves Git object integrity and path scope, not that executable tests ran.
   Repository-State: HEAD=89acfbcb7fa6d2045fcc51782d79f11d1413c822; WORKTREE=CLEAN
   Limitations: GitHub's immutable remote commit tree was inspected; the owner's local checkout (which contains the updater's uncommitted change) was NOT inspected. V02 pending; no new site build, Playwright, hosted CI or human gate executed.
-- [?] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
+- [~] M09-R26-V02 Run new strict framework/project validation, project build and representative new tier-selection commands against the actual post-migration executable checkout.
   Source: DERIVED
   Covers:
     - M09-R26-02
   Gate: INTEGRATION
   Command: npm run state:check; npm run build; npm run test:tier1; npm run test:tier2:public; npm run test:tier2:studio; npm run qualify:published-site; npm run qualify:private-studio (qualified candidates only; avoid redundant broad reruns).
-  Oracle: independent Python schema validator and project checker, Astro compiler/build, Node fixture and real-output assertions, Playwright browser and negative guards.
+  Oracle: integration-or-end-to-end
+  Oracle-Details: Strict schema/project checker, Astro source compiler and renderer, actual built output and integration assertions, browser workflows and negative-case oracles remain individually required by the named qualification contracts.
   Expected: Strict state VALID with no warnings, Astro build PASS, affected test selections and named public/private qualifications run successfully with exact counts, candidate commit, elapsed time and limitations.
-  Blocker: Connected GitHub API can publish/review repository text but cannot execute commands on the owner's wilco3 worktree, install Node dependencies, or operate the required Playwright browsers. No local/hosted command was run and no PASS is claimed.
-  Resume: Execute these commands in the actual Node >=22.12 checkout, record evidence and then close this machine-only task; do not alter human-gate results or start hosted CI/deployment implicitly.
+  Attempt-1: 2026-10-27 user synchronized the development branch to 8f1b816 and attempted public/private qualification, but both stopped in strict DSM preflight with E084 invalid Oracle on V01/V02, E057 blocked task lacking Blocked-By, and W082 on an already-completed R25-V03 external Suspension-Checkpoint. System Node18.19.1 / npm9.2.0 is below project requirements; npm ci completed with engine warnings. No build, release gate, Playwright test or qualification executed. Errors are recorded as FAIL/PRECHECK, not PASS.
+  Progress: Fix project-owned schema field values and represent finished external verification as historical completed metadata without altering old run IDs, original PASS/FAIL, or framework code. The user can execute Node22 qualifications in the local checkout; this task remains IN_PROGRESS until an actual result is recorded.
+  Resume: After pulling the repair checkpoint, run npm run state:check and the named public/private qualification under a Node22.23.3/npm10.9.9 runtime (see docs/operations.md). Record actual candidate commit, commands, timings, outcomes and limitations. Never infer PASS, trigger deployment, rewrite the 2026-10-26 public release evidence or close inherited human gates.

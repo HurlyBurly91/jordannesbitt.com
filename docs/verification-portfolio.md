@@ -41,3 +41,16 @@ No tests were removed, retired, marked periodic, made nonblocking, or had their 
 **Recheck on:** changed data/publication projection, launch manifest, design/templates, ingest/media metadata, actual CDN behaviour, Studio persistence/CAS/export/security, Playwright/browser/runtime upgrades, new observed escapes, material test runtime increase, or qualification change. Review only affected groups unless evidence shows systemic drift. Do not weaken private source/rights isolation, owner approval or independent release gate for speed. A human finding triggers a bounded oracle-gap review and the smallest distinct regression; do not automatically append an entire end-to-end journey.
 
 Last audit: 2026-10-27, M09-R26. Inventory derived from the 11 current `tests/*.test.mjs` source files and current scripts/2026-10-26 release record; timings and current PASS/FAIL are explicitly unknown pending executable checkout verification.
+
+### Reproducible Node runtime for this checkout
+
+The system default on `wilco3` was observed as Node 18.19.1 and is **unsupported**. The documented, non-global temporary runtime is Node 22.23.3 / npm 10.9.9 via `npm exec`, with a project-specific cache. Reinstall dependencies under that runtime; do not treat `npm ci` success plus `EBADENGINE` warnings as a valid runtime qualification. One supported invocation is:
+
+```bash
+npm_config_cache=/tmp/opencode/jordannesbitt-npm-cache \
+ASTRO_TELEMETRY_DISABLED=1 \
+npm exec --yes --package=node@22.23.3 --package=npm@10.9.9 --call \
+  'node --version && npm --version && npm ci && npm run browser:install && npm run qualify:published-site && npm run qualify:private-studio'
+```
+
+Actual timing, outputs, pass/fail and candidate identity must still be captured. `npm audit` advisories are tracked as a separate dependency/security review; do not blindly run `npm audit fix --force` during this policy-only migration.
